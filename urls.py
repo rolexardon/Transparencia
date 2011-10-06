@@ -1,10 +1,10 @@
 from django.conf.urls.defaults import patterns, include, url
+from django.views.generic.simple import redirect_to
 
-# Uncomment the next two lines to enable the admin:
-# from django.contrib import admin
-# admin.autodiscover()
+from django.contrib import admin
+admin.autodiscover()
 
-urlpatterns = patterns('',
+urlpatterns = patterns('views',
     # Examples:
     # url(r'^$', 'Transparencia.views.home', name='home'),
     # url(r'^Transparencia/', include('Transparencia.foo.urls')),
@@ -14,4 +14,16 @@ urlpatterns = patterns('',
 
     # Uncomment the next line to enable the admin:
     # url(r'^admin/', include(admin.site.urls)),
+    
+    
+    
+    url(r'^$',redirect_to, {'url': 'transparencia/home/'},name = 'url_home'),
+    url(r'^transparencia/home/$','view_home',name = 'url_home'),
+    
+    url(r'^transparencia/home/autenticar/$','view_autenticar', name = 'url_autenticar'),
+    
+    url(r'^transparencia/administracion/',include('Administration.urls')),
+    url(r'^transparencia/encuesta/',include('Encuesta.urls')),
+    url(r'^transparencia/reportes/',include('Reportes.urls')),
+    
 )
