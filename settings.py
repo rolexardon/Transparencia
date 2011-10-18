@@ -5,9 +5,7 @@ DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
 ADMINS = (
-          
      ('Rolando Ardon', 'rolando_ardon299@hotmail.com'),
-     
 )
 
 MANAGERS = ADMINS
@@ -15,9 +13,13 @@ MANAGERS = ADMINS
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql', # Add 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
+        
         #'NAME': os.path.join(ROOT_PATH, 'TransparenciaDB'),                      # Or path to database file if using sqlite3.       
-        'NAME': 'TransparenciaDB', 
-        'USER': 'root',                      # Not used with sqlite3.
+        #'DATABASE_OPTION': '{"init_command":"SET storage_engine=INNODB"}',
+        'OPTIONS': {
+                    'init_command': 'SET storage_engine=INNODB',
+                    },
+        'NAME': 'TransparenciaDB',       # Not used with sqlite3.
         'PASSWORD': 'admin',                  # Not used with sqlite3.
         'HOST': 'localhost',                      # Set to empty string for localhost. Not used with sqlite3.
         'PORT': '',                      # Set to empty string for default. Not used with sqlite3.
@@ -54,7 +56,7 @@ MEDIA_ROOT = ''
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash.
 # Examples: "http://media.lawrence.com/media/", "http://example.com/media/"
-MEDIA_URL = ''
+MEDIA_URL = '/Media/'
 
 # Absolute path to the directory static files should be collected to.
 # Don't put anything in this directory yourself; store your static files
@@ -76,6 +78,8 @@ STATICFILES_DIRS = (
     # Put strings here, like "/home/html/static" or "C:/www/django/static".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
+    
+    ("static_encuesta","/home/rolex/workspace/Transparencia/Transparencia/Encuesta/Static"),
 )
 
 # List of finder classes that know how to find static files in
@@ -102,6 +106,8 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
+    "django.contrib.staticfiles.finders.FileSystemFinder",
+    "django.contrib.staticfiles.finders.AppDirectoriesFinder",
 )
 
 ROOT_URLCONF = 'Transparencia.urls'
