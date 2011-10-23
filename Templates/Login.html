@@ -1,0 +1,12 @@
+{%extends 'Main.html'%}
+{%block login%}
+    
+		<form  method='post' action={%url url_autenticar%}>{% csrf_token %}
+			<ul>
+  			<li>Usuario: <input name="user_tbx" ></li>
+  			<li>Contraseña: <input type="password" name="pass_tbx" ></li>
+  			<input type="submit" value="Autenticar">
+  			</ul>
+		</form>
+    
+{%endblock%}

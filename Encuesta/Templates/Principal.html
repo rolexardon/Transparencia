@@ -1,0 +1,44 @@
+{%extends 'Main.html'%}
+{%block contenido%}
+
+<link rel="stylesheet" type="text/css" href="{{STATIC_URL}}static_encuesta/tabs.css" />
+
+<script type="text/javascript">
+
+	function loadit(element)
+	{
+		var tabs=document.getElementById('tabs').getElementsByTagName("a");
+		for (var i=0; i < tabs.length; i++)
+		{
+			if(tabs[i].href == element.href) 
+				tabs[i].className="selected";
+			else
+				tabs[i].className="";
+		}
+	}
+
+</script>
+
+<body>
+	<div id="content">
+		<h1>		
+			<br><strong> SECRETARÍA DE EDUCACIÓN DE HONDURAS </strong></br>
+			<br><strong> UNIDAD DE TRANSPARENCIA </strong></br>
+		</h1>
+		<p><br><strong> FICHA PARA VERIFICACIÓN DE MURALES DE TRANSPARENCIA </strong></br> </p>
+		<div id="tabs">
+			<ul>
+				 <li><a href='{%url url_principal%}' class="selected" target="mainFrame"  onclick="loadit(this)" >Instrucciones</a></li>
+			     <li><a href='{%url url_encuesta1%}' target="mainFrame"  onclick="loadit(this)" >Página 1</a></li>
+			     <li><a href='{%url url_encuesta2%}' target="mainFrame"  onclick="loadit(this)" >Página 2</a></li>
+			</ul>
+		</div>
+		<div id="encuesta_div">
+			<form id="encuesta_form">
+				{%block encuesta%}
+				{%endblock%}
+			</form>
+		</div>
+	</div>
+</body>
+{%endblock%}

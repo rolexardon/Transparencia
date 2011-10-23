@@ -1,0 +1,135 @@
+{%extends 'Main.html'%}
+{%block contenido%}
+
+	<!-- Tools -->
+	<script src="{{STATIC_URL}}static_encuesta/tabs_tools.js"></script>
+	<link rel="stylesheet" type="text/css" href="{{STATIC_URL}}static_encuesta/tabs.css" />
+	<link rel="stylesheet" type="text/css" href="http://static.flowplayer.org/tools/css/tabs.css" />
+	
+	<!-- This JavaScript snippet activates those tabs -->
+	<script>
+		// perform JavaScript after the document is scriptable.
+		$(function() {
+			// setup ul.tabs to work as tabs for each div directly under div.panes
+			$("ul.tabs").tabs("div.panes > form");
+		});
+	</script>
+	
+<body>
+	<h1>		
+		<br><strong> SECRETARÍA DE EDUCACIÓN DE HONDURAS </strong></br>
+		<br><strong> UNIDAD DE TRANSPARENCIA </strong></br>
+	</h1>
+	<p><br><strong> FICHA PARA VERIFICACIÓN DE MURALES DE TRANSPARENCIA </strong></br> </p>
+	<!-- the tabs -->
+	<div id="div_tabs">
+		<ul class="tabs">
+			<li><a href="#">Instrucciones</a></li>
+			<li><a href="#">Página 1</a></li>
+			<li><a href="#">Página 2</a></li>
+		</ul>
+	</div>
+	<!-- tab "panes" -->
+	<div class="panes">
+		<form>
+			<p>
+				Instrucciones de Digitación
+			</p>
+			<button onclick="JavaScript:alert('Well done!')">Iniciar</button>
+		</form>
+		<form id="pg1">
+			<br><label>Nombre de Usuario:</label><input type="text" name="tbx_nombre" rows="1"></br>
+			<br><label>Fecha:</label><input type="text" name="tbx_fecha" rows="1"></br>
+			<fieldset id="centro">
+			<legend>Centro Educativo</legend>
+					<br><label>Departamento:</label><select name="cbx_dep" onchange= "GetMunicipios(this)">
+	                     								<!--{%for d in deps%}
+															<option> {{d.nombre}} </option>
+														{%endfor%}-->
+													</select></br>
+					<br><label>Municipio:</label><select name="cbx_mun" onchange= "">
+														<!--{%for m in muns%}
+															<option> {{m.nombre}} </option>
+														{%endfor%}-->
+													</select></br>
+					<br><label>Centro Educativo:</label><select name="cbx_centros">
+														<!--{%for c in centros%}
+																<option> {{c.nombre}} </option>
+															{%endfor%}-->
+														</select></br>
+					<br><label>Barrio/Colonia/Aldea/Comunidad:</label><input type="text" name="tbx_localidad" rows="1"></br>
+					<br><label>Contacto:</label><input type="text" name="tbx_tel" rows="1"></br>
+					<br><label>Tipo de Centro:</label><input type="text" name="tbx_tipcentro" rows="1"></br>
+			</fieldset>
+			<fieldset id="parteA">
+			<legend>A. Instalación y ubicación del mural</legend>
+					<label>Instalación y Ubicación:</label><select name="cbx_parteA">
+																{%for a in infoA%}
+																	<option> {{a.descripcion}} </option>
+																{%endfor%}
+															</select>
+			</fieldset>
+			<fieldset id="parteB">
+			<legend>B. Información obligatoria publicada en el mural</legend>
+				{%for b in infoB%}
+					<br><input type="checkbox" name="cbxB" value= {{b.descripcion}} />{{b.descripcion}}</br>
+				{%endfor%}
+				<label>Ejemplos de otra información: Merienda escolar, ingreso por cafeterias, ingreso por parqueo y otra información financiera.</label>
+					<ol>
+						<li><label>Otra Información:</label><input type="text" name="tbx_oi1" rows="1"></li>
+						<li><label>Otra Información:</label><input type="text" name="tbx_oi2" rows="1"></li>
+						<li><label>Otra Información:</label><input type="text" name="tbx_oi3" rows="1"></li>
+						<li><label>Otra Información:</label><input type="text" name="tbx_oi4" rows="1"></li>
+					</ol>
+			</fieldset>
+			<fieldset id="parteC">
+			<legend>C. Orden de la información</legend>
+				{%for c in infoC%}
+					<br><label>{{c.descripcion}}</label><select>
+															<option>SI</option>
+															<option>NO</option>
+														</select></br>
+				{%endfor%}
+			</fieldset>
+			<fieldset id="parteD">
+			<legend>D. Cantidades totales de docentes</legend>
+				{%for d in infoD%}
+					<br><label>{{d.descripcion}}</label><input type="text" name="tbx_{{d.codigo}}" rows="1"></br>
+				{%endfor%}
+			</fieldset>
+		</form>
+		<form>
+			<fieldset id="parteE">
+			<legend>E. Hallazgos e Irregularidades en LISTAS</legend>
+				{%for e in infoE%}
+					<br><label>{{e.descripcion}}</label><input type="text" name="tbx_{{e.codigo}}" rows="1"></br>
+				{%endfor%}
+			</fieldset>
+			<fieldset id="parteF">
+			<legend>F. Hallazgos e irregularidades en MATRICULA GRATIS</legend>
+					{%for f in infoF%}
+						<br><input type="checkbox" name="cbxF" value= {{f.descripcion}} />{{f.descripcion}}</br>
+					{%endfor%}
+				<label>Tratar de resumir la irregularidad.</label>
+					<ol>
+						<li><label>Otra irregularidad de Matrícula Gratis:</label><input type="text" name="tbx_oi1" rows="1"></li>
+						<li><label>Otra irregularidad de Matrícula Gratis:</label><input type="text" name="tbx_oi2" rows="1"></li>
+						<li><label>Otra irregularidad de Matrícula Gratis:</label><input type="text" name="tbx_oi3" rows="1"></li>
+					</ol>
+			</fieldset>
+			<fieldset id="parteG">
+			<legend>G. Creatividad (colores, materiales autóctonos, decorado)</legend>
+				{%for g in infoG%}
+					<br><label>{{g.descripcion}}</label><select name="cbx_{{g.descripcion}}">
+															<option> Excelente</option>
+															<option> Muy Bueno</option>
+															<option> Bueno</option>
+															<option> Regular</option>
+															<option> Malo </option>
+														</select></br>
+				{%endfor%}
+			</fieldset>
+		</form>
+	</div>
+</body>
+{%endblock%}
