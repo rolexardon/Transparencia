@@ -1,3 +1,4 @@
+# -*- coding: latin-1 -*-
 from django.db import models
 from django.forms.widgets import PasswordInput
 
@@ -20,10 +21,18 @@ class CentroEducativo(models.Model):
         return CentroEducativo.objects.all()
     @classmethod
     def FilterByDepMun(CentroEducativo,dep,mun):
-        return CentroEducativo.objects.filter(Codigo_Departamento = dep, Codigo_Municipio = mun)
+        if len(str(dep)) == 1:
+            dep = '0' + str(dep)
+        if len(str(mun)) == 1:
+            mun = '0' + str(mun)
+        
+        print dep
+        print mun
+        
+        return CentroEducativo.objects.filter(codigo_departamento = str(dep), codigo_municipio = str(mun))
     
     def __unicode__(self):
-        return self.BringAll
+        return self.nombre
     
 class TipoUsuario(models.Model):
     codigo = models.AutoField(primary_key=True)
@@ -55,10 +64,13 @@ class Municipio(models.Model):
         return Municipio.objects.all()
     @classmethod    
     def FilterByDep(Municipio,dep):
-        return Municipio.objects.filter(departamento_id = dep)
+        return Municipio.objects.filter(departamento = dep)
+    @classmethod
+    def BringDepId(Municipio,id):
+        return Municipio.objects.get(pk=id).departamento.pk
         
     def __unicode__(self):
-        return self.BringAll
+        return self.nombre
     
 class Aldea(models.Model):
     codigo = models.CharField(max_length=3)

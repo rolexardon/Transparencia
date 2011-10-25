@@ -1,0 +1,16 @@
+#topbar_btns
+{
+	float: right;
+
+}
+legend 
+{
+  padding: 0.2em 0.5em;
+  border:1px solid blue;
+  color:blue;
+  font-size:90%;
+  text-align:right;
+ }
+
+
+

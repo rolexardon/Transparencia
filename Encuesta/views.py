@@ -1,6 +1,7 @@
 from django.http import HttpResponse
 from django.template import RequestContext
 from django.shortcuts import render_to_response,redirect,get_object_or_404
+from django.utils import simplejson
 
 from Encuesta.models import SegmentoA as SA
 from Encuesta.models import SegmentoB as SB
@@ -14,9 +15,38 @@ from Administration.models import CentroEducativo as CE
 from Administration.models import Departamento as DP
 from Administration.models import Municipio as MN
 
-#def view_principal(request):
+def view_bringmunicipio(request):
     
- #   return render_to_response('Encuesta.html',context_instance=RequestContext(request))
+    if request.is_ajax():
+        if request.GET['data'] == 'muns':
+            try:
+                muns = MN.FilterByDep(request.GET['iddep'])
+                #muns = MN.objects.filter(departamento = request.GET['iddep'])
+                #print muns
+                data = [{'pk':m.pk,'descripcion':m.nombre} for m in muns]
+                return HttpResponse(simplejson.dumps(data), mimetype="application/json")
+            except Exception,e:
+                print e
+                return HttpResponse('MAL')
+            else:
+                return HttpResponse(simplejson.dumps(data), mimetype="application/json")
+            
+def view_bringcentros(request):
+    
+    if request.is_ajax():
+        if request.GET['data'] == 'centros':
+            try:
+                idmun = request.GET['idmun']
+                iddep = MN.BringDepId(idmun)
+                
+                centros = CE.FilterByDepMun(iddep,idmun)
+                data = [{'pk':c.pk,'descripcion':c.nombre} for c in centros]
+                return HttpResponse(simplejson.dumps(data), mimetype="application/json")
+            except Exception,e:
+                print e
+                return HttpResponse('MAL')
+            else:
+                return HttpResponse(simplejson.dumps(data), mimetype="application/json")
 
 def view_encuesta(request):
     
