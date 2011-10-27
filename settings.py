@@ -81,6 +81,7 @@ STATICFILES_DIRS = (
     ("static_resources","/home/rolex/workspace/Transparencia/Transparencia/Resources"),
     ("static_encuesta","/home/rolex/workspace/Transparencia/Transparencia/Encuesta/Static"),
     ("resources_icons","/home/rolex/workspace/Transparencia/Transparencia/Resources/css/images/icons"),
+    ("resources_imgs","/home/rolex/workspace/Transparencia/Transparencia/Resources/css/images"),
     ("resources_css","/home/rolex/workspace/Transparencia/Transparencia/Resources/css/"),
     
 )

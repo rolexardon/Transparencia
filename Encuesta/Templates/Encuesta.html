@@ -1,6 +1,14 @@
 {%extends 'Main.html'%}
+{%block header%}
+	<h1>
+		<table id="tb_header">
+			<tr><td><label id="title01">SECRETARÍA DE EDUCACIÓN DE HONDURAS</label></td></tr>
+			<tr><td><label id="title02">UNIDAD DE TRANSPARENCIA</label></td></tr>
+			<tr><td><label id="title03">FICHA PARA VERIFICACIÓN DE MURALES DE TRANSPARENCIA</label><td></tr>
+		</table>
+	</h1>
+{%endblock%}
 {%block contenido%}
-
 	<script>
 		$(document).ready(function() {
 			$( "#tabs" ).tabs();
@@ -8,6 +16,10 @@
 			$( "#btnSave" ).click(function() 
 								{ 
 									alert("Save");
+								});	
+			$( "#btnHome" ).click(function() 
+								{ 
+									alert("Home");
 								});	
 			$("#id_dep").change(function() {
 				$("#id_mun").empty();
@@ -47,14 +59,7 @@
 			});
 		});
 	</script>
-
-	<body>
-		<h1>		
-			<br><strong> SECRETARÍA DE EDUCACIÓN DE HONDURAS </strong></br>
-			<br><strong> UNIDAD DE TRANSPARENCIA </strong></br>
-		</h1>
-		<p><br><strong> FICHA PARA VERIFICACIÓN DE MURALES DE TRANSPARENCIA </strong></br> </p>
-		
+	<body>		
 		<div id="tabs">
 			<ul>
 				<li><a href="#tabs-1">Instrucciones</a></li>
@@ -76,94 +81,229 @@
 			<div id="tabs-2">
 			<form id="pg1">
 				<fieldset id="basico">
-					<br><label>Nombre de Usuario:</label><input type="text" name="tbx_nombre" rows="1"></br>
-					<br><label>Fecha: <input id="datepicker" type="text"></label></br>
+					<table id="tb_basico">
+						<tr>
+							<td><label class="lbl_basico">Nombre de Usuario:</label></td>
+							<td><input type="text" name="tbx_nombre"></td>
+						</tr>
+						<tr>
+							<td><label class="lbl_basico">Fecha:</label></td>
+							<td><input id="datepicker" type="text"></td>
+						</tr>
+					</table>
 				</fieldset>
+				<br>
 				<fieldset id="centro">
 				<legend>Centro Educativo</legend>
-					<br><label>Departamento:</label><select name="cbx_dep" id="id_dep">
-			                     						{%for d in deps%}
-																<option value="{{d.pk}}"> {{d.nombre}} </option>
-														{%endfor%}
-													</select></br>
-					<br><label>Municipio:</label><select name="cbx_mun" id="id_mun"></select></br>
-					<br><label>Centro Educativo:</label><select name="cbx_centros" id="id_centros"></select></br>
-					<br><label>Barrio/Colonia/Aldea/Comunidad:</label><input type="text" name="tbx_localidad" rows="1"></br>
-					<br><label>Contacto:</label><input type="text" name="tbx_tel" rows="1"></br>
-					<br><label>Tipo de Centro:</label><input type="text" name="tbx_tipcentro" rows="1"></br>
+					<div class="instruccion">
+						<label>Seleccione el centro educativo</label>
+					</div>
+					<br>
+					<table>
+						<tr>
+							<td><label class="lbl_centro">Departamento:</label></td>
+							<td class="right_align"><select name="cbx_dep" id="id_dep">
+				                	{%for d in deps%}
+										<option value="{{d.pk}}"> {{d.nombre}} </option>
+									{%endfor%}
+								</select>
+							</td>
+						</tr>
+						<tr>
+							<td><label class="lbl_centro">Municipio:</label></td>
+							<td class="right_align"><select name="cbx_mun" id="id_mun"></select></td>
+						</tr>
+						<tr>
+							<td><label class="lbl_centro">Centro Educativo:</label></td>
+							<td class="right_align"><select name="cbx_centros" id="id_centros"></select></td>
+						</tr>
+						<tr>
+							<td><label class="lbl_centro">Barrio/Colonia/Aldea/Comunidad:</label></td>
+							<td class="right_align"><input type="text" name="tbx_localidad"></td>
+						</tr>
+						<tr>
+							<td><label class="lbl_centro">Contacto:</label></td>
+							<td class="right_align"><input type="text" name="tbx_tel"></td>
+						</tr>
+						<tr>
+							<td><label class="lbl_centro">Tipo de Centro:</label></td>
+							<td class="right_align"><input type="text" name="tbx_tipcentro"></td>
+						</tr>
+					</table>
 				</fieldset>
+				<br>
 				<fieldset id="parteA">
 				<legend>A. Instalación y ubicación del mural</legend>
-					<label>Instalación y Ubicación:</label><select name="cbx_parteA">
-																{%for a in infoA%}
-																	<option> {{a.descripcion}} </option>
-																{%endfor%}
-															</select>
+					<div class="instruccion">
+						<label>Seleccione una opción</label>
+					</div>
+					<br>
+					<table>
+						<tr>
+							<td><label class="lbl_A">Instalación y Ubicación:</label></td>
+							<td class="right_align"><select name="cbx_parteA" id="valueA">
+									{%for a in infoA%}
+										<option> {{a.descripcion}} </option>
+									{%endfor%}
+								</select>
+							</td>
+						</tr>
+					</table>
 				</fieldset>
+				<br>
 				<fieldset id="parteB">
 				<legend>B. Información obligatoria publicada en el mural</legend>
-					{%for b in infoB%}
-						<br><input type="checkbox" name="cbxB" value= {{b.descripcion}} />{{b.descripcion}}</br>
-					{%endfor%}
-					<label>Ejemplos de otra información: Merienda escolar, ingreso por cafeterias, ingreso por parqueo y otra información financiera.</label>
-						<ol>
-							<li><label>Otra Información:</label><input type="text" name="tbx_oi1" rows="1"></li>
-							<li><label>Otra Información:</label><input type="text" name="tbx_oi2" rows="1"></li>
-							<li><label>Otra Información:</label><input type="text" name="tbx_oi3" rows="1"></li>
-							<li><label>Otra Información:</label><input type="text" name="tbx_oi4" rows="1"></li>
-						</ol>
+					<div class="instruccion">
+						<label>Puede elegir varias opciones y escribir hasta 4 tipos de información extra</label>
+					</div>
+					<br>
+					<table id="tb_parteB01">
+						{%for b in infoB%}
+							<tr><td><input type="checkbox" name="cbxB" value= {{b.descripcion}} />{{b.descripcion}}</td></tr>
+						{%endfor%}
+					</table>
+					<br>
+					<div class="instruccion2">
+						<label>Resuma lo mejor posible y revise su ortografía</label>
+						<label>Ejemplos de otra información: Merienda escolar, ingreso por cafeterias, ingreso por parqueo y otra información financiera.</label>
+					</div>
+					<br>
+					<table id="tb_parteB02">
+						<tr>
+							<td><label>Otra Información:</label>
+							<input type="text" name="tbx_oi1" maxlength="150"></td>
+						</tr>
+						<tr>
+							<td><label>Otra Información:</label>
+							<input type="text" name="tbx_oi2" maxlength="150"></td>
+						</tr>
+						<tr>
+							<td><label>Otra Información:</label>
+							<input type="text" name="tbx_oi3" maxlength="150"></td>
+						</tr>
+						<tr>
+							<td><label>Otra Información:</label>
+							<input type="text" name="tbx_oi4" maxlength="150"></td>
+						</tr>
+					</table>
 				</fieldset>
+				<br>
 				<fieldset id="parteC">
 				<legend>C. Orden de la información</legend>
-					{%for c in infoC%}
-						<br><label>{{c.descripcion}}</label><select>
-																<option>SI</option>
-																<option>NO</option>
-															</select></br>
-					{%endfor%}
+					<div class="instruccion">
+						<label>Para cada casilla, seleccione SI o NO</label>
+					</div>
+					<br>
+					<table>
+						{%for c in infoC%}
+							<tr>
+								<td><label>{{c.descripcion}}</label></td>
+								<td class="right_align"><select>
+										<option>SI</option>
+										<option>NO</option>
+									</select>
+								</td>
+							</tr>
+						{%endfor%}
+					</table>
 				</fieldset>
+				<br>
 				<fieldset id="parteD">
 				<legend>D. Cantidades totales de docentes</legend>
-					{%for d in infoD%}
-						<br><label>{{d.descripcion}}</label><input type="text" name="tbx_{{d.codigo}}" rows="1"></br>
-					{%endfor%}
+					<div class="instruccion">
+						<label>Solo colocar números en cada casilla</label>
+					</div>
+					<br>
+					<table>
+						{%for d in infoD%}
+							<tr>
+								<td><label>{{d.descripcion}}</label></td>
+								<td class="right_align"><input type="text" name="tbx_{{d.codigo}}"></td>
+							</tr>
+						{%endfor%}
+					</table>
 				</fieldset>
 			</form>
 			</div>
 			<div id="tabs-3">
-			<form>
+			<form id="pg2">
 				<fieldset id="parteE">
 				<legend>E. Hallazgos e Irregularidades en LISTAS</legend>
-					{%for e in infoE%}
-						<br><label>{{e.descripcion}}</label><input type="text" name="tbx_{{e.codigo}}" rows="1"></br>
-					{%endfor%}
+					<div class="instruccion">
+						<label>Solo colocar números en cada casilla</label>
+					</div>
+					<br>
+					<table>
+						{%for e in infoE%}
+							<tr>
+								<td><label>{{e.descripcion}}</label></td>
+								<td class="right_align"><input type="text" name="tbx_{{e.codigo}}"></td>
+							</tr>
+						{%endfor%}
+					</table>
 				</fieldset>
+				<br>
 				<fieldset id="parteF">
 				<legend>F. Hallazgos e irregularidades en MATRICULA GRATIS</legend>
+					<div class="instruccion">
+						<label>Seleccione la opción y si es necesario, digitar hasta otras tres irregularidades más</label>
+					</div>
+					<br>
+					<table id="tb_parteF01">
 						{%for f in infoF%}
-							<br><input type="checkbox" name="cbxF" value= {{f.descripcion}} />{{f.descripcion}}</br>
+							<tr><td><input type="checkbox" name="cbxF" value= {{f.descripcion}} />{{f.descripcion}}</td></tr>
 						{%endfor%}
-					<label>Tratar de resumir la irregularidad.</label>
-						<ol>
-							<li><label>Otra irregularidad de Matrícula Gratis:</label><input type="text" name="tbx_oi1" rows="1"></li>
-							<li><label>Otra irregularidad de Matrícula Gratis:</label><input type="text" name="tbx_oi2" rows="1"></li>
-							<li><label>Otra irregularidad de Matrícula Gratis:</label><input type="text" name="tbx_oi3" rows="1"></li>
-						</ol>
+					</table>
+					<br>
+					<div class="instruccion2">
+						<label>Resumir la irregularidad lo mejor posible</label>
+					</div>
+					<br>
+					<table id="tb_parteF02">
+						<tr>
+							<td><label>Otra irregularidad de Matrícula Gratis:</label>
+							<input type="text" name="tbx_oi1" maxlength="100"></td>
+						</tr>
+						<tr>
+							<td><label>Otra irregularidad de Matrícula Gratis:</label>
+							<input type="text" name="tbx_oi2" maxlength="100"></td>
+						</tr>
+						<tr>
+							<td><label>Otra irregularidad de Matrícula Gratis:</label>
+							<input type="text" name="tbx_oi13" maxlength="100"></td>
+						</tr>
+					</table>
 				</fieldset>
+				<br>
 				<fieldset id="parteG">
 				<legend>G. Creatividad (colores, materiales autóctonos, decorado)</legend>
-					{%for g in infoG%}
-						<br><label>{{g.descripcion}}</label><select name="cbx_{{g.descripcion}}">
-																<option> Excelente</option>
-																<option> Muy Bueno</option>
-																<option> Bueno</option>
-																<option> Regular</option>
-																<option> Malo </option>
-															</select></br>
-					{%endfor%}
+					<div class="instruccion">
+						<label>Seleccione una opción</label>
+					</div>
+					<br>
+					<table>
+						{%for g in infoG%}
+							<tr>
+							<td><label>{{g.descripcion}}</label></td>
+							<td class="right_align"><select name="cbx_{{g.descripcion}}">
+									<option> Excelente</option>
+									<option> Muy Bueno</option>
+									<option> Bueno</option>
+									<option> Regular</option>
+									<option> Malo </option>
+								</select></br>
+							</td>
+						{%endfor%}
+					</table>
 				</fieldset>
 			</form>
 			</div>
+			<fieldset id="footbar">
+				<div id="footbar_btns">
+					<input type="image" src="{{STATIC_URL}}resources_icons/back.ico" id="btnBack">
+					<input type="image" src="{{STATIC_URL}}resources_icons/forward.ico" id="btnFwd">
+				</div>
+			</fieldset>
 		</div>
 	</body>
 {%endblock%}
