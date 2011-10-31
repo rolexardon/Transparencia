@@ -3,6 +3,8 @@ from django.template import RequestContext
 from django.shortcuts import render_to_response,redirect,get_object_or_404
 from django.utils import simplejson
 
+
+
 from Encuesta.models import SegmentoA as SA
 from Encuesta.models import SegmentoB as SB
 from Encuesta.models import SegmentoC as SC
@@ -10,6 +12,7 @@ from Encuesta.models import SegmentoD as SD
 from Encuesta.models import SegmentoE as SE
 from Encuesta.models import SegmentoF as SF
 from Encuesta.models import SegmentoG as SG
+from Encuesta.models import EncuestaTemp as ET
 
 from Administration.models import CentroEducativo as CE
 from Administration.models import Departamento as DP
@@ -48,6 +51,63 @@ def view_bringcentros(request):
             else:
                 return HttpResponse(simplejson.dumps(data), mimetype="application/json")
 
+def view_savepg1(request):
+    
+    infoA= SA.BringAll()
+    infoB= SB.BringAll()
+    infoC= SC.BringAll()
+    infoD= SD.BringAll()
+    infoE= SE.BringAll()
+    infoF= SF.BringAll()
+    infoG= SG.BringAll()
+    
+    if request.method=='POST':
+        
+        next_id=ET.Nextid()
+        print next_id
+        
+        SaveBasic(request.POST['tbx_codigo'],request.POST['tbx_fecha'],'temporal')
+        SaveCE(request.POST['cbx_centros'],'temporal')
+        SavePartA(request,infoA,'temporal')
+        SavePartB(request,infoB,'temporal')
+        SavePartC(request,infoC,'temporal')
+        SavePartD(request,infoD,'temporal')
+        SavePartE(request,infoE,'temporal')
+        SavePartF(request,infoF,'temporal')
+        SavePartG(request,infoG,'temporal')
+            
+        return render_to_response('Home.html',context_instance=RequestContext(request))
+    else:
+        return render_to_response('Login.html',context_instance=RequestContext(request))
+
+def SaveBasic(usuario,fecha,tabla_guardar):
+    #if tabla_guardar == 'temporal':
+        
+    return 
+def SaveCE(codigo,tabla_guardar):
+
+    return
+def SavePartA(datos,items,tabla_guardar):
+    
+    return
+def SavePartB(datos,items,tabla_guardar):
+    
+    return 
+def SavePartC(datos,items,tabla_guardar):
+    
+    return 
+def SavePartD(datos,items,tabla_guardar):
+    
+    return 
+def SavePartE(datos,items,tabla_guardar):
+    
+    return 
+def SavePartF(datos,items,tabla_guardar):
+    
+    return 
+def SavePartG(datos,items,tabla_guardar):
+    
+    return    
 def view_encuesta(request):
     
     if request.is_ajax():

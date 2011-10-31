@@ -23,6 +23,21 @@ table
 {
   width: 100%;
 }
+#title01
+{
+	font-family:"Arial",sans-serif;
+	font-size:50px;
+}
+#title02
+{
+	font-family:"Arial",sans-serif;
+	font-size:30px;
+}
+#title03
+{
+	font-family:"Arial",sans-serif;
+	font-size:20px;
+}
 #tb_header
 {
 	text-align:center;
@@ -74,8 +89,3 @@ table
 {
    text-align:right;
 }
-
-
-
-
-

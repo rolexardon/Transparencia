@@ -57,14 +57,46 @@
 					}
 				});
 			});
+			
+			
+			/*var validator = $("#pg1").validate({
+							rules: {
+								inputs_parteD: {
+													"required",
+													number: true
+												},	
+								date : "required",
+							},
+							messages: {
+								inputs_parteD: {
+													required: "Ingrese este valor"
+													number: "Valor numérico"
+												},
+							},
+			errorPlacement: function(error, element) {
+				if ( element.is(":radio") )
+					error.appendTo( element.parent().next().next() );
+				else if ( element.is(":checkbox") )
+					error.appendTo ( element.next() );
+				else
+					error.appendTo( element.parent().next() );
+			},
+			// set this class to error-labels to indicate valid fields
+			success: function(label) {
+				// set &nbsp; as text for IE
+				label.html("&nbsp;").addClass("checked");
+			}
+			*/
+			
 		});
+		
 	</script>
 	<body>		
 		<div id="tabs">
 			<ul>
 				<li><a href="#tabs-1">Instrucciones</a></li>
 				<li><a href="#tabs-2">Página 1</a></li>
-				<li><a href="#tabs-3">Página 2</a></li>
+				<li><a href="#tabs-3">Página 2</a></li>		
 			</ul>
 			<fieldset id="topbar">
 				<div id="topbar_btns">
@@ -79,16 +111,16 @@
 				<button onclick="JavaScript:alert('Well done!')">Iniciar</button>
 			</div>
 			<div id="tabs-2">
-			<form id="pg1">
+			<form id="pg1" method='post' action={%url url_savepg1%}>{% csrf_token %}
 				<fieldset id="basico">
 					<table id="tb_basico">
 						<tr>
-							<td><label class="lbl_basico">Nombre de Usuario:</label></td>
-							<td><input type="text" name="tbx_nombre"></td>
+							<td><label class="lbl_basico">Código Usuario:</label></td>
+							<td><input type="text" name="tbx_codigo"></td>
 						</tr>
 						<tr>
 							<td><label class="lbl_basico">Fecha:</label></td>
-							<td><input id="datepicker" type="text"></td>
+							<td><input id="datepicker" type="text" name="tbx_fecha"></td>
 						</tr>
 					</table>
 				</fieldset>
@@ -150,7 +182,7 @@
 						</tr>
 					</table>
 				</fieldset>
-				<br>
+				<br>			
 				<fieldset id="parteB">
 				<legend>B. Información obligatoria publicada en el mural</legend>
 					<div class="instruccion">
@@ -162,7 +194,7 @@
 							<tr><td><input type="checkbox" name="cbxB" value= {{b.descripcion}} />{{b.descripcion}}</td></tr>
 						{%endfor%}
 					</table>
-					<br>
+					<br>			
 					<div class="instruccion2">
 						<label>Resuma lo mejor posible y revise su ortografía</label>
 						<label>Ejemplos de otra información: Merienda escolar, ingreso por cafeterias, ingreso por parqueo y otra información financiera.</label>
@@ -218,11 +250,15 @@
 						{%for d in infoD%}
 							<tr>
 								<td><label>{{d.descripcion}}</label></td>
-								<td class="right_align"><input type="text" name="tbx_{{d.codigo}}"></td>
+								<td class="right_align"><input type="number" name="tbx_{{d.codigo}} for="inputs_parteD"></td>
+								<td class="status"></td>
 							</tr>
 						{%endfor%}
 					</table>
 				</fieldset>
+				
+				<input class="submit" type="submit" value="Submit"/>
+				
 			</form>
 			</div>
 			<div id="tabs-3">
@@ -237,7 +273,7 @@
 						{%for e in infoE%}
 							<tr>
 								<td><label>{{e.descripcion}}</label></td>
-								<td class="right_align"><input type="text" name="tbx_{{e.codigo}}"></td>
+								<td class="right_align"><input type="number" name="tbx_{{e.codigo}}"></td>
 							</tr>
 						{%endfor%}
 					</table>
