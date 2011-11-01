@@ -8,6 +8,16 @@
 		</table>
 	</h1>
 {%endblock%}
+{%block includes%}
+	<script type="text/javascript" src="{{STATIC_URL}}static_resources/jquery/jquery-1.6.2.min.js"></script>
+	<script type="text/javascript" src="{{STATIC_URL}}static_resources/jquery/jquery-ui-1.8.16.custom.min.js"></script>
+	
+	<!--<script type="text/javascript" src="{{STATIC_URL}}static_resources/jquery/jquery.js"></script>
+	<script type="text/javascript" src="{{STATIC_URL}}static_resources/jquery/jquery.validate.js"></script>-->
+
+	<link rel="stylesheet" type="text/css" href="{{STATIC_URL}}resources_css/jquery-ui-1.8.16.custom.css" />
+	<link rel="stylesheet" type="text/css" href="{{STATIC_URL}}resources_css/styles_encuesta.css" />
+{%endblock%}
 {%block contenido%}
 	<script>
 		$(document).ready(function() {

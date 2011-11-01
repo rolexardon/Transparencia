@@ -63,49 +63,58 @@ def view_savepg1(request):
     
     if request.method=='POST':
         
-        next_id=ET.Nextid()
+        #dict=ET.Nextid()
+        #next_id=dict.get('codigo__max')
+        #if next_id == 'none':
+        #    next_id=1
+        #else:
+        #    next_id= next_id+1
+        p = ET(codigo_usuario=request.POST['tbx_codigo'],fecha=request.POST['tbx_fecha'])
+        p.save()
+        next_id=p.codigo + 1
         print next_id
         
-        SaveBasic(request.POST['tbx_codigo'],request.POST['tbx_fecha'],'temporal')
-        SaveCE(request.POST['cbx_centros'],'temporal')
-        SavePartA(request,infoA,'temporal')
-        SavePartB(request,infoB,'temporal')
-        SavePartC(request,infoC,'temporal')
-        SavePartD(request,infoD,'temporal')
-        SavePartE(request,infoE,'temporal')
-        SavePartF(request,infoF,'temporal')
-        SavePartG(request,infoG,'temporal')
+        #SaveBasic(request.POST['tbx_codigo'],request.POST['tbx_fecha'],'temporal',next_id)
+        SaveCE(request.POST['cbx_centros'],'temporal',next_id)
+        SavePartA(request,infoA,'temporal',next_id)
+        SavePartB(request,infoB,'temporal',next_id)
+        SavePartC(request,infoC,'temporal',next_id)
+        SavePartD(request,infoD,'temporal',next_id)
+        SavePartE(request,infoE,'temporal',next_id)
+        SavePartF(request,infoF,'temporal',next_id)
+        SavePartG(request,infoG,'temporal',next_id)
             
         return render_to_response('Home.html',context_instance=RequestContext(request))
     else:
         return render_to_response('Login.html',context_instance=RequestContext(request))
 
-def SaveBasic(usuario,fecha,tabla_guardar):
+def SaveBasic(usuario,fecha,tabla_guardar,codigo_tabla):
     #if tabla_guardar == 'temporal':
+    #    p = ET(codigo=codigo_tabla,codigo_usuario=usuario)
         
     return 
-def SaveCE(codigo,tabla_guardar):
+def SaveCE(codigo,tabla_guardar,codigo_tabla):
 
     return
-def SavePartA(datos,items,tabla_guardar):
+def SavePartA(datos,items,tabla_guardar,codigo_tabla):
     
     return
-def SavePartB(datos,items,tabla_guardar):
+def SavePartB(datos,items,tabla_guardar,codigo_tabla):
     
     return 
-def SavePartC(datos,items,tabla_guardar):
+def SavePartC(datos,items,tabla_guardar,codigo_tabla):
     
     return 
-def SavePartD(datos,items,tabla_guardar):
+def SavePartD(datos,items,tabla_guardar,codigo_tabla):
     
     return 
-def SavePartE(datos,items,tabla_guardar):
+def SavePartE(datos,items,tabla_guardar,codigo_tabla):
     
     return 
-def SavePartF(datos,items,tabla_guardar):
+def SavePartF(datos,items,tabla_guardar,codigo_tabla):
     
     return 
-def SavePartG(datos,items,tabla_guardar):
+def SavePartG(datos,items,tabla_guardar,codigo_tabla):
     
     return    
 def view_encuesta(request):

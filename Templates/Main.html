@@ -3,20 +3,14 @@
 <head>
 
     <meta http-equiv="content-type" content="text/html; charset=utf-8"0>
-	<script type="text/javascript" src="{{STATIC_URL}}static_resources/jquery/jquery-1.6.2.min.js"></script>
-	<script type="text/javascript" src="{{STATIC_URL}}static_resources/jquery/jquery-ui-1.8.16.custom.min.js"></script>
-	<!--<script type="text/javascript" src="{{STATIC_URL}}static_resources/jquery/jquery.js"></script>
-	<script type="text/javascript" src="{{STATIC_URL}}static_resources/jquery/jquery.validate.js"></script>-->
 
-	<link rel="stylesheet" type="text/css" href="{{STATIC_URL}}resources_css/jquery-ui-1.8.16.custom.css" />
-    <link rel="stylesheet" type="text/css" href="{{STATIC_URL}}resources_css/styles_encuesta.css" />
-    
+    {%block includes%}
+    {%endblock%}
     <title>Unidad de Transparencia</title>
 
 </head>
 <body>
     <header>
-        <strong><a href='{%url url_home%}'>Home</a></strong>
         {%block header%}
         {%endblock%}
     </header>
@@ -24,6 +18,8 @@
         {%block contenido%}
         {%endblock%}
     </div>
+    <footer>
 
+    </footer>
 </body>
 </html>

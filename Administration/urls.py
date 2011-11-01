@@ -7,6 +7,7 @@ admin.autodiscover()
 urlpatterns = patterns('Administration.views',
                        
     #url(r'^admin/', include(admin.site.urls)),
-    #url(r'^usuarios/','usuarios',name = 'usuarios'),                       
+    url(r'^usuarios/','view_usuarios',name = 'url_usuarios'),            
+    url(r'^usuarios/guardar$','view_saveusuario',name = 'url_saveusuario'),           
                     
 )

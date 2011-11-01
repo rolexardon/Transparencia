@@ -1,12 +1,33 @@
 {%extends 'Main.html'%}
+{%block includes%}
+	<link rel="stylesheet" type="text/css" href="{{STATIC_URL}}resources_css/styles_login.css" />
+{%endblock%}
 {%block contenido%}
-    
-		<form  method='post' action={%url url_autenticar%}>{% csrf_token %}
-			<ul>
-  			<li>Usuario: <input name="user_tbx" ></li>
-  			<li>Contraseña: <input type="password" name="pass_tbx" ></li>
-  			<input type="submit" value="Autenticar">
-  			</ul>
-		</form>
+	<div id="content">
+	    <aside>
+		    <div id="banner">
+		    	<img src="{{STATIC_URL}}resources_imgs/banner.png" height="1000" width="400"/>
+		    </div>
+		</aside>
+		<div id="mainContent">
+			<fieldset id="login">
+			<legend id="lg">Ingresar</lengend>
+				<form  method='post' action={%url url_autenticar%}>{% csrf_token %}
+					<table>
+						<br>
+			  			<tr>
+			  				<td><label>Usuario:</label></td>
+			  				<td><input name="user_tbx" ></td>
+			  			</tr>
+			  			<tr>
+				  			<td><label>Contraseña:</label></td>
+				  			<td><input type="password" name="pass_tbx" ></td>
+			  			</tr>
+			  			<tr><td><input type="submit" value="Autenticar"></td></tr>
+		  			</table>
+				</form>
+			</fieldset>
+		</div>
+	</div>
     
 {%endblock%}

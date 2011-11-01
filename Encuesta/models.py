@@ -87,7 +87,7 @@ class EncuestaSegementoF(models.Model):
     codigo = models.ForeignKey(SegmentoF)
 
 class EncuestaTemp(models.Model):
-    codigo = models.IntegerField(primary_key=True)
+    codigo = models.AutoField(primary_key=True)
     fecha = models.DateField(null=True,blank=True)
     codigo_usuario = models.ForeignKey(AdMod.Usuario)
     codigo_centro = models.ForeignKey(AdMod.CentroEducativo)
@@ -97,9 +97,9 @@ class EncuestaTemp(models.Model):
     tipo_valor = models.CharField(max_length = 100,blank=True)
     valor_item =  models.CharField(max_length = 255,blank=True)
     
-    @classmethod
-    def Nextid(EncuestaTemp):
-        return EncuestaTemp.objects.all().aggregate(Max('codigo'))
+    #@classmethod
+    #def Nextid(EncuestaTemp):
+    #    return EncuestaTemp.objects.all().aggregate(Max('codigo'))
 
         
 class Encuesta(models.Model):

@@ -1,9 +1,20 @@
 {%extends 'Main.html'%}
+{%block includes%}
+	<link rel="stylesheet" type="text/css" href="{{STATIC_URL}}resources_css/styles_main.css" />
+{%endblock%}
 {%block contenido%}
-	<div id='menu'>
-		<ul id="menuList">
-			<li><a href='{%url url_encuesta%}'>Encuesta</a></li>
-			<li><a href="#">Administración</a></li>
-		</ul>
+	<div id="content">
+	    <aside>
+		    <div id="banner">
+		    	<img src="{{STATIC_URL}}resources_imgs/banner.png" height="1000" width="400"/>
+		    </div>
+		</aside>
+		
+		<div id='menu'>
+			<ul id="menuList">
+				<li><a href='{%url url_encuesta%}'>Encuesta</a></li>
+				<li><a href="#">Administración</a></li>
+			</ul>
+		</div>
 	</div>
 {%endblock%}
