@@ -1,0 +1,12 @@
+aside
+{
+         display: table-cell;  
+         width: 300px;
+         	position:absolute;
+	left:-5%;
+           
+}
+#content 
+{  
+     display: table;  
+}

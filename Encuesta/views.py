@@ -3,8 +3,6 @@ from django.template import RequestContext
 from django.shortcuts import render_to_response,redirect,get_object_or_404
 from django.utils import simplejson
 
-
-
 from Encuesta.models import SegmentoA as SA
 from Encuesta.models import SegmentoB as SB
 from Encuesta.models import SegmentoC as SC

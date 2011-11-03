@@ -36,12 +36,27 @@ class CentroEducativo(models.Model):
     
 class TipoUsuario(models.Model):
     codigo = models.AutoField(primary_key=True)
-    nombre = models.CharField(max_length = 20)
+    nombre = models.CharField(max_length = 50)
     descripcion = models.CharField(max_length = 200)
+    
+    @classmethod
+    def BringAll(TipoUsuario):
+        return TipoUsuario.objects.all()
+
+    def __unicode__(self):
+        return self.nombre
 
 class Rol(models.Model):
     codigo = models.AutoField(primary_key = True)
     nombre = models.CharField(max_length=50)
+    descripcion = models.CharField(max_length = 200)
+
+    @classmethod
+    def BringAll(Rol):
+        return Rol.objects.all()
+    
+    def __unicode__(self):
+        return self.nombre
     
 class Departamento(models.Model):
     codigo = models.CharField(max_length=2,unique=True)
@@ -89,14 +104,18 @@ class Barrio(models.Model):
     
 class Usuario(models.Model):
     codigo = models.AutoField(primary_key=True)
-    nombre_completo = models.CharField(max_length=200)
+    nombre_completo = models.CharField(max_length=300)
     usuario = models.CharField(max_length=100,unique=True)
     #password = models.CharField(max_length=50,unique=True,widget=PasswordInput(render_value=False))
     password = models.CharField(max_length=50,unique=True)
     tipo_usuario = models.ForeignKey(TipoUsuario)
     telefono = models.CharField(max_length = 10)
     email = models.EmailField()
-    municipio = models.ForeignKey(Municipio)
+    direccion = models.CharField(max_length = 500)
     rol = models.ForeignKey(Rol)
     activo = models.BooleanField(default = True)
+    
+    @classmethod
+    def BringAll(Usuario):
+        return Usuario.objects.all()
 # Create your models here.
