@@ -21,13 +21,10 @@
 {%endblock%}
 {%block contenido%}
 	<script>
-		$(document).ready(function() {
+		$(document).ready(function() {	
+
 			$( "#tabs" ).tabs();
-			$( "#datepicker" ).datepicker();
-			$( "#btnSave" ).click(function() 
-								{ 
-									alert("Save");
-								});	
+			$( "#datepicker" ).datepicker({ dateFormat: 'yy-mm-dd' });
 			$( "#btnHome" ).click(function() 
 								{ 
 									alert("Home");
@@ -68,8 +65,26 @@
 					}
 				});
 			});
-			
-			
+			$("#btnSave").click(function(){
+				//$.post("{% url url_modify%}" , {ts : "temporal" });
+				$("#pg1,#pg2").submit()
+			});
+			/*
+			$("#datepicker").focusout(function(){
+				$.ajax({
+						type:"POST",
+						data:
+							{
+								data:"fecha",
+								fecha:$(this).val(),
+								tipo: "temporal",
+								tipo2: "unitario",
+								encuesta_id : {{codigo_enc}}
+							},
+						url: ,
+				});		
+			});
+			*/
 			/*var validator = $("#pg1").validate({
 							rules: {
 								inputs_parteD: {
@@ -103,6 +118,7 @@
 		
 	</script>
 		<div id="tabs">
+			<label>Usuario: {{usuario}}</label>
 			<ul>
 				<li><a href="#tabs-1">Instrucciones</a></li>
 				<li><a href="#tabs-2">Página 1</a></li>
@@ -121,12 +137,12 @@
 				<button onclick="JavaScript:alert('Well done!')">Iniciar</button>
 			</div>
 			<div id="tabs-2">
-			<form id="pg1" method='post' action={%url url_savepg1%}>{% csrf_token %}
+			<form id="pg1" method='post' action={%url url_save "pg1",codigo_enc%}>{% csrf_token %}
 				<fieldset id="basico">
 					<table id="tb_basico">
 						<tr>
 							<td><label class="lbl_basico">Código Usuario:</label></td>
-							<td><input type="text" name="tbx_codigo"></td>
+							<td><input type="text" name="tbx_codigo" value={{userid}}></td>
 						</tr>
 						<tr>
 							<td><label class="lbl_basico">Fecha:</label></td>
@@ -201,7 +217,7 @@
 					<br>
 					<table id="tb_parteB01">
 						{%for b in infoB%}
-							<tr><td><input type="checkbox" name="cbxB" value= {{b.descripcion}} />{{b.descripcion}}</td></tr>
+							<tr><td><input type="checkbox" name="cbxB" value= {{b.codigo}} />{{b.descripcion}}</td></tr>
 						{%endfor%}
 					</table>
 					<br>			
@@ -213,19 +229,19 @@
 					<table id="tb_parteB02">
 						<tr>
 							<td><label>Otra Información:</label>
-							<input type="text" name="tbx_oi1" maxlength="150"></td>
+							<input type="text" name="tbx_oi" maxlength="150"></td>
 						</tr>
 						<tr>
 							<td><label>Otra Información:</label>
-							<input type="text" name="tbx_oi2" maxlength="150"></td>
+							<input type="text" name="tbx_oi" maxlength="150"></td>
 						</tr>
 						<tr>
 							<td><label>Otra Información:</label>
-							<input type="text" name="tbx_oi3" maxlength="150"></td>
+							<input type="text" name="tbx_oi" maxlength="150"></td>
 						</tr>
 						<tr>
 							<td><label>Otra Información:</label>
-							<input type="text" name="tbx_oi4" maxlength="150"></td>
+							<input type="text" name="tbx_oi" maxlength="150"></td>
 						</tr>
 					</table>
 				</fieldset>
@@ -240,7 +256,7 @@
 						{%for c in infoC%}
 							<tr>
 								<td><label>{{c.descripcion}}</label></td>
-								<td class="right_align"><select>
+								<td class="right_align"><select name="selC_{{c.codigo}}">
 										<option>SI</option>
 										<option>NO</option>
 									</select>
@@ -260,19 +276,16 @@
 						{%for d in infoD%}
 							<tr>
 								<td><label>{{d.descripcion}}</label></td>
-								<td class="right_align"><input type="number" name="tbx_{{d.codigo}} for="inputs_parteD"></td>
+								<td class="right_align"><input type="number" name="tbxD_{{d.codigo}}" for="inputs_parteD"></td>
 								<td class="status"></td>
 							</tr>
 						{%endfor%}
 					</table>
-				</fieldset>
-				
-				<input class="submit" type="submit" value="Submit"/>
-				
+				</fieldset>			
 			</form>
 			</div>
 			<div id="tabs-3">
-			<form id="pg2">
+			<form id="pg2" method='post' action={%url url_save "pg2",codigo_enc%}>{% csrf_token %}
 				<fieldset id="parteE">
 				<legend>E. Hallazgos e Irregularidades en LISTAS</legend>
 					<div class="instruccion">
@@ -283,7 +296,7 @@
 						{%for e in infoE%}
 							<tr>
 								<td><label>{{e.descripcion}}</label></td>
-								<td class="right_align"><input type="number" name="tbx_{{e.codigo}}"></td>
+								<td class="right_align"><input type="number" name="tbxE_{{e.codigo}}"></td>
 							</tr>
 						{%endfor%}
 					</table>
@@ -297,7 +310,7 @@
 					<br>
 					<table id="tb_parteF01">
 						{%for f in infoF%}
-							<tr><td><input type="checkbox" name="cbxF" value= {{f.descripcion}} />{{f.descripcion}}</td></tr>
+							<tr><td><input type="checkbox" name="cbxF" value= {{f.codigo}} />{{f.descripcion}}</td></tr>
 						{%endfor%}
 					</table>
 					<br>
@@ -308,7 +321,7 @@
 					<table id="tb_parteF02">
 						<tr>
 							<td><label>Otra irregularidad de Matrícula Gratis:</label>
-							<input type="text" name="tbx_oi1" maxlength="100"></td>
+							<input type="text" name="tbx_oi2" maxlength="100"></td>
 						</tr>
 						<tr>
 							<td><label>Otra irregularidad de Matrícula Gratis:</label>
@@ -316,7 +329,7 @@
 						</tr>
 						<tr>
 							<td><label>Otra irregularidad de Matrícula Gratis:</label>
-							<input type="text" name="tbx_oi13" maxlength="100"></td>
+							<input type="text" name="tbx_oi2" maxlength="100"></td>
 						</tr>
 					</table>
 				</fieldset>
@@ -331,7 +344,7 @@
 						{%for g in infoG%}
 							<tr>
 							<td><label>{{g.descripcion}}</label></td>
-							<td class="right_align"><select name="cbx_{{g.descripcion}}">
+							<td class="right_align"><select name="selG_{{g.codigo}}">
 									<option> Excelente</option>
 									<option> Muy Bueno</option>
 									<option> Bueno</option>

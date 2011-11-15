@@ -4,12 +4,12 @@
 {%endblock%}
 {%block contenido%}
 	<div id="content">
-	    <aside>
+	    <section id="aside">
 		    <div id="banner">
-		    	<img src="{{STATIC_URL}}resources_imgs/banner.png" height="1000" width="400"/>
+		    	<img src="{{STATIC_URL}}resources_imgs/banner.png" height="600" width="300"/>
 		    </div>
-		</aside>
-		<div id="mainContent">
+		</section>
+		<section id="mainContent">
 			<fieldset id="login">
 			<legend id="lg">Ingresar</lengend>
 				<form  method='post' action={%url url_autenticar%}>{% csrf_token %}
@@ -27,7 +27,7 @@
 		  			</table>
 				</form>
 			</fieldset>
-		</div>
+		</section>
 	</div>
     
 {%endblock%}

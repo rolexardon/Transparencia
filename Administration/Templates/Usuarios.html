@@ -38,6 +38,7 @@
 					<form action={%url url_saveusuario%} method="post">{% csrf_token %}
 						<table>
 							{{ form.as_table }}
+							{{ form2.as_table }}
 						</table>
 						<input type="submit" value="Submit" />
 					</form>

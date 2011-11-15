@@ -1,9 +1,10 @@
-aside
+#aside
 {
          display: table-cell;  
          width: 300px;
-         	position:absolute;
-	left:-5%;
+	 width:40%;
+         position:absolute;
+	 left:-5%;
            
 }
 #content 
@@ -12,17 +13,22 @@ aside
 }
 #mainContent 
 {  
-         display: table-cell;  
-         #width: 620px;
+         display: table-cell;
+         position:absolute;
+	 left:40%;
+	top:40%;
+right:40;
+bottom:40;
+         /*#width: 620px;
          #padding-right: 22px; 
     
-    width:400px;
+    	width:400px;
 	#height:200px;
 	position:absolute;
 	left:55%;
 	top:50%;
 	margin:-100px 0 0 -150px;
-          
+         */
 }
 #login
 { 

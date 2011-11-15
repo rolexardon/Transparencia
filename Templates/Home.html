@@ -1,20 +1,125 @@
 {%extends 'Main.html'%}
+{%block header%}
+	<label id="lbl_user">Bienvenido {{usuario}}</label>
+{%endblock%}
 {%block includes%}
+	<script type="text/javascript" src="{{STATIC_URL}}static_resources/jquery/jquery-1.6.2.min.js"></script>
+	<script type="text/javascript" src="{{STATIC_URL}}static_resources/jquery/jquery-ui-1.8.16.custom.min.js"></script>
+	
+	<link rel="stylesheet" type="text/css" href="{{STATIC_URL}}resources_css/jquery-ui-1.8.16.custom.css" />
 	<link rel="stylesheet" type="text/css" href="{{STATIC_URL}}resources_css/styles_main.css" />
 {%endblock%}
 {%block contenido%}
-	<div id="content">
-	    <aside>
-		    <div id="banner">
-		    	<img src="{{STATIC_URL}}resources_imgs/banner.png" height="1000" width="400"/>
-		    </div>
-		</aside>
+<meta charset="utf-8">
+	<script>
+		$(document).ready(function() {
 		
-		<div id='menu'>
-			<ul id="menuList">
-				<li><a href='{%url url_encuesta%}'>Encuesta</a></li>
-				<li><a href="#">Administración</a></li>
-			</ul>
-		</div>
+			$("#tabs").tabs().addClass('ui-tabs-vertical ui-helper-clearfix');
+			$("#tabs li").removeClass('ui-corner-top').addClass('ui-corner-left');
+			$( "#accordion" ).accordion({
+				autoHeight: false,
+				navigation: true
+
+			});
+			$( "#sub_accordion1" ).accordion({
+				autoHeight: false,
+				navigation: true
+
+			});
+			$( "#sub_accordion2" ).accordion({
+				autoHeight: false,
+				navigation: true
+
+			});
+		});
+	</script>
+	<div id="content">
+	    <section id="aside">
+		    <div id="banner">
+		    	<img src="{{STATIC_URL}}resources_imgs/banner.png" height="600" width="300"/>
+		    </div>
+		</section>
+		<section id='menu'>
+			<div id="tabs">
+				<ul>
+					<li><a href="#tabs-1">Encuestas</a></li>
+					<li><a href="#tabs-2">Administración</a></li>	
+				</ul>
+				<div id="tabs-1">
+					<fieldset>
+					<legend>Encuestas Pendientes</legend>
+						<table>
+							<tr><td><strong><a href="{%url url_encuesta "nueva"%}"> Nueva Encuesta </a></strong>
+						</table>
+					</fieldset>
+				</div>
+				<div id="tabs-2">
+							<div id="accordion">
+								<h3><a href="#">Administración de Usuarios</a></h3>
+								<div>
+									
+								</div>
+								<h3><a href="#">Administración de Tipos de Usuarios</a></h3>
+								<div>
+									
+								</div>
+								<h3><a href="#">Administración de Roles</a></h3>
+								<div>
+									
+								</div>
+								<h3><a href="#">Administración de Segmentos de Encuesta</a></h3>
+								<div>
+									<div id = "sub_accordion1">
+										<h3><a href="#">Segmento A</a></h3>
+										<div>
+											
+										</div>
+										<h3><a href="#">Segmento B</a></h3>
+										<div>
+											
+										</div>
+										<h3><a href="#">Segmento C</a></h3>
+										<div>
+											
+										</div>
+										<h3><a href="#">Segmento D</a></h3>
+										<div>
+											
+										</div>
+										<h3><a href="#">Segmento E</a></h3>
+										<div>
+											
+										</div>
+										<h3><a href="#">Segmento F</a></h3>
+										<div>
+											
+										</div>
+										<h3><a href="#">Segmento G</a></h3>
+										<div>
+											
+										</div>									
+									</div>
+								</div>
+								<h3><a href="#">Visualización de Datos Geográficos</a></h3>
+								<div>
+									<div id = "sub_accordion2">
+										<h3><a href="#">Departamentos</a></h3>
+										<div>
+											
+										</div>
+										<h3><a href="#">Municipios</a></h3>
+										<div>
+											
+										</div>
+										<h3><a href="#">Centros Educativos</a></h3>
+										<div>
+											
+										</div>							
+									</div>									
+								</div>
+							</div>
+				</div>
+			</div>
+		</section>
 	</div>
 {%endblock%}
