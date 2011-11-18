@@ -96,14 +96,14 @@ class EncuestaTempData(models.Model):
     valor_item =  models.CharField(max_length = 255,null= True,blank=True)
                 
 class Encuesta(models.Model):
-    codigo = models.IntegerField(primary_key=True)
+    codigo = models.AutoField(primary_key=True)
     fecha = models.DateField()
     codigo_usuario = models.ForeignKey(User)
     codigo_centro = models.ForeignKey(AdMod.CentroEducativo)
         
 class EncuestaData(models.Model):
     encuesta = models.ForeignKey(Encuesta)
-    codigo_segmento = models.IntegerField()
+    segmento = models.CharField(max_length=2)
     codigo_item = models.IntegerField()
     tipo_valor = models.CharField(max_length = 100)
     valor_item =  models.CharField(max_length = 255)

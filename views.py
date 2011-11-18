@@ -3,7 +3,9 @@ from django.template import RequestContext
 from django.http import HttpResponseRedirect, Http404, HttpResponse
 from django.contrib.auth import authenticate, login
 
-
+from Administration.models import TipoUsuario as TU
+from Administration.models import Rol as RU
+from Encuesta.models import EncuestaTemp as ET
 
 def view_home(request):
     
@@ -20,22 +22,25 @@ def view_home(request):
 def view_autenticar(request):
     
     if request.method=='POST':
-        
         un = request.POST['user_tbx']
         pd = request.POST['pass_tbx']
         user = authenticate(username = un,password = pd)
         if user is not None:
             if user.is_active:
                 login(request, user)
-                PrepareContent(user,request)
+                return PrepareContent(user,request)
         else :
-            return HttpResponse("nada")
+            return HttpResponse("usuario no existe")
     #return render_to_response('Login.html',context_instance=RequestContext(request))
-    return render_to_response('Home.html',context_instance=RequestContext(request))
+    #return render_to_response('Home.html',context_instance=RequestContext(request))
 
 def PrepareContent(user,request):
     
     usuario = user.get_full_name()
-    return render_to_response('Home.html',{'usuario':usuario},context_instance=RequestContext(request))
+    id_usuario = user.id
+    rol_usuario = RU.objects.get(codigo = user.get_profile().rol.codigo)
+    encuestas_pendientes = ET.objects.filter(codigo_usuario = user)
+
+    return render_to_response('Home.html',{'usuario':usuario,'rol_usuario':rol_usuario.nombre,'encuestas':encuestas_pendientes},context_instance=RequestContext(request))
     
     

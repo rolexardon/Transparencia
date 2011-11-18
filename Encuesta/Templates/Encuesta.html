@@ -24,6 +24,11 @@
 		$(document).ready(function() {	
 
 			$( "#tabs" ).tabs();
+			$("#btn_Publish").click(function(){
+				if(confirm("¿Está seguro que desea cerrar la encuesta y guardar sus datos permanentemente?")){
+					$("#pg1,#pg2").submit()
+				}
+			});
 			$( "#datepicker" ).datepicker({ dateFormat: 'yy-mm-dd' });
 			$( "#btnHome" ).click(function() 
 								{ 
@@ -356,6 +361,7 @@
 					</table>
 				</fieldset>
 			</form>
+			<input type="button" id="btn_Publish" value="Publicar Encuesta"> 
 			</div>
 			<fieldset id="footbar">
 				<div id="footbar_btns">

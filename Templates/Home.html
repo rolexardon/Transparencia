@@ -13,7 +13,10 @@
 <meta charset="utf-8">
 	<script>
 		$(document).ready(function() {
-		
+			var rol_usuario = "{{rol_usuario}}";
+			if(rol_usuario == "Digitador"){
+				$("#tabs").tabs({ disabled: [1] });
+			}
 			$("#tabs").tabs().addClass('ui-tabs-vertical ui-helper-clearfix');
 			$("#tabs li").removeClass('ui-corner-top').addClass('ui-corner-left');
 			$( "#accordion" ).accordion({
@@ -49,7 +52,10 @@
 					<fieldset>
 					<legend>Encuestas Pendientes</legend>
 						<table>
-							<tr><td><strong><a href="{%url url_encuesta "nueva"%}"> Nueva Encuesta </a></strong>
+							<tr><td><strong><a href="{%url url_encuesta "nueva"%}"> Nueva Encuesta </a></strong></td></tr>
+							{%for e in encuestas%}
+								<tr><td><strong><a href="{%url url_encuesta e.codigo%}"> Encuesta {{e.codigo}} , fecha {{e.fecha}} </a></strong></td></tr>
+							{%endfor%}
 						</table>
 					</fieldset>
 				</div>
