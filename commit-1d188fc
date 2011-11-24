@@ -1,0 +1,1178 @@
+commit 1d188fcef8d1f1864295150f0e43569dd9d4daa4
+Author: Rolando Ardon <rolando_ardon299@hotmail.com>
+Date:   Fri Nov 18 16:53:46 2011 -0600
+
+    Nov18
+
+diff --git a/Encuesta/Templates/Encuesta.html b/Encuesta/Templates/Encuesta.html
+index 618e5c0..6060505 100644
+--- a/Encuesta/Templates/Encuesta.html
++++ b/Encuesta/Templates/Encuesta.html
+@@ -24,6 +24,11 @@
+ 		$(document).ready(function() {	
+ 
+ 			$( "#tabs" ).tabs();
++			$("#btn_Publish").click(function(){
++				if(confirm("¿Está seguro que desea cerrar la encuesta y guardar sus datos permanentemente?")){
++					$("#pg1,#pg2").submit()
++				}
++			});
+ 			$( "#datepicker" ).datepicker({ dateFormat: 'yy-mm-dd' });
+ 			$( "#btnHome" ).click(function() 
+ 								{ 
+@@ -356,6 +361,7 @@
+ 					</table>
+ 				</fieldset>
+ 			</form>
++			<input type="button" id="btn_Publish" value="Publicar Encuesta"> 
+ 			</div>
+ 			<fieldset id="footbar">
+ 				<div id="footbar_btns">
+diff --git a/Encuesta/migrations/0007_auto__chg_field_encuesta_fecha__chg_field_encuesta_codigo_centro.py b/Encuesta/migrations/0007_auto__chg_field_encuesta_fecha__chg_field_encuesta_codigo_centro.py
+new file mode 100644
+index 0000000..49cb2f1
+--- /dev/null
++++ b/Encuesta/migrations/0007_auto__chg_field_encuesta_fecha__chg_field_encuesta_codigo_centro.py
+@@ -0,0 +1,147 @@
++# encoding: utf-8
++import datetime
++from south.db import db
++from south.v2 import SchemaMigration
++from django.db import models
++
++class Migration(SchemaMigration):
++
++    def forwards(self, orm):
++        
++        # Changing field 'Encuesta.fecha'
++        db.alter_column('Encuesta_encuesta', 'fecha', self.gf('django.db.models.fields.DateField')(null=True))
++
++        # Changing field 'Encuesta.codigo_centro'
++        db.alter_column('Encuesta_encuesta', 'codigo_centro_id', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['Administration.CentroEducativo'], null=True))
++
++
++    def backwards(self, orm):
++        
++        # Changing field 'Encuesta.fecha'
++        db.alter_column('Encuesta_encuesta', 'fecha', self.gf('django.db.models.fields.DateField')(default=datetime.date(2011, 11, 18)))
++
++        # Changing field 'Encuesta.codigo_centro'
++        db.alter_column('Encuesta_encuesta', 'codigo_centro_id', self.gf('django.db.models.fields.related.ForeignKey')(default=datetime.date(2011, 11, 18), to=orm['Administration.CentroEducativo']))
++
++
++    models = {
++        'Administration.centroeducativo': {
++            'Meta': {'object_name': 'CentroEducativo'},
++            'administracion': ('django.db.models.fields.CharField', [], {'max_length': '300'}),
++            'codigo_ce': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
++            'codigo_departamento': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
++            'codigo_municipio': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
++            'descripcion_departamento': ('django.db.models.fields.CharField', [], {'max_length': '300'}),
++            'descripcion_municipio': ('django.db.models.fields.CharField', [], {'max_length': '300'}),
++            'direccion': ('django.db.models.fields.CharField', [], {'max_length': '300'}),
++            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
++            'nombre': ('django.db.models.fields.CharField', [], {'max_length': '300'}),
++            'telefono': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
++            'tipo_centro': ('django.db.models.fields.CharField', [], {'max_length': '300'})
++        },
++        'Encuesta.encuesta': {
++            'Meta': {'object_name': 'Encuesta'},
++            'codigo': ('django.db.models.fields.IntegerField', [], {'primary_key': 'True'}),
++            'codigo_centro': ('django.db.models.fields.related.ForeignKey', [], {'default': 'None', 'to': "orm['Administration.CentroEducativo']", 'null': 'True', 'blank': 'True'}),
++            'codigo_usuario': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['auth.User']"}),
++            'fecha': ('django.db.models.fields.DateField', [], {'null': 'True', 'blank': 'True'})
++        },
++        'Encuesta.encuestadata': {
++            'Meta': {'object_name': 'EncuestaData'},
++            'codigo_item': ('django.db.models.fields.IntegerField', [], {}),
++            'codigo_segmento': ('django.db.models.fields.IntegerField', [], {}),
++            'encuesta': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['Encuesta.Encuesta']"}),
++            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
++            'tipo_valor': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
++            'valor_item': ('django.db.models.fields.CharField', [], {'max_length': '255'})
++        },
++        'Encuesta.encuestatemp': {
++            'Meta': {'object_name': 'EncuestaTemp'},
++            'codigo': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
++            'codigo_centro': ('django.db.models.fields.related.ForeignKey', [], {'default': 'None', 'to': "orm['Administration.CentroEducativo']", 'null': 'True', 'blank': 'True'}),
++            'codigo_usuario': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['auth.User']"}),
++            'fecha': ('django.db.models.fields.DateField', [], {'null': 'True', 'blank': 'True'})
++        },
++        'Encuesta.encuestatempdata': {
++            'Meta': {'object_name': 'EncuestaTempData'},
++            'codigo_item': ('django.db.models.fields.IntegerField', [], {'default': '0', 'null': 'True', 'blank': 'True'}),
++            'encuesta': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['Encuesta.EncuestaTemp']"}),
++            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
++            'segmento': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '2', 'null': 'True', 'blank': 'True'}),
++            'tipo_valor': ('django.db.models.fields.CharField', [], {'max_length': '100', 'null': 'True', 'blank': 'True'}),
++            'valor_item': ('django.db.models.fields.CharField', [], {'max_length': '255', 'null': 'True', 'blank': 'True'})
++        },
++        'Encuesta.segmentoa': {
++            'Meta': {'object_name': 'SegmentoA'},
++            'codigo': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
++            'descripcion': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '255'})
++        },
++        'Encuesta.segmentob': {
++            'Meta': {'object_name': 'SegmentoB'},
++            'codigo': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
++            'descripcion': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '255'})
++        },
++        'Encuesta.segmentoc': {
++            'Meta': {'object_name': 'SegmentoC'},
++            'codigo': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
++            'descripcion': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '255'})
++        },
++        'Encuesta.segmentod': {
++            'Meta': {'object_name': 'SegmentoD'},
++            'codigo': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
++            'descripcion': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '255'})
++        },
++        'Encuesta.segmentoe': {
++            'Meta': {'object_name': 'SegmentoE'},
++            'codigo': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
++            'descripcion': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '255'})
++        },
++        'Encuesta.segmentof': {
++            'Meta': {'object_name': 'SegmentoF'},
++            'codigo': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
++            'descripcion': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '255'})
++        },
++        'Encuesta.segmentog': {
++            'Meta': {'object_name': 'SegmentoG'},
++            'codigo': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
++            'descripcion': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '255'})
++        },
++        'auth.group': {
++            'Meta': {'object_name': 'Group'},
++            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
++            'name': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '80'}),
++            'permissions': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['auth.Permission']", 'symmetrical': 'False', 'blank': 'True'})
++        },
++        'auth.permission': {
++            'Meta': {'ordering': "('content_type__app_label', 'content_type__model', 'codename')", 'unique_together': "(('content_type', 'codename'),)", 'object_name': 'Permission'},
++            'codename': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
++            'content_type': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['contenttypes.ContentType']"}),
++            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
++            'name': ('django.db.models.fields.CharField', [], {'max_length': '50'})
++        },
++        'auth.user': {
++            'Meta': {'object_name': 'User'},
++            'date_joined': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
++            'email': ('django.db.models.fields.EmailField', [], {'max_length': '75', 'blank': 'True'}),
++            'first_name': ('django.db.models.fields.CharField', [], {'max_length': '30', 'blank': 'True'}),
++            'groups': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['auth.Group']", 'symmetrical': 'False', 'blank': 'True'}),
++            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
++            'is_active': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
++            'is_staff': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
++            'is_superuser': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
++            'last_login': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
++            'last_name': ('django.db.models.fields.CharField', [], {'max_length': '30', 'blank': 'True'}),
++            'password': ('django.db.models.fields.CharField', [], {'max_length': '128'}),
++            'user_permissions': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['auth.Permission']", 'symmetrical': 'False', 'blank': 'True'}),
++            'username': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '30'})
++        },
++        'contenttypes.contenttype': {
++            'Meta': {'ordering': "('name',)", 'unique_together': "(('app_label', 'model'),)", 'object_name': 'ContentType', 'db_table': "'django_content_type'"},
++            'app_label': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
++            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
++            'model': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
++            'name': ('django.db.models.fields.CharField', [], {'max_length': '100'})
++        }
++    }
++
++    complete_apps = ['Encuesta']
+diff --git a/Encuesta/migrations/0007_auto__chg_field_encuesta_fecha__chg_field_encuesta_codigo_centro.pyc b/Encuesta/migrations/0007_auto__chg_field_encuesta_fecha__chg_field_encuesta_codigo_centro.pyc
+new file mode 100644
+index 0000000..60967e0
+Binary files /dev/null and b/Encuesta/migrations/0007_auto__chg_field_encuesta_fecha__chg_field_encuesta_codigo_centro.pyc differ
+diff --git a/Encuesta/migrations/0008_auto__chg_field_encuesta_fecha__chg_field_encuesta_codigo__chg_field_e.py b/Encuesta/migrations/0008_auto__chg_field_encuesta_fecha__chg_field_encuesta_codigo__chg_field_e.py
+new file mode 100644
+index 0000000..c8445db
+--- /dev/null
++++ b/Encuesta/migrations/0008_auto__chg_field_encuesta_fecha__chg_field_encuesta_codigo__chg_field_e.py
+@@ -0,0 +1,153 @@
++# encoding: utf-8
++import datetime
++from south.db import db
++from south.v2 import SchemaMigration
++from django.db import models
++
++class Migration(SchemaMigration):
++
++    def forwards(self, orm):
++        
++        # Changing field 'Encuesta.fecha'
++        db.alter_column('Encuesta_encuesta', 'fecha', self.gf('django.db.models.fields.DateField')(default=datetime.date(2011, 11, 18)))
++
++        # Changing field 'Encuesta.codigo'
++        db.alter_column('Encuesta_encuesta', 'codigo', self.gf('django.db.models.fields.AutoField')(primary_key=True))
++
++        # Changing field 'Encuesta.codigo_centro'
++        db.alter_column('Encuesta_encuesta', 'codigo_centro_id', self.gf('django.db.models.fields.related.ForeignKey')(default=datetime.date(2011, 11, 18), to=orm['Administration.CentroEducativo']))
++
++
++    def backwards(self, orm):
++        
++        # Changing field 'Encuesta.fecha'
++        db.alter_column('Encuesta_encuesta', 'fecha', self.gf('django.db.models.fields.DateField')(null=True))
++
++        # Changing field 'Encuesta.codigo'
++        db.alter_column('Encuesta_encuesta', 'codigo', self.gf('django.db.models.fields.IntegerField')(primary_key=True))
++
++        # Changing field 'Encuesta.codigo_centro'
++        db.alter_column('Encuesta_encuesta', 'codigo_centro_id', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['Administration.CentroEducativo'], null=True))
++
++
++    models = {
++        'Administration.centroeducativo': {
++            'Meta': {'object_name': 'CentroEducativo'},
++            'administracion': ('django.db.models.fields.CharField', [], {'max_length': '300'}),
++            'codigo_ce': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
++            'codigo_departamento': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
++            'codigo_municipio': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
++            'descripcion_departamento': ('django.db.models.fields.CharField', [], {'max_length': '300'}),
++            'descripcion_municipio': ('django.db.models.fields.CharField', [], {'max_length': '300'}),
++            'direccion': ('django.db.models.fields.CharField', [], {'max_length': '300'}),
++            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
++            'nombre': ('django.db.models.fields.CharField', [], {'max_length': '300'}),
++            'telefono': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
++            'tipo_centro': ('django.db.models.fields.CharField', [], {'max_length': '300'})
++        },
++        'Encuesta.encuesta': {
++            'Meta': {'object_name': 'Encuesta'},
++            'codigo': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
++            'codigo_centro': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['Administration.CentroEducativo']"}),
++            'codigo_usuario': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['auth.User']"}),
++            'fecha': ('django.db.models.fields.DateField', [], {})
++        },
++        'Encuesta.encuestadata': {
++            'Meta': {'object_name': 'EncuestaData'},
++            'codigo_item': ('django.db.models.fields.IntegerField', [], {}),
++            'codigo_segmento': ('django.db.models.fields.IntegerField', [], {}),
++            'encuesta': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['Encuesta.Encuesta']"}),
++            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
++            'tipo_valor': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
++            'valor_item': ('django.db.models.fields.CharField', [], {'max_length': '255'})
++        },
++        'Encuesta.encuestatemp': {
++            'Meta': {'object_name': 'EncuestaTemp'},
++            'codigo': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
++            'codigo_centro': ('django.db.models.fields.related.ForeignKey', [], {'default': 'None', 'to': "orm['Administration.CentroEducativo']", 'null': 'True', 'blank': 'True'}),
++            'codigo_usuario': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['auth.User']"}),
++            'fecha': ('django.db.models.fields.DateField', [], {'null': 'True', 'blank': 'True'})
++        },
++        'Encuesta.encuestatempdata': {
++            'Meta': {'object_name': 'EncuestaTempData'},
++            'codigo_item': ('django.db.models.fields.IntegerField', [], {'default': '0', 'null': 'True', 'blank': 'True'}),
++            'encuesta': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['Encuesta.EncuestaTemp']"}),
++            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
++            'segmento': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '2', 'null': 'True', 'blank': 'True'}),
++            'tipo_valor': ('django.db.models.fields.CharField', [], {'max_length': '100', 'null': 'True', 'blank': 'True'}),
++            'valor_item': ('django.db.models.fields.CharField', [], {'max_length': '255', 'null': 'True', 'blank': 'True'})
++        },
++        'Encuesta.segmentoa': {
++            'Meta': {'object_name': 'SegmentoA'},
++            'codigo': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
++            'descripcion': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '255'})
++        },
++        'Encuesta.segmentob': {
++            'Meta': {'object_name': 'SegmentoB'},
++            'codigo': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
++            'descripcion': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '255'})
++        },
++        'Encuesta.segmentoc': {
++            'Meta': {'object_name': 'SegmentoC'},
++            'codigo': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
++            'descripcion': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '255'})
++        },
++        'Encuesta.segmentod': {
++            'Meta': {'object_name': 'SegmentoD'},
++            'codigo': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
++            'descripcion': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '255'})
++        },
++        'Encuesta.segmentoe': {
++            'Meta': {'object_name': 'SegmentoE'},
++            'codigo': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
++            'descripcion': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '255'})
++        },
++        'Encuesta.segmentof': {
++            'Meta': {'object_name': 'SegmentoF'},
++            'codigo': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
++            'descripcion': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '255'})
++        },
++        'Encuesta.segmentog': {
++            'Meta': {'object_name': 'SegmentoG'},
++            'codigo': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
++            'descripcion': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '255'})
++        },
++        'auth.group': {
++            'Meta': {'object_name': 'Group'},
++            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
++            'name': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '80'}),
++            'permissions': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['auth.Permission']", 'symmetrical': 'False', 'blank': 'True'})
++        },
++        'auth.permission': {
++            'Meta': {'ordering': "('content_type__app_label', 'content_type__model', 'codename')", 'unique_together': "(('content_type', 'codename'),)", 'object_name': 'Permission'},
++            'codename': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
++            'content_type': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['contenttypes.ContentType']"}),
++            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
++            'name': ('django.db.models.fields.CharField', [], {'max_length': '50'})
++        },
++        'auth.user': {
++            'Meta': {'object_name': 'User'},
++            'date_joined': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
++            'email': ('django.db.models.fields.EmailField', [], {'max_length': '75', 'blank': 'True'}),
++            'first_name': ('django.db.models.fields.CharField', [], {'max_length': '30', 'blank': 'True'}),
++            'groups': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['auth.Group']", 'symmetrical': 'False', 'blank': 'True'}),
++            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
++            'is_active': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
++            'is_staff': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
++            'is_superuser': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
++            'last_login': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
++            'last_name': ('django.db.models.fields.CharField', [], {'max_length': '30', 'blank': 'True'}),
++            'password': ('django.db.models.fields.CharField', [], {'max_length': '128'}),
++            'user_permissions': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['auth.Permission']", 'symmetrical': 'False', 'blank': 'True'}),
++            'username': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '30'})
++        },
++        'contenttypes.contenttype': {
++            'Meta': {'ordering': "('name',)", 'unique_together': "(('app_label', 'model'),)", 'object_name': 'ContentType', 'db_table': "'django_content_type'"},
++            'app_label': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
++            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
++            'model': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
++            'name': ('django.db.models.fields.CharField', [], {'max_length': '100'})
++        }
++    }
++
++    complete_apps = ['Encuesta']
+diff --git a/Encuesta/migrations/0008_auto__chg_field_encuesta_fecha__chg_field_encuesta_codigo__chg_field_e.pyc b/Encuesta/migrations/0008_auto__chg_field_encuesta_fecha__chg_field_encuesta_codigo__chg_field_e.pyc
+new file mode 100644
+index 0000000..542a6b7
+Binary files /dev/null and b/Encuesta/migrations/0008_auto__chg_field_encuesta_fecha__chg_field_encuesta_codigo__chg_field_e.pyc differ
+diff --git a/Encuesta/migrations/0008_auto__chg_field_encuesta_fecha__chg_field_encuesta_codigo_centro.pyc b/Encuesta/migrations/0008_auto__chg_field_encuesta_fecha__chg_field_encuesta_codigo_centro.pyc
+new file mode 100644
+index 0000000..625a498
+Binary files /dev/null and b/Encuesta/migrations/0008_auto__chg_field_encuesta_fecha__chg_field_encuesta_codigo_centro.pyc differ
+diff --git a/Encuesta/migrations/0008_initial.pyc b/Encuesta/migrations/0008_initial.pyc
+new file mode 100644
+index 0000000..319fa4a
+Binary files /dev/null and b/Encuesta/migrations/0008_initial.pyc differ
+diff --git a/Encuesta/migrations/0009_auto__chg_field_encuesta_codigo.pyc b/Encuesta/migrations/0009_auto__chg_field_encuesta_codigo.pyc
+new file mode 100644
+index 0000000..0256587
+Binary files /dev/null and b/Encuesta/migrations/0009_auto__chg_field_encuesta_codigo.pyc differ
+diff --git a/Encuesta/migrations/0009_auto__del_encuesta__del_encuestadata.py b/Encuesta/migrations/0009_auto__del_encuesta__del_encuestadata.py
+new file mode 100644
+index 0000000..60b2369
+--- /dev/null
++++ b/Encuesta/migrations/0009_auto__del_encuesta__del_encuestadata.py
+@@ -0,0 +1,145 @@
++# encoding: utf-8
++import datetime
++from south.db import db
++from south.v2 import SchemaMigration
++from django.db import models
++
++class Migration(SchemaMigration):
++
++    def forwards(self, orm):
++        
++        # Deleting model 'Encuesta'
++        db.delete_table('Encuesta_encuesta')
++
++        # Deleting model 'EncuestaData'
++        db.delete_table('Encuesta_encuestadata')
++
++
++    def backwards(self, orm):
++        
++        # Adding model 'Encuesta'
++        db.create_table('Encuesta_encuesta', (
++            ('codigo', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
++            ('fecha', self.gf('django.db.models.fields.DateField')()),
++            ('codigo_usuario', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['auth.User'])),
++            ('codigo_centro', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['Administration.CentroEducativo'])),
++        ))
++        db.send_create_signal('Encuesta', ['Encuesta'])
++
++        # Adding model 'EncuestaData'
++        db.create_table('Encuesta_encuestadata', (
++            ('encuesta', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['Encuesta.Encuesta'])),
++            ('valor_item', self.gf('django.db.models.fields.CharField')(max_length=255)),
++            ('codigo_item', self.gf('django.db.models.fields.IntegerField')()),
++            ('tipo_valor', self.gf('django.db.models.fields.CharField')(max_length=100)),
++            ('codigo_segmento', self.gf('django.db.models.fields.IntegerField')()),
++            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
++        ))
++        db.send_create_signal('Encuesta', ['EncuestaData'])
++
++
++    models = {
++        'Administration.centroeducativo': {
++            'Meta': {'object_name': 'CentroEducativo'},
++            'administracion': ('django.db.models.fields.CharField', [], {'max_length': '300'}),
++            'codigo_ce': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
++            'codigo_departamento': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
++            'codigo_municipio': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
++            'descripcion_departamento': ('django.db.models.fields.CharField', [], {'max_length': '300'}),
++            'descripcion_municipio': ('django.db.models.fields.CharField', [], {'max_length': '300'}),
++            'direccion': ('django.db.models.fields.CharField', [], {'max_length': '300'}),
++            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
++            'nombre': ('django.db.models.fields.CharField', [], {'max_length': '300'}),
++            'telefono': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
++            'tipo_centro': ('django.db.models.fields.CharField', [], {'max_length': '300'})
++        },
++        'Encuesta.encuestatemp': {
++            'Meta': {'object_name': 'EncuestaTemp'},
++            'codigo': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
++            'codigo_centro': ('django.db.models.fields.related.ForeignKey', [], {'default': 'None', 'to': "orm['Administration.CentroEducativo']", 'null': 'True', 'blank': 'True'}),
++            'codigo_usuario': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['auth.User']"}),
++            'fecha': ('django.db.models.fields.DateField', [], {'null': 'True', 'blank': 'True'})
++        },
++        'Encuesta.encuestatempdata': {
++            'Meta': {'object_name': 'EncuestaTempData'},
++            'codigo_item': ('django.db.models.fields.IntegerField', [], {'default': '0', 'null': 'True', 'blank': 'True'}),
++            'encuesta': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['Encuesta.EncuestaTemp']"}),
++            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
++            'segmento': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '2', 'null': 'True', 'blank': 'True'}),
++            'tipo_valor': ('django.db.models.fields.CharField', [], {'max_length': '100', 'null': 'True', 'blank': 'True'}),
++            'valor_item': ('django.db.models.fields.CharField', [], {'max_length': '255', 'null': 'True', 'blank': 'True'})
++        },
++        'Encuesta.segmentoa': {
++            'Meta': {'object_name': 'SegmentoA'},
++            'codigo': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
++            'descripcion': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '255'})
++        },
++        'Encuesta.segmentob': {
++            'Meta': {'object_name': 'SegmentoB'},
++            'codigo': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
++            'descripcion': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '255'})
++        },
++        'Encuesta.segmentoc': {
++            'Meta': {'object_name': 'SegmentoC'},
++            'codigo': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
++            'descripcion': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '255'})
++        },
++        'Encuesta.segmentod': {
++            'Meta': {'object_name': 'SegmentoD'},
++            'codigo': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
++            'descripcion': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '255'})
++        },
++        'Encuesta.segmentoe': {
++            'Meta': {'object_name': 'SegmentoE'},
++            'codigo': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
++            'descripcion': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '255'})
++        },
++        'Encuesta.segmentof': {
++            'Meta': {'object_name': 'SegmentoF'},
++            'codigo': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
++            'descripcion': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '255'})
++        },
++        'Encuesta.segmentog': {
++            'Meta': {'object_name': 'SegmentoG'},
++            'codigo': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
++            'descripcion': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '255'})
++        },
++        'auth.group': {
++            'Meta': {'object_name': 'Group'},
++            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
++            'name': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '80'}),
++            'permissions': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['auth.Permission']", 'symmetrical': 'False', 'blank': 'True'})
++        },
++        'auth.permission': {
++            'Meta': {'ordering': "('content_type__app_label', 'content_type__model', 'codename')", 'unique_together': "(('content_type', 'codename'),)", 'object_name': 'Permission'},
++            'codename': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
++            'content_type': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['contenttypes.ContentType']"}),
++            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
++            'name': ('django.db.models.fields.CharField', [], {'max_length': '50'})
++        },
++        'auth.user': {
++            'Meta': {'object_name': 'User'},
++            'date_joined': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
++            'email': ('django.db.models.fields.EmailField', [], {'max_length': '75', 'blank': 'True'}),
++            'first_name': ('django.db.models.fields.CharField', [], {'max_length': '30', 'blank': 'True'}),
++            'groups': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['auth.Group']", 'symmetrical': 'False', 'blank': 'True'}),
++            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
++            'is_active': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
++            'is_staff': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
++            'is_superuser': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
++            'last_login': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
++            'last_name': ('django.db.models.fields.CharField', [], {'max_length': '30', 'blank': 'True'}),
++            'password': ('django.db.models.fields.CharField', [], {'max_length': '128'}),
++            'user_permissions': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['auth.Permission']", 'symmetrical': 'False', 'blank': 'True'}),
++            'username': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '30'})
++        },
++        'contenttypes.contenttype': {
++            'Meta': {'ordering': "('name',)", 'unique_together': "(('app_label', 'model'),)", 'object_name': 'ContentType', 'db_table': "'django_content_type'"},
++            'app_label': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
++            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
++            'model': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
++            'name': ('django.db.models.fields.CharField', [], {'max_length': '100'})
++        }
++    }
++
++    complete_apps = ['Encuesta']
+diff --git a/Encuesta/migrations/0009_auto__del_encuesta__del_encuestadata.pyc b/Encuesta/migrations/0009_auto__del_encuesta__del_encuestadata.pyc
+new file mode 100644
+index 0000000..8215f21
+Binary files /dev/null and b/Encuesta/migrations/0009_auto__del_encuesta__del_encuestadata.pyc differ
+diff --git a/Encuesta/migrations/0010_auto__add_encuesta__add_encuestadata.py b/Encuesta/migrations/0010_auto__add_encuesta__add_encuestadata.py
+new file mode 100644
+index 0000000..42bb23f
+--- /dev/null
++++ b/Encuesta/migrations/0010_auto__add_encuesta__add_encuestadata.py
+@@ -0,0 +1,161 @@
++# encoding: utf-8
++import datetime
++from south.db import db
++from south.v2 import SchemaMigration
++from django.db import models
++
++class Migration(SchemaMigration):
++
++    def forwards(self, orm):
++        
++        # Adding model 'Encuesta'
++        db.create_table('Encuesta_encuesta', (
++            ('codigo', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
++            ('fecha', self.gf('django.db.models.fields.DateField')()),
++            ('codigo_usuario', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['auth.User'])),
++            ('codigo_centro', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['Administration.CentroEducativo'])),
++        ))
++        db.send_create_signal('Encuesta', ['Encuesta'])
++
++        # Adding model 'EncuestaData'
++        db.create_table('Encuesta_encuestadata', (
++            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
++            ('encuesta', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['Encuesta.Encuesta'])),
++            ('codigo_segmento', self.gf('django.db.models.fields.IntegerField')()),
++            ('codigo_item', self.gf('django.db.models.fields.IntegerField')()),
++            ('tipo_valor', self.gf('django.db.models.fields.CharField')(max_length=100)),
++            ('valor_item', self.gf('django.db.models.fields.CharField')(max_length=255)),
++        ))
++        db.send_create_signal('Encuesta', ['EncuestaData'])
++
++
++    def backwards(self, orm):
++        
++        # Deleting model 'Encuesta'
++        db.delete_table('Encuesta_encuesta')
++
++        # Deleting model 'EncuestaData'
++        db.delete_table('Encuesta_encuestadata')
++
++
++    models = {
++        'Administration.centroeducativo': {
++            'Meta': {'object_name': 'CentroEducativo'},
++            'administracion': ('django.db.models.fields.CharField', [], {'max_length': '300'}),
++            'codigo_ce': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
++            'codigo_departamento': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
++            'codigo_municipio': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
++            'descripcion_departamento': ('django.db.models.fields.CharField', [], {'max_length': '300'}),
++            'descripcion_municipio': ('django.db.models.fields.CharField', [], {'max_length': '300'}),
++            'direccion': ('django.db.models.fields.CharField', [], {'max_length': '300'}),
++            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
++            'nombre': ('django.db.models.fields.CharField', [], {'max_length': '300'}),
++            'telefono': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
++            'tipo_centro': ('django.db.models.fields.CharField', [], {'max_length': '300'})
++        },
++        'Encuesta.encuesta': {
++            'Meta': {'object_name': 'Encuesta'},
++            'codigo': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
++            'codigo_centro': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['Administration.CentroEducativo']"}),
++            'codigo_usuario': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['auth.User']"}),
++            'fecha': ('django.db.models.fields.DateField', [], {})
++        },
++        'Encuesta.encuestadata': {
++            'Meta': {'object_name': 'EncuestaData'},
++            'codigo_item': ('django.db.models.fields.IntegerField', [], {}),
++            'codigo_segmento': ('django.db.models.fields.IntegerField', [], {}),
++            'encuesta': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['Encuesta.Encuesta']"}),
++            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
++            'tipo_valor': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
++            'valor_item': ('django.db.models.fields.CharField', [], {'max_length': '255'})
++        },
++        'Encuesta.encuestatemp': {
++            'Meta': {'object_name': 'EncuestaTemp'},
++            'codigo': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
++            'codigo_centro': ('django.db.models.fields.related.ForeignKey', [], {'default': 'None', 'to': "orm['Administration.CentroEducativo']", 'null': 'True', 'blank': 'True'}),
++            'codigo_usuario': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['auth.User']"}),
++            'fecha': ('django.db.models.fields.DateField', [], {'null': 'True', 'blank': 'True'})
++        },
++        'Encuesta.encuestatempdata': {
++            'Meta': {'object_name': 'EncuestaTempData'},
++            'codigo_item': ('django.db.models.fields.IntegerField', [], {'default': '0', 'null': 'True', 'blank': 'True'}),
++            'encuesta': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['Encuesta.EncuestaTemp']"}),
++            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
++            'segmento': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '2', 'null': 'True', 'blank': 'True'}),
++            'tipo_valor': ('django.db.models.fields.CharField', [], {'max_length': '100', 'null': 'True', 'blank': 'True'}),
++            'valor_item': ('django.db.models.fields.CharField', [], {'max_length': '255', 'null': 'True', 'blank': 'True'})
++        },
++        'Encuesta.segmentoa': {
++            'Meta': {'object_name': 'SegmentoA'},
++            'codigo': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
++            'descripcion': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '255'})
++        },
++        'Encuesta.segmentob': {
++            'Meta': {'object_name': 'SegmentoB'},
++            'codigo': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
++            'descripcion': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '255'})
++        },
++        'Encuesta.segmentoc': {
++            'Meta': {'object_name': 'SegmentoC'},
++            'codigo': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
++            'descripcion': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '255'})
++        },
++        'Encuesta.segmentod': {
++            'Meta': {'object_name': 'SegmentoD'},
++            'codigo': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
++            'descripcion': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '255'})
++        },
++        'Encuesta.segmentoe': {
++            'Meta': {'object_name': 'SegmentoE'},
++            'codigo': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
++            'descripcion': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '255'})
++        },
++        'Encuesta.segmentof': {
++            'Meta': {'object_name': 'SegmentoF'},
++            'codigo': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
++            'descripcion': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '255'})
++        },
++        'Encuesta.segmentog': {
++            'Meta': {'object_name': 'SegmentoG'},
++            'codigo': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
++            'descripcion': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '255'})
++        },
++        'auth.group': {
++            'Meta': {'object_name': 'Group'},
++            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
++            'name': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '80'}),
++            'permissions': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['auth.Permission']", 'symmetrical': 'False', 'blank': 'True'})
++        },
++        'auth.permission': {
++            'Meta': {'ordering': "('content_type__app_label', 'content_type__model', 'codename')", 'unique_together': "(('content_type', 'codename'),)", 'object_name': 'Permission'},
++            'codename': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
++            'content_type': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['contenttypes.ContentType']"}),
++            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
++            'name': ('django.db.models.fields.CharField', [], {'max_length': '50'})
++        },
++        'auth.user': {
++            'Meta': {'object_name': 'User'},
++            'date_joined': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
++            'email': ('django.db.models.fields.EmailField', [], {'max_length': '75', 'blank': 'True'}),
++            'first_name': ('django.db.models.fields.CharField', [], {'max_length': '30', 'blank': 'True'}),
++            'groups': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['auth.Group']", 'symmetrical': 'False', 'blank': 'True'}),
++            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
++            'is_active': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
++            'is_staff': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
++            'is_superuser': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
++            'last_login': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
++            'last_name': ('django.db.models.fields.CharField', [], {'max_length': '30', 'blank': 'True'}),
++            'password': ('django.db.models.fields.CharField', [], {'max_length': '128'}),
++            'user_permissions': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['auth.Permission']", 'symmetrical': 'False', 'blank': 'True'}),
++            'username': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '30'})
++        },
++        'contenttypes.contenttype': {
++            'Meta': {'ordering': "('name',)", 'unique_together': "(('app_label', 'model'),)", 'object_name': 'ContentType', 'db_table': "'django_content_type'"},
++            'app_label': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
++            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
++            'model': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
++            'name': ('django.db.models.fields.CharField', [], {'max_length': '100'})
++        }
++    }
++
++    complete_apps = ['Encuesta']
+diff --git a/Encuesta/migrations/0010_auto__add_encuesta__add_encuestadata.pyc b/Encuesta/migrations/0010_auto__add_encuesta__add_encuestadata.pyc
+new file mode 100644
+index 0000000..32ee8fc
+Binary files /dev/null and b/Encuesta/migrations/0010_auto__add_encuesta__add_encuestadata.pyc differ
+diff --git a/Encuesta/migrations/0011_auto__del_field_encuestadata_codigo_segmento__add_field_encuestadata_s.py b/Encuesta/migrations/0011_auto__del_field_encuestadata_codigo_segmento__add_field_encuestadata_s.py
+new file mode 100644
+index 0000000..4db4dcb
+--- /dev/null
++++ b/Encuesta/migrations/0011_auto__del_field_encuestadata_codigo_segmento__add_field_encuestadata_s.py
+@@ -0,0 +1,147 @@
++# encoding: utf-8
++import datetime
++from south.db import db
++from south.v2 import SchemaMigration
++from django.db import models
++
++class Migration(SchemaMigration):
++
++    def forwards(self, orm):
++        
++        # Deleting field 'EncuestaData.codigo_segmento'
++        db.delete_column('Encuesta_encuestadata', 'codigo_segmento')
++
++        # Adding field 'EncuestaData.segmento'
++        db.add_column('Encuesta_encuestadata', 'segmento', self.gf('django.db.models.fields.CharField')(default=datetime.date(2011, 11, 18), max_length=2), keep_default=False)
++
++
++    def backwards(self, orm):
++        
++        # Adding field 'EncuestaData.codigo_segmento'
++        db.add_column('Encuesta_encuestadata', 'codigo_segmento', self.gf('django.db.models.fields.IntegerField')(default=datetime.date(2011, 11, 18)), keep_default=False)
++
++        # Deleting field 'EncuestaData.segmento'
++        db.delete_column('Encuesta_encuestadata', 'segmento')
++
++
++    models = {
++        'Administration.centroeducativo': {
++            'Meta': {'object_name': 'CentroEducativo'},
++            'administracion': ('django.db.models.fields.CharField', [], {'max_length': '300'}),
++            'codigo_ce': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
++            'codigo_departamento': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
++            'codigo_municipio': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
++            'descripcion_departamento': ('django.db.models.fields.CharField', [], {'max_length': '300'}),
++            'descripcion_municipio': ('django.db.models.fields.CharField', [], {'max_length': '300'}),
++            'direccion': ('django.db.models.fields.CharField', [], {'max_length': '300'}),
++            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
++            'nombre': ('django.db.models.fields.CharField', [], {'max_length': '300'}),
++            'telefono': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
++            'tipo_centro': ('django.db.models.fields.CharField', [], {'max_length': '300'})
++        },
++        'Encuesta.encuesta': {
++            'Meta': {'object_name': 'Encuesta'},
++            'codigo': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
++            'codigo_centro': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['Administration.CentroEducativo']"}),
++            'codigo_usuario': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['auth.User']"}),
++            'fecha': ('django.db.models.fields.DateField', [], {})
++        },
++        'Encuesta.encuestadata': {
++            'Meta': {'object_name': 'EncuestaData'},
++            'codigo_item': ('django.db.models.fields.IntegerField', [], {}),
++            'encuesta': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['Encuesta.Encuesta']"}),
++            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
++            'segmento': ('django.db.models.fields.CharField', [], {'max_length': '2'}),
++            'tipo_valor': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
++            'valor_item': ('django.db.models.fields.CharField', [], {'max_length': '255'})
++        },
++        'Encuesta.encuestatemp': {
++            'Meta': {'object_name': 'EncuestaTemp'},
++            'codigo': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
++            'codigo_centro': ('django.db.models.fields.related.ForeignKey', [], {'default': 'None', 'to': "orm['Administration.CentroEducativo']", 'null': 'True', 'blank': 'True'}),
++            'codigo_usuario': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['auth.User']"}),
++            'fecha': ('django.db.models.fields.DateField', [], {'null': 'True', 'blank': 'True'})
++        },
++        'Encuesta.encuestatempdata': {
++            'Meta': {'object_name': 'EncuestaTempData'},
++            'codigo_item': ('django.db.models.fields.IntegerField', [], {'default': '0', 'null': 'True', 'blank': 'True'}),
++            'encuesta': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['Encuesta.EncuestaTemp']"}),
++            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
++            'segmento': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '2', 'null': 'True', 'blank': 'True'}),
++            'tipo_valor': ('django.db.models.fields.CharField', [], {'max_length': '100', 'null': 'True', 'blank': 'True'}),
++            'valor_item': ('django.db.models.fields.CharField', [], {'max_length': '255', 'null': 'True', 'blank': 'True'})
++        },
++        'Encuesta.segmentoa': {
++            'Meta': {'object_name': 'SegmentoA'},
++            'codigo': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
++            'descripcion': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '255'})
++        },
++        'Encuesta.segmentob': {
++            'Meta': {'object_name': 'SegmentoB'},
++            'codigo': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
++            'descripcion': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '255'})
++        },
++        'Encuesta.segmentoc': {
++            'Meta': {'object_name': 'SegmentoC'},
++            'codigo': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
++            'descripcion': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '255'})
++        },
++        'Encuesta.segmentod': {
++            'Meta': {'object_name': 'SegmentoD'},
++            'codigo': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
++            'descripcion': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '255'})
++        },
++        'Encuesta.segmentoe': {
++            'Meta': {'object_name': 'SegmentoE'},
++            'codigo': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
++            'descripcion': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '255'})
++        },
++        'Encuesta.segmentof': {
++            'Meta': {'object_name': 'SegmentoF'},
++            'codigo': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
++            'descripcion': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '255'})
++        },
++        'Encuesta.segmentog': {
++            'Meta': {'object_name': 'SegmentoG'},
++            'codigo': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
++            'descripcion': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '255'})
++        },
++        'auth.group': {
++            'Meta': {'object_name': 'Group'},
++            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
++            'name': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '80'}),
++            'permissions': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['auth.Permission']", 'symmetrical': 'False', 'blank': 'True'})
++        },
++        'auth.permission': {
++            'Meta': {'ordering': "('content_type__app_label', 'content_type__model', 'codename')", 'unique_together': "(('content_type', 'codename'),)", 'object_name': 'Permission'},
++            'codename': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
++            'content_type': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['contenttypes.ContentType']"}),
++            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
++            'name': ('django.db.models.fields.CharField', [], {'max_length': '50'})
++        },
++        'auth.user': {
++            'Meta': {'object_name': 'User'},
++            'date_joined': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
++            'email': ('django.db.models.fields.EmailField', [], {'max_length': '75', 'blank': 'True'}),
++            'first_name': ('django.db.models.fields.CharField', [], {'max_length': '30', 'blank': 'True'}),
++            'groups': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['auth.Group']", 'symmetrical': 'False', 'blank': 'True'}),
++            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
++            'is_active': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
++            'is_staff': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
++            'is_superuser': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
++            'last_login': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
++            'last_name': ('django.db.models.fields.CharField', [], {'max_length': '30', 'blank': 'True'}),
++            'password': ('django.db.models.fields.CharField', [], {'max_length': '128'}),
++            'user_permissions': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['auth.Permission']", 'symmetrical': 'False', 'blank': 'True'}),
++            'username': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '30'})
++        },
++        'contenttypes.contenttype': {
++            'Meta': {'ordering': "('name',)", 'unique_together': "(('app_label', 'model'),)", 'object_name': 'ContentType', 'db_table': "'django_content_type'"},
++            'app_label': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
++            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
++            'model': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
++            'name': ('django.db.models.fields.CharField', [], {'max_length': '100'})
++        }
++    }
++
++    complete_apps = ['Encuesta']
+diff --git a/Encuesta/migrations/0011_auto__del_field_encuestadata_codigo_segmento__add_field_encuestadata_s.pyc b/Encuesta/migrations/0011_auto__del_field_encuestadata_codigo_segmento__add_field_encuestadata_s.pyc
+new file mode 100644
+index 0000000..43298ce
+Binary files /dev/null and b/Encuesta/migrations/0011_auto__del_field_encuestadata_codigo_segmento__add_field_encuestadata_s.pyc differ
+diff --git a/Encuesta/migrations/0011_initial.pyc b/Encuesta/migrations/0011_initial.pyc
+new file mode 100644
+index 0000000..fe3a3e7
+Binary files /dev/null and b/Encuesta/migrations/0011_initial.pyc differ
+diff --git a/Encuesta/migrations/0012_auto__chg_field_encuesta_codigo.pyc b/Encuesta/migrations/0012_auto__chg_field_encuesta_codigo.pyc
+new file mode 100644
+index 0000000..b9cd2e0
+Binary files /dev/null and b/Encuesta/migrations/0012_auto__chg_field_encuesta_codigo.pyc differ
+diff --git a/Encuesta/models.py b/Encuesta/models.py
+index 32ddbe9..eb4ad58 100644
+--- a/Encuesta/models.py
++++ b/Encuesta/models.py
+@@ -96,14 +96,14 @@ class EncuestaTempData(models.Model):
+     valor_item =  models.CharField(max_length = 255,null= True,blank=True)
+                 
+ class Encuesta(models.Model):
+-    codigo = models.IntegerField(primary_key=True)
++    codigo = models.AutoField(primary_key=True)
+     fecha = models.DateField()
+     codigo_usuario = models.ForeignKey(User)
+     codigo_centro = models.ForeignKey(AdMod.CentroEducativo)
+         
+ class EncuestaData(models.Model):
+     encuesta = models.ForeignKey(Encuesta)
+-    codigo_segmento = models.IntegerField()
++    segmento = models.CharField(max_length=2)
+     codigo_item = models.IntegerField()
+     tipo_valor = models.CharField(max_length = 100)
+     valor_item =  models.CharField(max_length = 255)
+\ No newline at end of file
+diff --git a/Encuesta/models.pyc b/Encuesta/models.pyc
+index eb0cbfa..4fee662 100644
+Binary files a/Encuesta/models.pyc and b/Encuesta/models.pyc differ
+diff --git a/Encuesta/views.py b/Encuesta/views.py
+index 9b6c3db..2bb1087 100644
+--- a/Encuesta/views.py
++++ b/Encuesta/views.py
+@@ -10,6 +10,8 @@ from Encuesta.models import SegmentoD as SD
+ from Encuesta.models import SegmentoE as SE
+ from Encuesta.models import SegmentoF as SF
+ from Encuesta.models import SegmentoG as SG
++from Encuesta.models import Encuesta 
++from Encuesta.models import EncuestaData as ED
+ from Encuesta.models import EncuestaTemp as ET
+ from Encuesta.models import EncuestaTempData as ETD
+ 
+@@ -17,7 +19,8 @@ from Administration.models import CentroEducativo as CE
+ from Administration.models import Departamento as DP
+ from Administration.models import Municipio as MN
+ 
+-tipo_save  = "temporal"
++tipo_save  = "final"
++id_encuestafinal = 0
+ 
+ def view_tiposave(request):
+     if request.is_ajax():
+@@ -59,24 +62,32 @@ def view_bringcentros(request):
+                 return HttpResponse(simplejson.dumps(data), mimetype="application/json")
+ 
+ def view_save(request,pg,encuesta_id):
+-    
+-    if tipo_save == "temporal":
+-        encuesta = ET.objects.get(pk=encuesta_id)
+-    #else:
+-     #   encuesta = T.objects.get(pk=encuesta_id)    
+     if pg == "pg1":
+-        
++        if tipo_save == "temporal":
++            encuesta = ET.objects.get(pk=encuesta_id)
++            SaveBasic(request.POST['cbx_centros'],request.POST['tbx_fecha'],encuesta_id)
++        else:
++            centro = CE.objects.get(pk=request.POST['cbx_centros'])
++            row=Encuesta(codigo_usuario = request.user,fecha=request.POST['tbx_fecha'],codigo_centro = centro)
++            row.save()
++            encuesta = row
++                    
+         infoC=SC.BringAll()
+         infoD=SD.BringAll()
+         
+-        SaveBasic(request.POST['cbx_centros'],request.POST['tbx_fecha'],tipo_save,encuesta_id)
+-        SavePartA(request,tipo_save,encuesta)
++        SavePartA(request.POST['cbx_parteA'],tipo_save,encuesta)
+         SavePartB(request,tipo_save,encuesta)
+         SavePartC(request,infoC,tipo_save,encuesta)
+         SavePartD(request,infoD,tipo_save,encuesta)
+ 
+     else :
+         
++        if tipo_save == "temporal":
++            encuesta = ET.objects.get(pk=encuesta_id)
++        else:
++            p = Encuesta.objects.latest('codigo')
++            encuesta = Encuesta.objects.get(pk= p.codigo)
++            
+         infoE= SE.BringAll()
+         infoG= SG.BringAll()
+         
+@@ -86,24 +97,30 @@ def view_save(request,pg,encuesta_id):
+         
+     return HttpResponse('Encuesta temp guardada')   
+ 
+-def SaveBasic(codigo_centro,fecha,tipo_guardar,codigo_tabla):
++def SaveBasic(codigo_centro,fecha,codigo_tabla):
+     
+-    if tipo_guardar == "temporal":
+         ET.objects.filter(codigo = codigo_tabla).update(fecha=fecha,codigo_centro = codigo_centro)
+-
++        print "salvo basic"
+         
+-def SavePartA(datos,tipo_guardar,encuesta):
++def SavePartA(item,tipo_guardar,encuesta):
++    
++    obj02 = SA.objects.get(descripcion = item )
+     if tipo_guardar == "temporal":
+-        obj02 = SA.objects.get(descripcion = datos)
+-        row=ETD(encuesta = encuesta,segmento="A",codigo_item=obj02.codigo,tipo_valor="texto",valor_item = datos)
+-        row.save()
++        row=ETD(encuesta = encuesta,segmento="A",codigo_item=obj02.codigo,tipo_valor="texto",valor_item = item)
++    else:
++        
++        row=ED(encuesta = encuesta,segmento="A",codigo_item=obj02.codigo,tipo_valor="texto",valor_item = item)
++        print "here"
++    row.save()
++    print " salvo a"
+ 
+ def SavePartB(datos,tipo_guardar,encuesta):
+     
+-    if tipo_guardar == "temporal":
+-        lista = datos.POST.getlist("cbxB")
+-        lista2 = datos.POST.getlist("tbx_oi")
++    lista = datos.POST.getlist("cbxB")
++    lista2 = datos.POST.getlist("tbx_oi")
+     
++    if tipo_guardar == "temporal":
++
+         for l in lista:
+             obj = SB.objects.get(pk=l)
+             row=ETD(encuesta = encuesta,segmento="B",codigo_item=l,tipo_valor="seleccion",valor_item = obj.descripcion)
+@@ -112,6 +129,17 @@ def SavePartB(datos,tipo_guardar,encuesta):
+             if l2 != "":
+                 row=ETD(encuesta = encuesta,segmento="B",codigo_item=-1,tipo_valor="extra",valor_item = l2)
+                 row.save()
++    else:
++
++        for l in lista:
++            obj = SB.objects.get(pk=l)
++            row=ED(encuesta = encuesta,segmento="B",codigo_item=l,tipo_valor="seleccion",valor_item = obj.descripcion)
++            row.save()
++        for l2 in lista2:
++            if l2 != "":
++                row=ED(encuesta = encuesta,segmento="B",codigo_item=-1,tipo_valor="extra",valor_item = l2)
++                row.save()        
++        print " salvo b"
+     
+ def SavePartC(datos,items,tipo_guardar,encuesta):
+     
+@@ -120,7 +148,14 @@ def SavePartC(datos,items,tipo_guardar,encuesta):
+             string = "selC_" + str(i.codigo)
+             obj = datos.POST[string]
+             row=ETD(encuesta = encuesta,segmento="C",codigo_item=i.codigo,tipo_valor="opcion",valor_item = obj)
+-            row.save()        
++            row.save()
++    else:
++        for i in items:
++            string = "selC_" + str(i.codigo)
++            obj = datos.POST[string]
++            row=ED(encuesta = encuesta,segmento="C",codigo_item=i.codigo,tipo_valor="opcion",valor_item = obj)
++            row.save()       
++        print " salvo c"
+     
+ def SavePartD(datos,items,tipo_guardar,encuesta):
+ 
+@@ -130,6 +165,13 @@ def SavePartD(datos,items,tipo_guardar,encuesta):
+             obj = datos.POST[string]
+             row = ETD(encuesta=encuesta,segmento="D",codigo_item=i.codigo,tipo_valor="numerico",valor_item=obj)
+             row.save()
++    else:
++        for i in items:
++            string = "tbxD_" + str(i.codigo)
++            obj = datos.POST[string]
++            row = ED(encuesta=encuesta,segmento="D",codigo_item=i.codigo,tipo_valor="numerico",valor_item=obj)
++            row.save()        
++        print " salvo d"
+         
+ def SavePartE(datos,items,tipo_guardar,encuesta):
+     
+@@ -139,14 +181,21 @@ def SavePartE(datos,items,tipo_guardar,encuesta):
+             obj = datos.POST[string]
+             row = ETD(encuesta=encuesta,segmento="E",codigo_item=i.codigo,tipo_valor="numerico",valor_item=obj)
+             row.save()
++    else:
++        for i in items:
++            string = "tbxE_" + str(i.codigo)
++            obj = datos.POST[string]
++            row = ED(encuesta=encuesta,segmento="E",codigo_item=i.codigo,tipo_valor="numerico",valor_item=obj)
++            row.save()
++        print " salvo e"
+             
+ def SavePartF(datos,tipo_guardar,encuesta):
+     
++    lista = datos.POST.getlist("cbxF")
++    lista2 = datos.POST.getlist("tbx_oi2")
+     if tipo_guardar == "temporal":
+-        lista = datos.POST.getlist("cbxF")
+-        lista2 = datos.POST.getlist("tbx_oi2")
++
+         for l in lista:
+-            print l
+             obj = SF.objects.get(pk=l)
+             row=ETD(encuesta = encuesta,segmento="F",codigo_item=l,tipo_valor="seleccion",valor_item = obj.descripcion)
+             row.save()
+@@ -155,6 +204,17 @@ def SavePartF(datos,tipo_guardar,encuesta):
+             if l2 != "":
+                 row=ETD(encuesta = encuesta,segmento="F",codigo_item=-1,tipo_valor="extra",valor_item = l2)
+                 row.save()
++    else:
++        for l in lista:
++            obj = SF.objects.get(pk=l)
++            row=ED(encuesta = encuesta,segmento="F",codigo_item=l,tipo_valor="seleccion",valor_item = obj.descripcion)
++            row.save()
++
++        for l2 in lista2:
++            if l2 != "":
++                row=ED(encuesta = encuesta,segmento="F",codigo_item=-1,tipo_valor="extra",valor_item = l2)
++                row.save()
++        print " salvo f"
+ def SavePartG(datos,items,tipo_guardar,encuesta):
+     
+     if tipo_guardar == "temporal":
+@@ -163,6 +223,13 @@ def SavePartG(datos,items,tipo_guardar,encuesta):
+             obj = datos.POST[string]
+             row=ETD(encuesta = encuesta,segmento="G",codigo_item=i.codigo,tipo_valor="opcion",valor_item = obj)
+             row.save()
++    else:
++        for i in items:
++            string = "selG_" + str(i.codigo)
++            obj = datos.POST[string]
++            row=ED(encuesta = encuesta,segmento="G",codigo_item=i.codigo,tipo_valor="opcion",valor_item = obj)
++            row.save()        
++        print " salvo g"
+                    
+ def view_encuesta(request,tipo):
+     
+@@ -185,7 +252,7 @@ def view_encuesta(request,tipo):
+     if tipo == "nueva":
+         p = ET(codigo_usuario=request.user)
+         p.save()
+-             
++        
+         return render_to_response('Encuesta.html',{'usuario':username,'id_usuario':userid,'codigo_enc':p.codigo,'tipo_save':tipo_save,'deps':deps,'centros':centros,'infoA':infoA,'infoB':infoB,'infoC':infoC,'infoD':infoD,'infoE':infoE,'infoF':infoF,'infoG':infoG,'muns':muns},context_instance=RequestContext(request))
+     else:
+         HttpResponse("hola")
+diff --git a/Encuesta/views.pyc b/Encuesta/views.pyc
+index 302d03d..ec75b1e 100644
+Binary files a/Encuesta/views.pyc and b/Encuesta/views.pyc differ
+diff --git a/Templates/Home.html b/Templates/Home.html
+index a7288d4..dec0efe 100644
+--- a/Templates/Home.html
++++ b/Templates/Home.html
+@@ -13,7 +13,10 @@
+ <meta charset="utf-8">
+ 	<script>
+ 		$(document).ready(function() {
+-		
++			var rol_usuario = "{{rol_usuario}}";
++			if(rol_usuario == "Digitador"){
++				$("#tabs").tabs({ disabled: [1] });
++			}
+ 			$("#tabs").tabs().addClass('ui-tabs-vertical ui-helper-clearfix');
+ 			$("#tabs li").removeClass('ui-corner-top').addClass('ui-corner-left');
+ 			$( "#accordion" ).accordion({
+@@ -49,7 +52,10 @@
+ 					<fieldset>
+ 					<legend>Encuestas Pendientes</legend>
+ 						<table>
+-							<tr><td><strong><a href="{%url url_encuesta "nueva"%}"> Nueva Encuesta </a></strong>
++							<tr><td><strong><a href="{%url url_encuesta "nueva"%}"> Nueva Encuesta </a></strong></td></tr>
++							{%for e in encuestas%}
++								<tr><td><strong><a href="{%url url_encuesta e.codigo%}"> Encuesta {{e.codigo}} , fecha {{e.fecha}} </a></strong></td></tr>
++							{%endfor%}
+ 						</table>
+ 					</fieldset>
+ 				</div>
+diff --git a/views.py b/views.py
+index e628840..a8ee95b 100644
+--- a/views.py
++++ b/views.py
+@@ -3,7 +3,9 @@ from django.template import RequestContext
+ from django.http import HttpResponseRedirect, Http404, HttpResponse
+ from django.contrib.auth import authenticate, login
+ 
+-
++from Administration.models import TipoUsuario as TU
++from Administration.models import Rol as RU
++from Encuesta.models import EncuestaTemp as ET
+ 
+ def view_home(request):
+     
+@@ -20,22 +22,25 @@ def view_home(request):
+ def view_autenticar(request):
+     
+     if request.method=='POST':
+-        
+         un = request.POST['user_tbx']
+         pd = request.POST['pass_tbx']
+         user = authenticate(username = un,password = pd)
+         if user is not None:
+             if user.is_active:
+                 login(request, user)
+-                PrepareContent(user,request)
++                return PrepareContent(user,request)
+         else :
+-            return HttpResponse("nada")
++            return HttpResponse("usuario no existe")
+     #return render_to_response('Login.html',context_instance=RequestContext(request))
+-    return render_to_response('Home.html',context_instance=RequestContext(request))
++    #return render_to_response('Home.html',context_instance=RequestContext(request))
+ 
+ def PrepareContent(user,request):
+     
+     usuario = user.get_full_name()
+-    return render_to_response('Home.html',{'usuario':usuario},context_instance=RequestContext(request))
++    id_usuario = user.id
++    rol_usuario = RU.objects.get(codigo = user.get_profile().rol.codigo)
++    encuestas_pendientes = ET.objects.filter(codigo_usuario = user)
++
++    return render_to_response('Home.html',{'usuario':usuario,'rol_usuario':rol_usuario.nombre,'encuestas':encuestas_pendientes},context_instance=RequestContext(request))
+     
+     
+\ No newline at end of file
+diff --git a/views.pyc b/views.pyc
+index 9d37ec8..53b6aef 100644
+Binary files a/views.pyc and b/views.pyc differ

@@ -1,33 +1,48 @@
 {%extends 'Main.html'%}
 {%block includes%}
+	<script type="text/javascript" src="{{STATIC_URL}}static_resources/jquery/jquery-1.6.2.min.js"></script>
+	<script type="text/javascript" src="{{STATIC_URL}}static_resources/jquery/jquery-ui-1.8.16.custom.min.js"></script>
+	
+	<link rel="stylesheet" type="text/css" href="{{STATIC_URL}}resources_css/jquery-ui-1.8.16.custom.css" />
 	<link rel="stylesheet" type="text/css" href="{{STATIC_URL}}resources_css/styles_login.css" />
 {%endblock%}
 {%block contenido%}
-	<div id="content">
-	    <section id="aside">
-		    <div id="banner">
-		    	<img src="{{STATIC_URL}}resources_imgs/banner.png" height="600" width="300"/>
-		    </div>
-		</section>
-		<section id="mainContent">
-			<fieldset id="login">
-			<legend id="lg">Ingresar</lengend>
-				<form  method='post' action={%url url_autenticar%}>{% csrf_token %}
-					<table>
-						<br>
-			  			<tr>
-			  				<td><label>Usuario:</label></td>
-			  				<td><input name="user_tbx" ></td>
-			  			</tr>
-			  			<tr>
-				  			<td><label>Contraseña:</label></td>
-				  			<td><input type="password" name="pass_tbx" ></td>
-			  			</tr>
-			  			<tr><td><input type="submit" value="Autenticar"></td></tr>
-		  			</table>
-				</form>
-			</fieldset>
-		</section>
+	<script>
+		$(document).ready(function() {	
+			$("#tabs").tabs();
+		});
+	</script>
+	<div id="tabs">
+		<ul>
+			<li><a href="#tabs-1">Ingreso a Sistema</a></li>
+		</ul>
+		<div id="tabs-1">
+			<div id="content">
+			    <section id="aside">
+				    <div id="banner">
+				    	<img src="{{STATIC_URL}}resources_imgs/banner.png" height="600" width="300"/>
+				    </div>
+				</section>
+				<section id="mainContent">
+					<fieldset id="login">
+					<legend id="lg">Ingresar</lengend>
+						<form  method='post' action={%url url_autenticar%}>{% csrf_token %}
+							<table>
+								<br>
+					  			<tr>
+					  				<td><label>Usuario:</label></td>
+					  				<td><input name="user_tbx" ></td>
+					  			</tr>
+					  			<tr>
+						  			<td><label>Contraseña:</label></td>
+						  			<td><input type="password" name="pass_tbx" ></td>
+					  			</tr>
+					  			<tr><td><input type="submit" value="Autenticar"></td></tr>
+				  			</table>
+						</form>
+					</fieldset>
+				</section>
+			</div>
+		</div>
 	</div>
-    
 {%endblock%}

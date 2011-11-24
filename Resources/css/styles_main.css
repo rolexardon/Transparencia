@@ -12,7 +12,7 @@
          display: table-cell;  
          width: 300px;
 	 width:40%;
-         position:absolute;
+         'position:absolute;
 	 left:-5%;
            
 }
@@ -23,7 +23,7 @@
 #menu
 {  
          display: table-cell;
-         position:absolute;
+         'position:absolute;
 	 left:15%;
 	top:5%;
 right:0;

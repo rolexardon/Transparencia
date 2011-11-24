@@ -26,11 +26,14 @@ class CentroEducativo(models.Model):
             dep = '0' + str(dep)
         if len(str(mun)) == 1:
             mun = '0' + str(mun)
-        
-        print dep
-        print mun
-        
-        return CentroEducativo.objects.filter(codigo_departamento = str(dep), codigo_municipio = str(mun))
+           
+        return CentroEducativo.objects.filter(codigo_departamento = str(dep), codigo_municipio = str(mun)).order_by('nombre')
+    @classmethod
+    def GetCodigoCentro(CentroEducativo,idcentro):
+        return CentroEducativo.objects.get(pk=idcentro).codigo_ce
+    @classmethod
+    def GetTipoCentro(CentroEducativo,idcentro):
+        return CentroEducativo.objects.get(pk=idcentro).tipo_centro
     
     def __unicode__(self):
         return self.nombre
@@ -84,7 +87,10 @@ class Municipio(models.Model):
     @classmethod
     def BringDepId(Municipio,id):
         return Municipio.objects.get(pk=id).departamento.pk
-        
+    @classmethod
+    def BringMunCode(Municipio,k):
+        p = Municipio.get(pk=k)
+        return p.codigo   
     def __unicode__(self):
         return self.nombre
     

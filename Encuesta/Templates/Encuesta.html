@@ -12,29 +12,112 @@
 	<script type="text/javascript" src="{{STATIC_URL}}static_resources/jquery/jquery-1.6.2.min.js"></script>
 	<script type="text/javascript" src="{{STATIC_URL}}static_resources/jquery/jquery-ui-1.8.16.custom.min.js"></script>
 	
-	<!--<script type="text/javascript" src="{{STATIC_URL}}static_resources/jquery/jquery.js"></script>
-	<script type="text/javascript" src="{{STATIC_URL}}static_resources/jquery/jquery.validate.js"></script>-->
+	<!--<script type="text/javascript" src="{{STATIC_URL}}static_resources/jquery/jquery.js"></script>-->
+	<script type="text/javascript" src="{{STATIC_URL}}static_resources/jquery/jquery.validate.js"></script>
 
 	<link rel="stylesheet" type="text/css" href="{{STATIC_URL}}resources_css/jquery-ui-1.8.16.custom.css" />
 	<link rel="stylesheet" type="text/css" href="{{STATIC_URL}}resources_css/styles_encuesta.css" />
 	
 {%endblock%}
 {%block contenido%}
-	<script>
-		$(document).ready(function() {	
+	<script language="javascript">
+		$(document).ready(function() {
+		
+			var selectedTabIndex = null;
+			var validated = false;
+			var valorE1 = 0 ;
+			var dep=0;
+			
+			$( "#tabs" ).tabs({
+			    select: function(event, ui) {
+					selectedTabIndex = ui.index;
+					var form_2_val = "null";
+					if (selectedTabIndex == 0 ) form_2_val = "pg2";
+					if (selectedTabIndex == 1 ) form_2_val = "pg1";
+					
+					switch(form_2_val){
+						case "pg1" :
+									validate_style(form_2_val,"temporal")
+									break
+						case "pg2" :
+									validate_style(form_2_val,"temporal")
+									break
+					}
+					f = "#" + form_2_val;
+					validated = $(f).valid();
+					/*if(validated == true && form_2_val == "pg2"){
 
-			$( "#tabs" ).tabs();
+						var d2 = document.getElementsByName("tbxD_2").value;
+						var d3 = document.getElementsByName("tbxD_3").value;
+						valorE1 = d2+d3;
+						alert(valorE1);
+					}*/
+					return validated;
+    			}
+			});
+			
+		
+			function validate_style(form,type){
+				try{
+					switch(form){
+						case "pg1":
+									if(type=="temporal"){
+										$.validator.addMethod("Numeric_tbxs", $.validator.methods.number, "Ingrese elementos numéricos");
+										$.validator.addClassRules("number_inputs", { Numeric_tbxs: true});
+										$("#pg1").validate({
+											onsubmit: false,
+											rules: {
+												tbxD_ : {
+															number : true
+														 }
+											},
+											messages :{	}
+										});
+									}
+									else {
+											$("#pg1").validate({
+												onsubmit: false,
+												rules: {
+													tbx_fecha : "required",
+													cbx_centros : "required",
+													
+												},
+												messages :{	}
+											});							
+									}
+									break
+						case "pg2":
+									if(type=="temporal"){
+										$.validator.addMethod("Numeric_tbxs2", $.validator.methods.number, "Ingrese elementos numéricos");
+										$.validator.addClassRules("inputs_parteE", { Numeric_tbxs2: true});
+										$("#pg2").validate({
+											onsubmit: false,
+											rules: {
+												tbxE_ : {
+															number : true
+														 }
+											},
+											messages :{	}				
+										});
+									}
+									break								
+					}
+				}
+				catch(err){
+					alert(err);
+				}
+			};
 			$("#btn_Publish").click(function(){
 				if(confirm("¿Está seguro que desea cerrar la encuesta y guardar sus datos permanentemente?")){
-					$("#pg1,#pg2").submit()
+					validate_style("pg1","final");
+					if($("#pg1").valid()) $("#pg1").submit();
+					validate_style("pg2","final");
+					if($("#pg2").valid()) $("#pg2").submit();		
 				}
 			});
 			$( "#datepicker" ).datepicker({ dateFormat: 'yy-mm-dd' });
-			$( "#btnHome" ).click(function() 
-								{ 
-									alert("Home");
-								});	
 			$("#id_dep").change(function() {
+				dep = $(this).val();
 				$("#id_mun").empty();
 				$("#id_centros").empty();
 				$.ajax({
@@ -60,6 +143,7 @@
 							data:
 								{
 									data:"centros",
+									iddep : dep,
 									idmun:$(this).val()
 								},
 							url: "{% url url_bringcentros %}",
@@ -70,84 +154,86 @@
 					}
 				});
 			});
-			$("#btnSave").click(function(){
-				//$.post("{% url url_modify%}" , {ts : "temporal" });
-				$("#pg1,#pg2").submit()
-			});
-			/*
-			$("#datepicker").focusout(function(){
+			$("#id_centros").change(function(){
+				$("#id_codigocentro").empty();
+				$("#id_tipocentro").empty();
 				$.ajax({
-						type:"POST",
-						data:
-							{
-								data:"fecha",
-								fecha:$(this).val(),
-								tipo: "temporal",
-								tipo2: "unitario",
-								encuesta_id : {{codigo_enc}}
-							},
-						url: ,
-				});		
+							type:"GET",
+							data:
+								{
+									data : "infodecentro",
+									idcentro:$(this).val()
+								},
+							url: "{% url url_bringcentroinfo %}",
+							success: function(lista){
+								
+									$("#id_codigocentro").val(lista[0]);
+									$("#id_tipocentro").val(lista[1]);
+							}
+				});
 			});
-			*/
-			/*var validator = $("#pg1").validate({
-							rules: {
-								inputs_parteD: {
-													"required",
-													number: true
-												},	
-								date : "required",
-							},
-							messages: {
-								inputs_parteD: {
-													required: "Ingrese este valor"
-													number: "Valor numérico"
-												},
-							},
-			errorPlacement: function(error, element) {
-				if ( element.is(":radio") )
-					error.appendTo( element.parent().next().next() );
-				else if ( element.is(":checkbox") )
-					error.appendTo ( element.next() );
-				else
-					error.appendTo( element.parent().next() );
-			},
-			// set this class to error-labels to indicate valid fields
-			success: function(label) {
-				// set &nbsp; as text for IE
-				label.html("&nbsp;").addClass("checked");
-			}
-			*/
-			
+			$("#btnSave").click(function(){
+				try{
+					if(selectedTabIndex == 0 ){
+						validate_style("pg1","temporal");
+						if($("#pg1").valid()) {
+							validate_style("pg2","temporal");
+							if($("#pg2").valid()) {
+								$("#pg1").submit();
+								$("#pg2").submit();
+							}
+						}
+					}
+					else {
+						validate_style("pg2","temporal");
+						if($("#pg2").valid()) {
+							validate_style("pg1","temporal");
+							if($("#pg1").valid()) {
+								$("#pg2").submit();
+								$("#pg1").submit();
+							}
+						}
+					}
+				}
+				catch(err){
+					alert(err);
+				}				
+			});
+			$("#cbxF_3").click(function(){
+				document.getElementById("cbxF_4").checked = false;
+			});
+			$("#cbxF_4").click(function(){
+				document.getElementById("cbxF_3").checked = false;
+			});
+			$("#cbxF_5").click(function(){
+				if(document.getElementById("cbxF_2").checked == true || document.getElementById("cbxF_4").checked == true){
+					document.getElementById("cbxF_5").checked = false;
+					}
+			});
 		});
-		
 	</script>
+	
+	
+	
 		<div id="tabs">
 			<label>Usuario: {{usuario}}</label>
 			<ul>
-				<li><a href="#tabs-1">Instrucciones</a></li>
 				<li><a href="#tabs-2">Página 1</a></li>
 				<li><a href="#tabs-3">Página 2</a></li>		
 			</ul>
 			<fieldset id="topbar">
 				<div id="topbar_btns">
 					<input type="image" src="{{STATIC_URL}}resources_icons/Save.ico" id="btnSave">
-					<input type="image" src="{{STATIC_URL}}resources_icons/Home.ico" id="btnHome">
+					<input type="image" src="{{STATIC_URL}}resources_icons/Accept.ico" id="btn_Publish" >
 				</div>
 			</fieldset>
-			<div id="tabs-1">
-				<p>
-					Instrucciones de Digitación
-				</p>
-				<button onclick="JavaScript:alert('Well done!')">Iniciar</button>
-			</div>
 			<div id="tabs-2">
-			<form id="pg1" method='post' action={%url url_save "pg1",codigo_enc%}>{% csrf_token %}
+			<form id="pg1" method='post' action={%url url_save "pg1",codigo_enc%} class="val_form">{% csrf_token %}
 				<fieldset id="basico">
 					<table id="tb_basico">
 						<tr>
 							<td><label class="lbl_basico">Código Usuario:</label></td>
-							<td><input type="text" name="tbx_codigo" value={{userid}}></td>
+							<td><input type="text" name="tbx_codigo"  value="{{id_usuario}}" disabled="disabled"></td>
 						</tr>
 						<tr>
 							<td><label class="lbl_basico">Fecha:</label></td>
@@ -181,17 +267,29 @@
 							<td class="right_align"><select name="cbx_centros" id="id_centros"></select></td>
 						</tr>
 						<tr>
-							<td><label class="lbl_centro">Barrio/Colonia/Aldea/Comunidad:</label></td>
-							<td class="right_align"><input type="text" name="tbx_localidad"></td>
-						</tr>
-						<tr>
-							<td><label class="lbl_centro">Contacto:</label></td>
-							<td class="right_align"><input type="text" name="tbx_tel"></td>
+							<td><label class="lbl_centro">Código Centro:</label></td>
+							<td class="right_align"><input type="text" name="tbx_idcentro" id="id_codigocentro" disabled = "disabled"></ td>
 						</tr>
 						<tr>
 							<td><label class="lbl_centro">Tipo de Centro:</label></td>
-							<td class="right_align"><input type="text" name="tbx_tipcentro"></td>
+							<td class="right_align"><input type="text" name="tbx_tipocentro" id="id_tipocentro" disabled = "disabled"></td>
 						</tr>
+						<tr>
+							<td><label class="lbl_centro">Zona:</label></td>
+							<td class="right_align"><select name="cbx_zonacentro" id="">
+									<option> Rural </option>
+									<option> Urbano </option>
+								</select>
+							</td>
+						</tr>
+						<tr>
+							<td><label class="lbl_centro">Contacto Telefónico:</label></td>
+							<td class="right_align"><input type="text" name="tbx_tel1" id="id_tel1" class ="number_inputs"></td>
+						</tr>
+						<!--<tr>
+							<td><label class="lbl_centro">Contacto Telefónico:</label></td>
+							<td class="right_align"><input type="text" name="tbx_tel2" id="id_tel2" class ="number_inputs"></td>
+						</tr>-->
 					</table>
 				</fieldset>
 				<br>
@@ -281,7 +379,7 @@
 						{%for d in infoD%}
 							<tr>
 								<td><label>{{d.descripcion}}</label></td>
-								<td class="right_align"><input type="number" name="tbxD_{{d.codigo}}" for="inputs_parteD"></td>
+								<td class="right_align"><input type="number" name="tbxD_{{d.codigo}}" class="number_inputs"></td>
 								<td class="status"></td>
 							</tr>
 						{%endfor%}
@@ -290,7 +388,7 @@
 			</form>
 			</div>
 			<div id="tabs-3">
-			<form id="pg2" method='post' action={%url url_save "pg2",codigo_enc%}>{% csrf_token %}
+			<form id="pg2" method='post' action={%url url_save "pg2",codigo_enc%} class="val_form">{% csrf_token %}
 				<fieldset id="parteE">
 				<legend>E. Hallazgos e Irregularidades en LISTAS</legend>
 					<div class="instruccion">
@@ -301,7 +399,7 @@
 						{%for e in infoE%}
 							<tr>
 								<td><label>{{e.descripcion}}</label></td>
-								<td class="right_align"><input type="number" name="tbxE_{{e.codigo}}"></td>
+								<td class="right_align"><input type="number"  name="tbxE_{{e.codigo}}" class="inputs_parteE"></td>
 							</tr>
 						{%endfor%}
 					</table>
@@ -315,7 +413,7 @@
 					<br>
 					<table id="tb_parteF01">
 						{%for f in infoF%}
-							<tr><td><input type="checkbox" name="cbxF" value= {{f.codigo}} />{{f.descripcion}}</td></tr>
+							<tr><td>F{{f.codigo}}._<input type="checkbox" id="cbxF_{{f.codigo}}" name="cbxF" value= {{f.codigo}} />{{f.descripcion}}</td></tr>
 						{%endfor%}
 					</table>
 					<br>
@@ -361,7 +459,7 @@
 					</table>
 				</fieldset>
 			</form>
-			<input type="button" id="btn_Publish" value="Publicar Encuesta"> 
+			
 			</div>
 			<fieldset id="footbar">
 				<div id="footbar_btns">
