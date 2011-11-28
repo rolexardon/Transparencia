@@ -2,6 +2,7 @@ from django.http import HttpResponse
 from django.template import RequestContext
 from django.shortcuts import render_to_response,redirect,get_object_or_404
 from django.utils import simplejson
+from datetime import datetime as dt
 
 from Encuesta.models import SegmentoA as SA
 from Encuesta.models import SegmentoB as SB
@@ -84,6 +85,7 @@ def view_save(request,pg,encuesta_id):
         if tipo_save == "temporal":
             encuesta = ET.objects.get(pk=encuesta_id)
             SaveBasic(request,encuesta_id)
+            ETD.objects.filter(encuesta= encuesta_id).delete()
         else:
             encuesta = SaveBasic(request,-1)
                     
@@ -116,24 +118,19 @@ def SaveBasic(datos,codigo_tabla):
 
     if codigo_tabla != -1 :
         p = ET.objects.filter(codigo = codigo_tabla)
-        print "antes de fecha"
         if 'tbx_fecha' in datos.POST:
             fecha=datos.POST['tbx_fecha']
             if fecha != "":
                 p.update(fecha=fecha)
-        print "antes de centro"
         if 'cbx_centros' in datos.POST:
             centro=datos.POST['cbx_centros']
             p.update(codigo_centro = centro)
-        print "antes de tel"
         if 'tbx_tel1' in datos.POST:
             t1=datos.POST['tbx_tel1']
             if t1 != "":
                 p.update(tel=t1)
-        print "antes de zona"
         zona = datos.POST['cbx_zonacentro']
         p.update(zona=zona)
-        print "sali"
         return 0
     else :
         centro = CE.objects.get(pk=datos.POST['cbx_centros'])
@@ -287,7 +284,7 @@ def SavePartG(datos,items,tipo_guardar,encuesta):
             row.save()        
             print " salvo g"
                    
-def view_encuesta(request,tipo):
+def view_encuesta(request,encuesta):
     
     usuario = request.user
     username = usuario.username
@@ -305,10 +302,58 @@ def view_encuesta(request,tipo):
     deps = DP.BringAll()
     muns= MN.BringAll()
         
-    if tipo == "nueva":
-        p = ET(codigo_usuario=request.user)
+    if encuesta == "nueva":
+        p = ET(codigo_usuario=request.user,fecha_apertura = dt.today())
         p.save()
         
-        return render_to_response('Encuesta.html',{'usuario':username,'id_usuario':userid,'codigo_enc':p.codigo,'tipo_save':tipo_save,'deps':deps,'centros':centros,'infoA':infoA,'infoB':infoB,'infoC':infoC,'infoD':infoD,'infoE':infoE,'infoF':infoF,'infoG':infoG,'muns':muns},context_instance=RequestContext(request))
+        return render_to_response('Encuesta.html',{'usuario':username,'id_usuario':userid,'codigo_enc':p.codigo,'tipo_save':tipo_save,'deps':deps,'centros':centros,'infoA':infoA,'infoB':infoB,'infoC':infoC,'infoD':infoD,'infoE':infoE,'infoF':infoF,'infoG':infoG,'muns':muns,'tipo':"nueva", 'range1':range(4),'range2':range(3)},context_instance=RequestContext(request))
     else:
-        HttpResponse("hola")
+        e = ET.objects.get(pk=encuesta)
+        #data = ETD.objects.filter(encuesta=e)
+    
+        data_a = ConvertToDict(ETD.objects.filter(encuesta=e,segmento = "A").values())
+        data_b = ConvertToDict(ETD.objects.filter(encuesta=e,segmento = "B",tipo_valor="seleccion").values())
+        data_b2 = ConvertToDict(ETD.objects.filter(encuesta=e,segmento = "B",tipo_valor="extra").values())
+        data_c = ConvertToDict(ETD.objects.filter(encuesta=e,segmento = "C").values())
+        data_d = ConvertToDict(ETD.objects.filter(encuesta=e,segmento = "D").values())
+        data_e = ConvertToDict(ETD.objects.filter(encuesta=e,segmento = "E").values())
+        data_f = ConvertToDict(ETD.objects.filter(encuesta=e,segmento = "F",tipo_valor="seleccion").values())
+        data_f2 = ConvertToDict(ETD.objects.filter(encuesta=e,segmento = "F",tipo_valor="extra").values())
+        data_g = ConvertToDict(ETD.objects.filter(encuesta=e,segmento = "G").values())
+        
+        data_a = data_a[0].get('codigo_item')
+        data_b = GetList(data_b,1)
+        data_b2 = GetList(data_b2,2)
+        data_c = GetList(data_c,2)
+        data_d = GetList(data_d,2) 
+        data_e = GetList(data_e,2)
+        data_f = GetList(data_f,1)
+        data_f2 = GetList(data_f2,2)
+        data_g = GetList(data_g,2)        
+        
+        data_b2 = CompleteSpaces(data_b2,4)
+        data_f2 = CompleteSpaces(data_f2,3)
+        data_d = CompleteSpaces(data_d,len(infoD))
+        data_e = CompleteSpaces(data_e,len(infoE))
+        return render_to_response('Encuesta.html',{'usuario':username,'id_usuario':userid,'codigo_enc':encuesta,'tipo_save':tipo_save,'deps':deps,'centros':centros,'infoA':infoA,'infoB':infoB,'infoC':infoC,'infoD':infoD,'infoE':infoE,'infoF':infoF,'infoG':infoG,'muns':muns,'tipo':"existente",'encuesta':e, 'da':data_a, 'db':data_b,'db2':data_b2, 'dc':data_c, 'dd':data_d, 'de':data_e, 'df':data_f, 'df2':data_f2,'dg':data_g, 'range': range(4)},context_instance=RequestContext(request))
+
+def ConvertToDict(valuesqueryset):
+    return [item for item in valuesqueryset]
+def GetList(data,tipo):
+    
+    print data
+    if tipo == 1:
+        lista = list(item.get('codigo_item') for item in data)
+    else:
+        lista = list(item.get('valor_item') for item in data)   
+    return lista
+def CompleteSpaces(data,cantidad):
+    existentes = len(data)
+    agrega = cantidad - existentes
+    rg = range(agrega)
+    
+    for n in rg:
+        data.append("")
+    
+    return data
+        

@@ -62,7 +62,7 @@
 								<table>
 									<tr><td><strong><a href="{%url url_encuesta "nueva"%}"> Nueva Encuesta </a></strong></td></tr>
 									{%for e in encuestas%}
-										<tr><td><strong><a href="{%url url_encuesta e.codigo%}"> Encuesta {{e.codigo}} , fecha {{e.fecha}} </a></strong></td></tr>
+										<tr><td><strong><a href="{%url url_encuesta e.codigo%}"> Encuesta {{e.codigo}} , fecha de creación {{e.fecha_apertura}} </a></strong></td></tr>
 									{%endfor%}
 								</table>
 							</fieldset>

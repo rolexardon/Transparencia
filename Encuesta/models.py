@@ -84,6 +84,7 @@ class SegmentoG(models.Model):
 
 class EncuestaTemp(models.Model):
     codigo = models.AutoField(primary_key=True)
+    fecha_apertura = models.DateField(null=True,blank=True)
     fecha = models.DateField(null=True,blank=True)
     codigo_usuario = models.ForeignKey(User)
     codigo_centro = models.ForeignKey(AdMod.CentroEducativo, null = True, blank = True,default = None)
@@ -99,6 +100,7 @@ class EncuestaTempData(models.Model):
                 
 class Encuesta(models.Model):
     codigo = models.AutoField(primary_key=True)
+    fecha_apertura = models.DateField()
     fecha = models.DateField()
     codigo_usuario = models.ForeignKey(User)
     codigo_centro = models.ForeignKey(AdMod.CentroEducativo)
