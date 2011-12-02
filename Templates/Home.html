@@ -15,7 +15,7 @@
 		$(document).ready(function() {
 			var rol_usuario = "{{rol_usuario}}";
 			if(rol_usuario == "Digitador"){
-				$("#tabs").tabs({ disabled: [1] });
+				$("#tabs").tabs({ disabled: [1,2] });
 			}
 			$("#tabs_principal").tabs();
 			$("#tabs").tabs().addClass('ui-tabs-vertical ui-helper-clearfix');
@@ -36,9 +36,7 @@
 
 			});
 			$("#btn_GoUsuarios").click(function(){
-				$.ajax({
-						url: "{% url url_usuarios %}",
-				});			
+	
 			});
 		});
 	</script>
@@ -71,23 +69,27 @@
 									<div id="accordion">
 										<h3><a href="#">Administración de Usuarios</a></h3>
 										<div>
-											<table>
-												<tr>
-													<td><label>Gestión Administrativa de Usuarios</label></td>
-													<td><input type="image" src="{{STATIC_URL}}resources_icons/Login-in.ico" id="btn_GoUsuarios"></td>
-												</tr>
-											</table>
+											<form method="LINK" action="{%url url_usuarios%}">
+												<table>
+													<tr>
+														<td><label>Gestión Administrativa de Usuarios</label></td>
+														<td><input type="image" src="{{STATIC_URL}}resources_icons/Login-in.ico" id="btn_GoUsuarios"></td>
+													</tr>
+												</table>
+											</form>
 										</div>
 										<h3><a href="#">Administración de Tipos de Usuarios</a></h3>
 										<div>
-											<table>
-												<tr>
-													<td><label>Gestión Administrativa de Tipos de Usuarios</label></td>
-													<td><input type="image" src="{{STATIC_URL}}resources_icons/Login-in.ico" id="btn_GoTipos"></td>
-												</tr>
-											</table>											
+											<form method="LINK" action="{%url url_tipos%}">
+												<table>
+													<tr>
+														<td><label>Gestión Administrativa de Tipos de Usuarios</label></td>
+														<td><input type="image" src="{{STATIC_URL}}resources_icons/Login-in.ico" id="btn_GoTipos"></td>
+													</tr>
+												</table>
+											</form>											
 										</div>
-										<h3><a href="#">Administración de Roles</a></h3>
+										<!--<h3><a href="#">Administración de Roles</a></h3>
 										<div>
 											<table>
 												<tr>
@@ -95,7 +97,7 @@
 													<td><input type="image" src="{{STATIC_URL}}resources_icons/Login-in.ico" id="btn_GoRoles"></td>
 												</tr>
 											</table>											
-										</div>
+										</div>-->
 										<h3><a href="#">Administración de Segmentos de Encuesta</a></h3>
 										<div>
 											<div id = "sub_accordion1">
@@ -169,15 +171,15 @@
 											<div id = "sub_accordion2">
 												<h3><a href="#">Departamentos</a></h3>
 												<div>
-													
+													Sección Inhabilitada
 												</div>
 												<h3><a href="#">Municipios</a></h3>
 												<div>
-													
+													Sección Inhabilitada
 												</div>
 												<h3><a href="#">Centros Educativos</a></h3>
 												<div>
-													
+													Sección Inhabilitada
 												</div>							
 											</div>									
 										</div>
@@ -185,7 +187,7 @@
 						</div>
 						<div id="tabs-3">
 							<div>
-								Generacion de Reportes Aqui
+								Sección Inhabilitada
 							</div>
 						</div>
 					</div>

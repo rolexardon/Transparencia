@@ -1,5 +1,6 @@
 from django import template
 from Administration.models import CentroEducativo as CE
+from datetime import datetime as dt
 
 register = template.Library()
 
@@ -10,16 +11,39 @@ def iteminlist(data,index):
 @register.filter(name='getinfocentro')
 def getinfocentro(codigo,tipo):
     
-    if tipo == "nombre":
-        nombre = CE.objects.get(pk=codigo.pk).nombre
+    if codigo != None:
+        if tipo == "nombre":
+            value = CE.objects.get(pk=codigo.pk).nombre
+        if tipo == "codigo":
+            value = CE.objects.get(pk=codigo.pk).codigo_ce
+        if tipo == "tipo":
+            value = CE.objects.get(pk=codigo.pk).tipo_centro
+    else:
+        value=""
     
-    return nombre
+    return value    
+    
+    
 @register.filter(name='getallcentros')
 def getallcentros(codigo):
     
-    dep = CE.objects.get(pk=codigo.pk).codigo_departamento
-    mun = CE.objects.get(pk=codigo.pk).codigo_municipio
+    if codigo != None:
+        dep = CE.objects.get(pk=codigo.pk).codigo_departamento
+        mun = CE.objects.get(pk=codigo.pk).codigo_municipio
     
-    centros = CE.objects.filter(codigo_departamento = dep,codigo_municipio=mun).order_by('nombre').exclude(pk=codigo.pk)
+        centros = CE.objects.filter(codigo_departamento = dep,codigo_municipio=mun).order_by('nombre')
+
+        return centros
+@register.filter(name='setval')
+def setval(value,tipo):
     
-    return centros
+    if value != None:
+        if tipo == "fecha":
+            return value
+        if tipo == "tel":
+            return value
+    else:
+        if tipo == "fecha":
+            return dt.today()
+        if tipo == "tel":
+            return ""

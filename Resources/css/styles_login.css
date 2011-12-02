@@ -1,25 +1,17 @@
 #aside
 {
 	display: table-cell; 
-	width:60%;
-	'width : 300px;
-	float:left; 
-         /*width:300px;
-	 width:40%;
-         'position:fixed;
-	 left:-45%;
-          */ 
+	float:left;
 }
 #content 
 {  
-     display: table;  
+     	display: table;  
 }
 #mainContent 
 {  
 
         display: table-cell;
 	float:right;
-	'width:35%;
 
 /*
 	'text-align:center;
@@ -75,17 +67,28 @@
 }*/
 #login
 {
-  border:3px solid silver;
+ /* border:3px solid silver;
   position:relative;
+*/
+	border: 2px solid silver;
+	width: 50%;
+	padding: 3px
 
 }
 #lg 
 {
+
+	background: silver;
+	padding: 6px;
+	font-weight: bold;
+	color : white;
+/*
   padding: 0.2em 0.5em;
   border:5px solid silver;
   'color:blue;
   font-size:90%;
   font-weight:bold;
   text-align:right;
- }
+*/
+}
 

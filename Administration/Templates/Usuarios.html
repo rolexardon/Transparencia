@@ -9,7 +9,7 @@
 {%block header%}
 	<h1>
 		<table id="tb_header">
-			<tr><td><label id="title01">Administracion de Usuarios</label></td></tr>
+			<tr><td><label id="title01">Administración de Usuarios</label></td></tr>
 		</table>
 	</h1>
 {%endblock%}
@@ -51,7 +51,7 @@
 				<legend>Usuarios Existentes</legend>
 					<ol id="selectable">
 						{%for u in usuarios%}
-							<li class="ui-widget-content" id="{{u.codigo}}">{{u.usuario}}</li>
+							<li class="ui-widget-content" id="{{u.codigo}}">{{u.first_name}} {{u.last_name}}</li>
 						{%endfor%}
 					</ol>	
 				</fieldset>

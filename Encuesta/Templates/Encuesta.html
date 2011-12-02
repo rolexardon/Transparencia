@@ -11,6 +11,7 @@
 {%block includes%}
 	<script type="text/javascript" src="{{STATIC_URL}}static_resources/jquery/jquery-1.6.2.min.js"></script>
 	<script type="text/javascript" src="{{STATIC_URL}}static_resources/jquery/jquery-ui-1.8.16.custom.min.js"></script>
+	<!--<script type="text/javascript" src="{{STATIC_URL}}static_resources/javascript/encuesta_js.js"></script>-->
 	
 	<!--<script type="text/javascript" src="{{STATIC_URL}}static_resources/jquery/jquery.js"></script>-->
 	<script type="text/javascript" src="{{STATIC_URL}}static_resources/jquery/jquery.validate.js"></script>
@@ -22,12 +23,11 @@
 {%block contenido%}
 	<script language="javascript">
 		$(document).ready(function() {
-		
 			var selectedTabIndex = null;
 			var validated = false;
 			var valorE1 = 0 ;
 			var dep=0;
-			
+			var fecha = document.getElementById('hidden_date').value;
 			$( "#tabs" ).tabs({
 			    select: function(event, ui) {
 					selectedTabIndex = ui.index;
@@ -48,26 +48,23 @@
 					return validated;
     			}
 			});
-			
-		
 			function validate_style(form,type){
 				try{
 					switch(form){
 						case "pg1":
 									if(type=="temporal"){
-										$.validator.addMethod("Numeric_tbxs", $.validator.methods.number, "Ingrese elementos numéricos");
-										$.validator.addClassRules("number_inputs", { Numeric_tbxs: true});
+										$("#hidden_tiposave").val("temporal");
 										$("#pg1").validate({
-											onsubmit: false,
 											rules: {
-												tbxD_ : {
-															number : true
-														 }
+
 											},
 											messages :{	}
 										});
+										$.validator.addMethod("Numeric_tbxs", $.validator.methods.number, "Ingrese elementos numéricos");
+										$.validator.addClassRules("number_inputs", { Numeric_tbxs: true});										
 									}
 									else {
+											$("#hidden_tiposave").val("final");
 											$("#pg1").validate({
 												onsubmit: false,
 												rules: {
@@ -81,34 +78,56 @@
 									break
 						case "pg2":
 									if(type=="temporal"){
-										$.validator.addMethod("Numeric_tbxs2", $.validator.methods.number, "Ingrese elementos numéricos");
-										$.validator.addClassRules("inputs_parteE", { Numeric_tbxs2: true});
+									    $("#hidden_tiposave2").val("temporal");
 										$("#pg2").validate({
 											onsubmit: false,
 											rules: {
-												tbxE_ : {
-															number : true
-														 }
+												tbxE_1 : {
+															max: $("#D_2").val()
+														},
+												tbxE_5 : {
+															max: $("#D_2").val()
+														},
+												tbxE_6 : {
+															max: $("#D_3").val()
+														},
+												tbxE_7 : {
+															max: Math.max($("#D_2").val(),$("#D_3").val())
+														}
 											},
-											messages :{	}				
+											messages :{	
+												tbxE_1 : {
+															max:"Asegúrese que el valor sea igual o menor que D2._"
+														 },
+												tbxE_5 : {
+															max:"Asegúrese que el valor sea igual o menor que D2._"
+														 },	
+												tbxE_6 : {
+															max:"Asegúrese que el valor sea igual o menor que D3._"
+														 },			
+												tbxE_7 : {
+															max:"Asegúrese que el valor sea igual o menor que el mayor entre D2._ y D3._"
+														 }											 
+											}				
 										});
+										$.validator.addMethod("Numeric_tbxs2", $.validator.methods.number, "Ingrese elementos numéricos");
+										$.validator.addClassRules("inputs_parteE", { Numeric_tbxs2: true});
+									}
+									else {
+										$("#hidden_tiposave2").val("final");
+									
 									}
 									break								
 					}
 				}
 				catch(err){
-					alert(err);
+					alert(err.description);
 				}
 			};
-			$("#btn_Publish").click(function(){
-				if(confirm("¿Está seguro que desea cerrar la encuesta y guardar sus datos permanentemente?")){
-					validate_style("pg1","final");
-					if($("#pg1").valid()) $("#pg1").submit();
-					validate_style("pg2","final");
-					if($("#pg2").valid()) $("#pg2").submit();		
-				}
-			});
-			$( "#datepicker" ).datepicker({ dateFormat: 'yy-mm-dd' });
+			$( "#datepicker" ).datepicker({ 
+					dateFormat: 'yy-mm-dd'
+					});
+			$("#datepicker").datepicker('setDate', fecha); 
 			$("#id_dep").change(function() {
 				dep = $(this).val();
 				$("#id_mun").empty();
@@ -169,14 +188,13 @@
 			});
 			$("#btnSave").click(function(){
 				try{
-					alert(selectedTabIndex);
+					var selectedTabIndex = $("#tabs").tabs("option", "selected");
 					if(selectedTabIndex == 0 ){
 						validate_style("pg1","temporal");
 						if($("#pg1").valid()) {
 							validate_style("pg2","temporal");
 							if($("#pg2").valid()) {
 								$("#pg1,#pg2").submit();
-								//$("#pg2").submit();
 							}
 						}
 					}
@@ -186,7 +204,6 @@
 							validate_style("pg1","temporal");
 							if($("#pg1").valid()) {
 								$("#pg2,#pg1").submit();
-								//$("#pg1").submit();
 							}
 						}
 					}
@@ -194,6 +211,34 @@
 				catch(err){
 					alert(err);
 				}				
+			});
+			$("#btn_Publish").click(function(){
+				if(confirm("¿Está seguro que desea publicar la encuesta y guardar los datos permanentemente?")){
+				try{
+					var selectedTabIndex = $("#tabs").tabs("option", "selected");
+					if(selectedTabIndex == 0 ){
+						validate_style("pg1","final");
+						if($("#pg1").valid()) {
+							validate_style("pg2","final");
+							if($("#pg2").valid()) {
+								$("#pg1,#pg2").submit();
+							}
+						}
+					}
+					else {
+						validate_style("pg2","final");
+						if($("#pg2").valid()) {
+							validate_style("pg1","final");
+							if($("#pg1").valid()) {
+								$("#pg2,#pg1").submit();
+							}
+						}
+					}
+				}
+				catch(err){
+					alert(err);
+				}
+				}
 			});
 			$("#cbxF_3").click(function(){
 				document.getElementById("cbxF_4").checked = false;
@@ -208,9 +253,6 @@
 			});
 		});
 	</script>
-	
-	
-	
 		<div id="tabs">
 			<label>Usuario: {{usuario}}</label>
 			<ul>
@@ -227,6 +269,8 @@
 			{%if tipo == "nueva"%}
 				<div id="tabs-2">
 				<form id="pg1" method='post' action={%url url_save "pg1",codigo_enc%} class="val_form">{% csrf_token %}
+					<input type="hidden" name="tipo_save" value="" id ="hidden_tiposave">
+					<input type="hidden" name="" value={{today}} id ="hidden_date">
 					<fieldset id="basico">
 						<table id="tb_basico">
 							<tr>
@@ -319,7 +363,7 @@
 						<br>
 						<table id="tb_parteB01">
 							{%for b in infoB%}
-								<tr><td>B{{B.codigo}}._<input type="checkbox" name="cbxB" value= {{b.codigo}} />{{b.descripcion}}</td></tr>
+								<tr><td>B{{b.codigo}}._<input type="checkbox" name="cbxB" value= {{b.codigo}} />{{b.descripcion}}</td></tr>
 							{%endfor%}
 						</table>
 						<br>			
@@ -368,7 +412,7 @@
 							{%for d in infoD%}
 								<tr>
 									<td><label>D{{d.codigo}}._{{d.descripcion}}</label></td>
-									<td class="right_align"><input type="number" name="tbxD_{{d.codigo}}" class="number_inputs"></td>
+									<td class="right_align"><input type="number" name="tbxD_{{d.codigo}}" id = "D_{{d.codigo}}" class="number_inputs"></td>
 									<td class="status"></td>
 								</tr>
 							{%endfor%}
@@ -378,6 +422,7 @@
 				</div>
 				<div id="tabs-3">
 				<form id="pg2" method='post' action={%url url_save "pg2",codigo_enc%} class="val_form">{% csrf_token %}
+					<input type="hidden" name="tipo_save" value="" id ="hidden_tiposave2">
 					<fieldset id="parteE">
 					<legend>E. Hallazgos e Irregularidades en LISTAS</legend>
 						<div class="instruccion">
@@ -388,7 +433,7 @@
 							{%for e in infoE%}
 								<tr>
 									<td><label>E{{e.codigo}}._{{e.descripcion}}</label></td>
-									<td class="right_align"><input type="number"  name="tbxE_{{e.codigo}}" class="inputs_parteE"></td>
+									<td class="right_align"><input type="number"  name="tbxE_{{e.codigo}}" id = "tbxE_{{e.codigo}}"  class="inputs_parteE"></td>
 								</tr>
 							{%endfor%}
 						</table>
@@ -454,6 +499,8 @@
 			{%load customfilters%}
 				<div id="tabs-2">
 				<form id="pg1" method='post' action={%url url_save "pg1",codigo_enc%} class="val_form">{% csrf_token %}
+					<input type="hidden" name="tipo_save" value="" id ="hidden_tiposave">
+					<input type="hidden" name="" value={{encuesta.fecha|setval:"fecha"}} id ="hidden_date">
 					<fieldset id="basico">
 						<table id="tb_basico">
 							<tr>
@@ -462,7 +509,7 @@
 							</tr>
 							<tr>
 								<td><label class="lbl_basico">Fecha:</label></td>
-								<td><input id="datepicker" type="text" name="tbx_fecha" value="{{encuesta.fecha}}"></td>
+								<td><input id="datepicker" type="text" name="tbx_fecha" value=""></td>
 							</tr>
 						</table>
 					</fieldset>
@@ -492,21 +539,21 @@
 								<td><label class="lbl_centro">Centro Educativo:</label></td>
 								<td class="right_align"><select name="cbx_centros" id="id_centros">
 									{%for item in encuesta.codigo_centro|getallcentros%}
-										{%if item == encuesta.codigo_centro|getinfocentro:"nombre"%}
-											<option selected="selected"> {{item.nombre}} </option>
+										{%if item.nombre == encuesta.codigo_centro|getinfocentro:"nombre"%}
+											<option value={{item.pk}} selected="selected"> {{item}} </option>
 										{%else%}
-											<option> {{item.nombre}} </option>
+											<option value={{item.pk}}> {{item}} </option>
 										{%endif%}
 									{%endfor%}
 								</select></td>								
 							</tr>
 							<tr>
 								<td><label class="lbl_centro">Código Centro:</label></td>
-								<td class="right_align"><input type="text" name="tbx_idcentro" id="id_codigocentro" disabled = "disabled"></ td>
+								<td class="right_align"><input type="text" name="tbx_idcentro" id="id_codigocentro" disabled = "disabled" value={{encuesta.codigo_centro|getinfocentro:"codigo"}}></ td>
 							</tr>
 							<tr>
 								<td><label class="lbl_centro">Tipo de Centro:</label></td>
-								<td class="right_align"><input type="text" name="tbx_tipocentro" id="id_tipocentro" disabled = "disabled"></td>
+								<td class="right_align"><input type="text" name="tbx_tipocentro" id="id_tipocentro" disabled = "disabled" value={{encuesta.codigo_centro|getinfocentro:"tipo"}}></td>
 							</tr>
 							<tr>
 								<td><label class="lbl_centro">Zona:</label></td>
@@ -518,7 +565,7 @@
 							</tr>
 							<tr>
 								<td><label class="lbl_centro">Contacto Telefónico:</label></td>
-								<td class="right_align"><input type="text" name="tbx_tel1" id="id_tel1" class ="number_inputs" value="{{encuesta.tel}}"></td>
+								<td class="right_align"><input type="text" name="tbx_tel1" id="id_tel1" class ="number_inputs" value={{encuesta.tel|setval:"tel"}}></td>
 							</tr>
 						</table>
 					</fieldset>
@@ -534,7 +581,7 @@
 								<td><label class="lbl_A">Instalación y Ubicación:</label></td>
 								<td class="right_align"><select name="cbx_parteA" id="valueA">
 										{%for a in infoA%}
-											{%if a.codigo == da%}
+											{%if a.codigo == da.0%}
 												<option selected="selected"> {{a.descripcion}} </option>
 											{%else%}
 												<option> {{a.descripcion}} </option>
@@ -612,7 +659,7 @@
 							{%for d in infoD%}
 								<tr>
 									<td><label>D{{d.codigo}}._{{d.descripcion}}</label></td>
-									<td class="right_align"><input type="number" name="tbxD_{{d.codigo}}" class="number_inputs" value= {{dd|iteminlist:forloop.counter0}}></td>
+									<td class="right_align"><input type="number" name="tbxD_{{d.codigo}}" id = "D_{{d.codigo}}" class="number_inputs" value= {{dd|iteminlist:forloop.counter0}}></td>
 									<td class="status"></td>
 								</tr>
 							{%endfor%}
@@ -622,6 +669,7 @@
 				</div>
 				<div id="tabs-3">
 				<form id="pg2" method='post' action={%url url_save "pg2",codigo_enc%} class="val_form">{% csrf_token %}
+					<input type="hidden" name="tipo_save" value="" id ="hidden_tiposave2">
 					<fieldset id="parteE">
 					<legend>E. Hallazgos e Irregularidades en LISTAS</legend>
 						<div class="instruccion">
@@ -713,6 +761,12 @@
 										<option> Bueno</option>
 										<option> Regular</option>
 										<option selected = "selected"> Malo</option>
+									{%else%}
+										<option> Excelente</option>
+										<option> Muy Bueno</option>
+										<option> Bueno</option>
+										<option> Regular</option>
+										<option> Malo</option>
 									{%endif%}
 									</select></br>
 								</td>

@@ -7,10 +7,12 @@ from django.contrib.auth.models import User
 
 # Create your views here.
 def view_usuarios(request):
-
+    
     form = UF()
     form2 = PUF()
-    usuarios = US.BringAll()
+    #usuarios = US.BringAll()
+    usuarios = User.objects.all()
+    print usuarios
     return render_to_response('Usuarios.html', {'form': form,'form2':form2,'usuarios':usuarios},context_instance=RequestContext(request))
     
 def view_tipos(request):

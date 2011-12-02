@@ -11,7 +11,7 @@ from Encuesta.models import SegmentoD as SD
 from Encuesta.models import SegmentoE as SE
 from Encuesta.models import SegmentoF as SF
 from Encuesta.models import SegmentoG as SG
-from Encuesta.models import Encuesta 
+from Encuesta.models import Encuesta as E
 from Encuesta.models import EncuestaData as ED
 from Encuesta.models import EncuestaTemp as ET
 from Encuesta.models import EncuestaTempData as ETD
@@ -20,14 +20,10 @@ from Administration.models import CentroEducativo as CE
 from Administration.models import Departamento as DP
 from Administration.models import Municipio as MN
 
-tipo_save  = "temporal"
-id_encuestafinal = 0
+from Transparencia.views import PrepareContent
 
-def view_tiposave(request):
-    if request.is_ajax():
-        if request.method == 'POST':
-            tipo_save = request.POST['ts']
-    return
+tipo_save  = ""
+id_encuestafinal = 0
 
 def view_bringmunicipio(request):
     
@@ -35,13 +31,11 @@ def view_bringmunicipio(request):
         if request.GET['data'] == 'muns':
             try:
                 muns = MN.FilterByDep(request.GET['iddep'])
-                #muns = MN.objects.filter(departamento = request.GET['iddep'])
-                #print muns
                 data = [{'pk':m.codigo,'descripcion':m.nombre} for m in muns]
                 return HttpResponse(simplejson.dumps(data), mimetype="application/json")
             except Exception,e:
                 print e
-                return HttpResponse('MAL')
+                return HttpResponse('Error')
             else:
                 return HttpResponse(simplejson.dumps(data), mimetype="application/json")
             
@@ -58,7 +52,7 @@ def view_bringcentros(request):
                 return HttpResponse(simplejson.dumps(data), mimetype="application/json")
             except Exception,e:
                 print e
-                return HttpResponse('MAL')
+                return HttpResponse('Error')
             else:
                 return HttpResponse(simplejson.dumps(data), mimetype="application/json")
             
@@ -75,71 +69,75 @@ def view_bringcentroinfo(request):
                 return HttpResponse(simplejson.dumps(resp), mimetype="application/json")
             except Exception,e:
                 print e
-                return HttpResponse('MAL')
+                return HttpResponse('Error')
             else:
                 return HttpResponse(simplejson.dumps(resp), mimetype="application/json")
             
             
 def view_save(request,pg,encuesta_id):
     if pg == "pg1":
+        tipo_save = request.POST['tipo_save']
         if tipo_save == "temporal":
             encuesta = ET.objects.get(pk=encuesta_id)
             SaveBasic(request,encuesta_id)
             ETD.objects.filter(encuesta= encuesta_id).delete()
         else:
             encuesta = SaveBasic(request,-1)
-                    
+            
         infoC=SC.BringAll()
         infoD=SD.BringAll()
-        
         SavePartA(request.POST['cbx_parteA'],tipo_save,encuesta)
         SavePartB(request,tipo_save,encuesta)
         SavePartC(request,infoC,tipo_save,encuesta)
         SavePartD(request,infoD,tipo_save,encuesta)
 
     else :
+        tipo_save = request.POST['tipo_save']
         if tipo_save == "temporal":
             encuesta = ET.objects.get(pk=encuesta_id)
         else:
-            p = Encuesta.objects.latest('codigo')
-            encuesta = Encuesta.objects.get(pk= p.codigo)
+            p = E.objects.latest('codigo')
+            encuesta = E.objects.get(pk= p.codigo)
             
         infoE= SE.BringAll()
         infoG= SG.BringAll()
-        
         SavePartE(request,infoE,tipo_save,encuesta)
         SavePartF(request,tipo_save,encuesta)
         SavePartG(request,infoG,tipo_save,encuesta)
         
-    return HttpResponse('Encuesta temp guardada')
-    
+    borrar_temporal(encuesta_id,request.POST['tipo_save'])    
+    return PrepareContent(request.user,request)
 
 def SaveBasic(datos,codigo_tabla):
-
-    if codigo_tabla != -1 :
-        p = ET.objects.filter(codigo = codigo_tabla)
-        if 'tbx_fecha' in datos.POST:
-            fecha=datos.POST['tbx_fecha']
-            if fecha != "":
-                p.update(fecha=fecha)
-        if 'cbx_centros' in datos.POST:
-            centro=datos.POST['cbx_centros']
-            p.update(codigo_centro = centro)
-        if 'tbx_tel1' in datos.POST:
+    try:
+        if codigo_tabla != -1 :
+            p = ET.objects.filter(codigo = codigo_tabla)
+            if 'tbx_fecha' in datos.POST:
+                fecha=datos.POST['tbx_fecha']
+                if fecha != "":
+                    p.update(fecha=fecha)
+            if 'cbx_centros' in datos.POST:
+                centro=datos.POST['cbx_centros']
+                p.update(codigo_centro = centro)
+            if 'tbx_tel1' in datos.POST:
+                t1=datos.POST['tbx_tel1']
+                if t1 != "":
+                    p.update(tel=t1)
+                else :
+                    p.update(tel=None)
+            zona = datos.POST['cbx_zonacentro']
+            p.update(zona=zona)
+        else :
+            centro = CE.objects.get(pk=datos.POST['cbx_centros'])
+            fecha = datos.POST['tbx_fecha']
+            zona = datos.POST['cbx_zonacentro']
             t1=datos.POST['tbx_tel1']
-            if t1 != "":
-                p.update(tel=t1)
-        zona = datos.POST['cbx_zonacentro']
-        p.update(zona=zona)
-        return 0
-    else :
-        centro = CE.objects.get(pk=datos.POST['cbx_centros'])
-        fecha = datos.POST['tbx_fecha']
-        zona = datos.POST['cbx_zonacentro']
-        t1=datos.POST['tbx_tel1']
-        row=Encuesta(codigo_usuario = datos.user,fecha=fecha,codigo_centro = centro,zona=zona,tel=t1)
-        row.save()
-        return row        
+            
+            row=E(codigo_usuario = datos.user,fecha=fecha,codigo_centro = centro,zona=zona,tel=t1,fecha_apertura = dt.today())
+            row.save()
+            return row   
+    except Exception as inst:     
+        print inst
 
 def SavePartA(item,tipo_guardar,encuesta):
     
@@ -149,7 +147,6 @@ def SavePartA(item,tipo_guardar,encuesta):
     else:
         row=ED(encuesta = encuesta,segmento="A",codigo_item=obj02.codigo,tipo_valor="texto",valor_item = item)
     row.save()
-    print " salvo a"
 
 def SavePartB(datos,tipo_guardar,encuesta):
     
@@ -162,24 +159,20 @@ def SavePartB(datos,tipo_guardar,encuesta):
             obj = SB.objects.get(pk=l)
             row=ETD(encuesta = encuesta,segmento="B",codigo_item=l,tipo_valor="seleccion",valor_item = obj.descripcion)
             row.save()
-            print " salvo b"
         for l2 in lista2:
             if l2 != "":
                 row=ETD(encuesta = encuesta,segmento="B",codigo_item=-1,tipo_valor="extra",valor_item = l2)
                 row.save()
-                print " salvo b"
     else:
 
         for l in lista:
             obj = SB.objects.get(pk=l)
             row=ED(encuesta = encuesta,segmento="B",codigo_item=l,tipo_valor="seleccion",valor_item = obj.descripcion)
             row.save()
-            print " salvo b"
         for l2 in lista2:
             if l2 != "":
                 row=ED(encuesta = encuesta,segmento="B",codigo_item=-1,tipo_valor="extra",valor_item = l2)
-                row.save()
-                print " salvo b"        
+                row.save()       
         
     
 def SavePartC(datos,items,tipo_guardar,encuesta):
@@ -190,14 +183,12 @@ def SavePartC(datos,items,tipo_guardar,encuesta):
             obj = datos.POST[string]
             row=ETD(encuesta = encuesta,segmento="C",codigo_item=i.codigo,tipo_valor="opcion",valor_item = obj)
             row.save()
-            print " salvo c"
     else:
         for i in items:
             string = "selC_" + str(i.codigo)
             obj = datos.POST[string]
             row=ED(encuesta = encuesta,segmento="C",codigo_item=i.codigo,tipo_valor="opcion",valor_item = obj)
-            row.save()       
-            print " salvo c"
+            row.save()
     
 def SavePartD(datos,items,tipo_guardar,encuesta):
 
@@ -208,7 +199,6 @@ def SavePartD(datos,items,tipo_guardar,encuesta):
             if obj != "":
                 row = ETD(encuesta=encuesta,segmento="D",codigo_item=i.codigo,tipo_valor="numerico",valor_item=obj)
                 row.save()
-                print " salvo d"
     else:
         for i in items:
             string = "tbxD_" + str(i.codigo)
@@ -216,7 +206,6 @@ def SavePartD(datos,items,tipo_guardar,encuesta):
             if obj != "":
                 row = ED(encuesta=encuesta,segmento="D",codigo_item=i.codigo,tipo_valor="numerico",valor_item=obj)
                 row.save()        
-                print " salvo d"
         
 def SavePartE(datos,items,tipo_guardar,encuesta):
     
@@ -227,7 +216,6 @@ def SavePartE(datos,items,tipo_guardar,encuesta):
             if obj != "":
                 row = ETD(encuesta=encuesta,segmento="E",codigo_item=i.codigo,tipo_valor="numerico",valor_item=obj)
                 row.save()
-                print " salvo e"
     else:
         for i in items:
             string = "tbxE_" + str(i.codigo)
@@ -235,7 +223,6 @@ def SavePartE(datos,items,tipo_guardar,encuesta):
             if obj != "":
                 row = ED(encuesta=encuesta,segmento="E",codigo_item=i.codigo,tipo_valor="numerico",valor_item=obj)
                 row.save()
-                print " salvo e"
             
 def SavePartF(datos,tipo_guardar,encuesta):
     
@@ -247,25 +234,21 @@ def SavePartF(datos,tipo_guardar,encuesta):
             obj = SF.objects.get(pk=l)
             row=ETD(encuesta = encuesta,segmento="F",codigo_item=l,tipo_valor="seleccion",valor_item = obj.descripcion)
             row.save()
-            print " salvo f"
 
         for l2 in lista2:
             if l2 != "":
                 row=ETD(encuesta = encuesta,segmento="F",codigo_item=-1,tipo_valor="extra",valor_item = l2)
                 row.save()
-                print " salvo f"
     else:
         for l in lista:
             obj = SF.objects.get(pk=l)
             row=ED(encuesta = encuesta,segmento="F",codigo_item=l,tipo_valor="seleccion",valor_item = obj.descripcion)
             row.save()
-            print " salvo f"
 
         for l2 in lista2:
             if l2 != "":
                 row=ED(encuesta = encuesta,segmento="F",codigo_item=-1,tipo_valor="extra",valor_item = l2)
                 row.save()
-                print " salvo f"
         
 def SavePartG(datos,items,tipo_guardar,encuesta):
     
@@ -275,15 +258,21 @@ def SavePartG(datos,items,tipo_guardar,encuesta):
             obj = datos.POST[string]
             row=ETD(encuesta = encuesta,segmento="G",codigo_item=i.codigo,tipo_valor="opcion",valor_item = obj)
             row.save()
-            print " salvo g"
     else:
         for i in items:
             string = "selG_" + str(i.codigo)
             obj = datos.POST[string]
             row=ED(encuesta = encuesta,segmento="G",codigo_item=i.codigo,tipo_valor="opcion",valor_item = obj)
-            row.save()        
-            print " salvo g"
+            row.save()
                    
+def borrar_temporal(encuesta, borrar):
+    if borrar == "final":
+        enc = ET.objects.filter(pk=encuesta)
+        enc.delete()
+    
+        enc_data = ETD.objects.filter(encuesta = encuesta)
+        enc_data.delete()
+    
 def view_encuesta(request,encuesta):
     
     usuario = request.user
@@ -305,8 +294,9 @@ def view_encuesta(request,encuesta):
     if encuesta == "nueva":
         p = ET(codigo_usuario=request.user,fecha_apertura = dt.today())
         p.save()
+        today = dt.today()
         
-        return render_to_response('Encuesta.html',{'usuario':username,'id_usuario':userid,'codigo_enc':p.codigo,'tipo_save':tipo_save,'deps':deps,'centros':centros,'infoA':infoA,'infoB':infoB,'infoC':infoC,'infoD':infoD,'infoE':infoE,'infoF':infoF,'infoG':infoG,'muns':muns,'tipo':"nueva", 'range1':range(4),'range2':range(3)},context_instance=RequestContext(request))
+        return render_to_response('Encuesta.html',{'usuario':username,'id_usuario':userid,'codigo_enc':p.codigo,'tipo_save':tipo_save,'deps':deps,'centros':centros,'infoA':infoA,'infoB':infoB,'infoC':infoC,'infoD':infoD,'infoE':infoE,'infoF':infoF,'infoG':infoG,'muns':muns,'tipo':"nueva", 'range1':range(4),'range2':range(3),'today':today},context_instance=RequestContext(request))
     else:
         e = ET.objects.get(pk=encuesta)
         #data = ETD.objects.filter(encuesta=e)
@@ -321,7 +311,8 @@ def view_encuesta(request,encuesta):
         data_f2 = ConvertToDict(ETD.objects.filter(encuesta=e,segmento = "F",tipo_valor="extra").values())
         data_g = ConvertToDict(ETD.objects.filter(encuesta=e,segmento = "G").values())
         
-        data_a = data_a[0].get('codigo_item')
+        #data_a = data_a[0].get('codigo_item')
+        data_a = GetList(data_a,1)
         data_b = GetList(data_b,1)
         data_b2 = GetList(data_b2,2)
         data_c = GetList(data_c,2)
@@ -340,14 +331,13 @@ def view_encuesta(request,encuesta):
 def ConvertToDict(valuesqueryset):
     return [item for item in valuesqueryset]
 def GetList(data,tipo):
-    
-    print data
     if tipo == 1:
         lista = list(item.get('codigo_item') for item in data)
     else:
         lista = list(item.get('valor_item') for item in data)   
     return lista
 def CompleteSpaces(data,cantidad):
+    
     existentes = len(data)
     agrega = cantidad - existentes
     rg = range(agrega)
