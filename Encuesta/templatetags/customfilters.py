@@ -6,8 +6,11 @@ register = template.Library()
 
 @register.filter(name='iteminlist')
 def iteminlist(data,index):
-
-    return data[index]
+    
+    value = data[index]
+    if value == "":
+        value = 0
+    return value
 @register.filter(name='getinfocentro')
 def getinfocentro(codigo,tipo):
     

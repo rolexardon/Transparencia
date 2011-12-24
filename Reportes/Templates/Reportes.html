@@ -1,10 +1,73 @@
-{%extends Main.html%}
+{%extends 'Main.html'%}
 {%block header%}
 
 {%endblock%}
 {%block includes%}
-
+	<script type="text/javascript" src="{{STATIC_URL}}static_resources/jquery/jquery-1.6.2.min.js"></script>
+	<script type="text/javascript" src="{{STATIC_URL}}static_resources/jquery/jquery-ui-1.8.16.custom.min.js"></script>
+	
+	<link rel="stylesheet" type="text/css" href="{{STATIC_URL}}resources_css/jquery-ui-1.8.16.custom.css" />
+	<link rel="stylesheet" type="text/css" href="{{STATIC_URL}}resources_css/styles_login.css" />
 {%endblock%}
 {%block contenido%}
+	<script>
+		$(document).ready(function() {	
+			$("#tabs").tabs();
+		});
+	</script>
+	{%load customfilters_reportes%}
+	<div id="tabs">
+		<ul>
+			<li><a href="#tabs-1">Generación de Reportes</a></li>
+			<li><a href="#tabs-2">Resultado de Reporte</a></li>
+		</ul>
+		<div id="tabs-1">
+			<fieldset>
+			<legend>Filtros de Reporte</legend>
+				<form>
+					<fieldset>
+					<legend>Filtro por Usuarios</legend>
+						<table>
+							<tr>
+								<td><label>Tipo de Usuario:</label></td>
+								<td><select>
+										<option>Todos</option>
+										{%for t in tipos%}
+											<option>{{t.descripcion}}</option>
+										{%endfor%}
+									</select>
+								</td>
+							</tr>
+							<tr>
+								<td><label>Usuario:</label></td>
+								<td><select>
+										<option>Todos</option>
+										{%for u in usuarios%}
+											<option>{{u|getfullname}}</option>
+										{%endfor%}
+									</select>
+								</td>
+							</tr>
+						</table>
+					</fieldset>
+					<fieldset>
+					<legend>Filtro Geográfico</legend>
 
+					</fieldset>
+					<fieldset>
+					<legend>Filtro por Segmentos de Encuesta</legend>
+					
+					</fieldset>
+				</form>
+			</fieldset>
+		</div>
+		<div id="tabs-2">
+			<label>Resultado de Reporte</label>
+			<div>
+				<table>
+				
+				</table>
+			</div>
+		</div>
+	</div>
 {%endblock%}

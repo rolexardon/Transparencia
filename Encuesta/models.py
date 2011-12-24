@@ -12,8 +12,10 @@ class SegmentoA(models.Model):
     def BringAll(SegmentoA):
         return SegmentoA.objects.all().order_by('codigo')
         
+ #   def __unicode__(self):
+ #       return self.BringAll
     def __unicode__(self):
-        return self.BringAll
+        return self.descripcion
     
 class SegmentoB(models.Model):
     codigo = models.AutoField(primary_key=True)
@@ -23,8 +25,10 @@ class SegmentoB(models.Model):
     def BringAll(SegmentoB):
         return SegmentoB.objects.all().order_by('codigo')
         
+ #   def __unicode__(self):
+ #       return self.BringAll
     def __unicode__(self):
-        return self.BringAll
+        return self.descripcion
 
 class SegmentoC(models.Model):
     codigo = models.AutoField(primary_key=True)
@@ -34,8 +38,10 @@ class SegmentoC(models.Model):
     def BringAll(SegmentoC):
         return SegmentoC.objects.all().order_by('codigo')
         
+ #   def __unicode__(self):
+ #       return self.BringAll
     def __unicode__(self):
-        return self.BringAll
+        return self.descripcion
 
 class SegmentoD(models.Model):
     codigo = models.AutoField(primary_key=True)
@@ -45,8 +51,10 @@ class SegmentoD(models.Model):
     def BringAll(SegmentoD):
         return SegmentoD.objects.all().order_by('codigo')
         
+ #   def __unicode__(self):
+ #       return self.BringAll
     def __unicode__(self):
-        return self.BringAll
+        return self.descripcion
         
 class SegmentoE(models.Model):
     codigo = models.AutoField(primary_key=True)
@@ -56,8 +64,10 @@ class SegmentoE(models.Model):
     def BringAll(SegmentoE):
         return SegmentoE.objects.all().order_by('codigo')
         
+ #   def __unicode__(self):
+ #       return self.BringAll
     def __unicode__(self):
-        return self.BringAll
+        return self.descripcion
     
 class SegmentoF(models.Model):
     codigo = models.AutoField(primary_key=True)
@@ -67,8 +77,10 @@ class SegmentoF(models.Model):
     def BringAll(SegmentoF):
         return SegmentoF.objects.all().order_by('codigo')
         
+ #   def __unicode__(self):
+ #       return self.BringAll
     def __unicode__(self):
-        return self.BringAll
+        return self.descripcion
 
 class SegmentoG(models.Model):
     codigo = models.AutoField(primary_key=True)
@@ -78,8 +90,10 @@ class SegmentoG(models.Model):
     def BringAll(SegmentoG):
         return SegmentoG.objects.all().order_by('codigo')
         
+ #   def __unicode__(self):
+ #       return self.BringAll
     def __unicode__(self):
-        return self.BringAll
+        return self.descripcion
     
 
 class EncuestaTemp(models.Model):

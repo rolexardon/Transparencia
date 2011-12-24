@@ -6,6 +6,7 @@ from django.contrib.auth import authenticate, login
 from Administration.models import TipoUsuario as TU
 from Administration.models import Rol as RU
 from Encuesta.models import EncuestaTemp as ET
+from Encuesta.models import Encuesta as E
 
 def view_home(request):
     
@@ -13,7 +14,8 @@ def view_home(request):
     if state:
         return redirect('url_home')
     else:
-        return render_to_response('Login.html',context_instance=RequestContext(request))
+        #return render_to_response('Login.html',context_instance=RequestContext(request))
+        return render_to_response('admin/login.html',context_instance=RequestContext(request))
         #return redirect('url_autenticar')
     #return HttpResponseRedirect('transparencia/home/autenticar')
     #return render_to_response('Login.html',context_instance=RequestContext(request))
@@ -22,13 +24,21 @@ def view_home(request):
 def view_autenticar(request):
     
     if request.method=='POST':
-        un = request.POST['user_tbx']
-        pd = request.POST['pass_tbx']
+        #un = request.POST['user_tbx']
+        #pd = request.POST['pass_tbx']
+        un = request.POST['username']
+        pd = request.POST['password']
+        #un = self.cleaned_data.get('username')
+        #pd = self.cleaned_data.get('password')
         user = authenticate(username = un,password = pd)
         if user is not None:
-            if user.is_active:
-                login(request, user)
-                return PrepareContent(user,request)
+            try:
+                if user.is_active:
+                    login(request, user)
+                    return PrepareContent(user,request)
+            except :
+                
+                return redirect('/admin/')
         else :
             return HttpResponse("usuario no existe")
     #return render_to_response('Login.html',context_instance=RequestContext(request))
@@ -40,7 +50,25 @@ def PrepareContent(user,request):
     id_usuario = user.id
     rol_usuario = RU.objects.get(codigo = user.get_profile().rol.codigo)
     encuestas_pendientes = ET.objects.filter(codigo_usuario = user)
+    encuestas_publicadas = E.objects.filter(codigo_usuario=user)
+    
+    try:
+        tipo = request.POST['tipo_save']
+    except:
+        tipo = ""
+        
 
-    return render_to_response('Home.html',{'usuario':usuario,'rol_usuario':rol_usuario.nombre,'encuestas':encuestas_pendientes},context_instance=RequestContext(request))
+    return render_to_response('Home.html',{'usuario':usuario,'rol_usuario':rol_usuario.nombre,'encuestas':encuestas_pendientes,'publicadas':encuestas_publicadas,'mssg':tipo},context_instance=RequestContext(request))
     
+def view_adminusuarios(request):
+
+    return redirect('/admin/Administration/usuario/')
+def view_adminsegmentos(request):
     
+    return redirect('/admin/Encuesta/')
+def view_adminencuestas(request):
+
+    return redirect('/admin/Administration/usuario/')
+#def view_adminreportes(request):
+
+   # return redirect('/admin/Administration/usuario/')

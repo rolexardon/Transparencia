@@ -123,7 +123,10 @@ class Usuario(models.Model):
     #activo = models.BooleanField(default = True)
     user = models.ForeignKey(User, unique=True)
 
+    
     @classmethod
     def BringAll(Usuario):
         return Usuario.objects.all()
+       
+
 # Create your models here.

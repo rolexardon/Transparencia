@@ -5,39 +5,66 @@
 {%block includes%}
 	<script type="text/javascript" src="{{STATIC_URL}}static_resources/jquery/jquery-1.6.2.min.js"></script>
 	<script type="text/javascript" src="{{STATIC_URL}}static_resources/jquery/jquery-ui-1.8.16.custom.min.js"></script>
+	<script type="text/javascript" src="{{STATIC_URL}}static_resources/jquery/fancybox/jquery.fancybox-1.3.4.pack.js"></script>
 	
 	<link rel="stylesheet" type="text/css" href="{{STATIC_URL}}resources_css/jquery-ui-1.8.16.custom.css" />
-	<link rel="stylesheet" type="text/css" href="{{STATIC_URL}}resources_css/styles_main.css" />
+	<link rel="stylesheet" type="text/css" href="{{STATIC_URL}}resources_css/styles_home.css" />
+	<link rel="stylesheet" type="text/css" href="{{STATIC_URL}}resources_css/fancybox/jquery.fancybox-1.3.4.css" />
 {%endblock%}
 {%block contenido%}
-<meta charset="utf-8">
+	<meta charset="utf-8">
 	<script>
 		$(document).ready(function() {
+			var mssg = "{{mssg}}";
+			var action;
+			if(mssg == "temporal"){
+				showMessage("Encuesta temporal guardada!");
+			}
+			if(mssg == "final"){
+				showMessage("Encuesta publicada!");
+			}
 			var rol_usuario = "{{rol_usuario}}";
 			if(rol_usuario == "Digitador"){
-				$("#tabs").tabs({ disabled: [1,2] });
+				$("#tabs").tabs({ disabled: [1] });
 			}
 			$("#tabs_principal").tabs();
 			$("#tabs").tabs().addClass('ui-tabs-vertical ui-helper-clearfix');
 			$("#tabs li").removeClass('ui-corner-top').addClass('ui-corner-left');
-			$( "#accordion" ).accordion({
-				autoHeight: false,
-				navigation: true
+			$( "#selectable" ).selectable({
+				stop: function() {
+					$( ".ui-selected", this ).each(function() {
+						action = $( "#selectable li" ).index( this );
+					});
+				}
+			});
+			$("#select_action").click(function(){
+				switch(action){
+					case 0:
+						location.href = '{%url url_adminusuarios%}'; 
+					break;
+					case 1:
+						location.href = '{%url url_adminsegmentos%}'; 
+					break;
+					case 2:
+						location.href = '{%url url_adminencuestas%}'; 
+					creak;
+					case 3:
+						location.href = '{%url url_reporte%}'; 
+					break;
+					
+				}
+			});
+			
+			function showMessage(message){
+			 
+				var content = $("<div>" + message + "<br /><br /></div>");
+    			var button = $("<input type='button' value='Ok' />");
+    			content.append(button);
 
-			});
-			$( "#sub_accordion1" ).accordion({
-				autoHeight: false,
-				navigation: true
-
-			});
-			$( "#sub_accordion2" ).accordion({
-				autoHeight: false,
-				navigation: true
-
-			});
-			$("#btn_GoUsuarios").click(function(){
-	
-			});
+    			$.fancybox({ content: content});
+    			$(button).click(function () { $.fancybox.close(); });
+			
+			};
 		});
 	</script>
 	<div id="tabs_principal">
@@ -46,13 +73,10 @@
 			<li><a href="#tabs1">Home</a></li>
 		</ul>
 		<div id="tabs1">
-			<div id="content">
-				<section id='menu'>
 					<div id="tabs">
 						<ul>
 							<li><a href="#tabs-1">Encuestas</a></li>
 							<li><a href="#tabs-2">Administración</a></li>
-							<li><a href="#tabs-3">Reportes</a></li>		
 						</ul>
 						<div id="tabs-1">
 							<fieldset>
@@ -64,139 +88,28 @@
 									{%endfor%}
 								</table>
 							</fieldset>
+							<fieldset>
+							<legend>Encuestas Publicadas</legend>
+								<table>
+									{%for p in publicadas%}
+										<tr><td><strong><a href=""> Encuesta {{p.codigo}} , fecha de creación {{p.fecha_apertura}} </a></strong></td></tr>
+									{%endfor%}
+								</table>
+							</fieldset>
 						</div>
 						<div id="tabs-2">
-									<div id="accordion">
-										<h3><a href="#">Administración de Usuarios</a></h3>
-										<div>
-											<form method="LINK" action="{%url url_usuarios%}">
-												<table>
-													<tr>
-														<td><label>Gestión Administrativa de Usuarios</label></td>
-														<td><input type="image" src="{{STATIC_URL}}resources_icons/Login-in.ico" id="btn_GoUsuarios"></td>
-													</tr>
-												</table>
-											</form>
-										</div>
-										<h3><a href="#">Administración de Tipos de Usuarios</a></h3>
-										<div>
-											<form method="LINK" action="{%url url_tipos%}">
-												<table>
-													<tr>
-														<td><label>Gestión Administrativa de Tipos de Usuarios</label></td>
-														<td><input type="image" src="{{STATIC_URL}}resources_icons/Login-in.ico" id="btn_GoTipos"></td>
-													</tr>
-												</table>
-											</form>											
-										</div>
-										<!--<h3><a href="#">Administración de Roles</a></h3>
-										<div>
-											<table>
-												<tr>
-													<td><label>Gestión Administrativa de Roles de Usuarios</label></td>
-													<td><input type="image" src="{{STATIC_URL}}resources_icons/Login-in.ico" id="btn_GoRoles"></td>
-												</tr>
-											</table>											
-										</div>-->
-										<h3><a href="#">Administración de Segmentos de Encuesta</a></h3>
-										<div>
-											<div id = "sub_accordion1">
-												<h3><a href="#">Segmento A</a></h3>
-												<div>
-													<table>
-														<tr>
-															<td><label>Gestión Administrativa Segmento A de Encuesta</label></td>
-															<td><input type="image" src="{{STATIC_URL}}resources_icons/Login-in.ico" id="btn_GoSegA"></td>
-														</tr>
-													</table>														
-												</div>
-												<h3><a href="#">Segmento B</a></h3>
-												<div>
-													<table>
-														<tr>
-															<td><label>Gestión Administrativa Segmento B de Encuesta</label></td>
-															<td><input type="image" src="{{STATIC_URL}}resources_icons/Login-in.ico" id="btn_GoSegB"></td>
-														</tr>
-													</table>													
-												</div>
-												<h3><a href="#">Segmento C</a></h3>
-												<div>
-													<table>
-														<tr>
-															<td><label>Gestión Administrativa Segmento C de Encuesta</label></td>
-															<td><input type="image" src="{{STATIC_URL}}resources_icons/Login-in.ico" id="btn_GoSegC"></td>
-														</tr>
-													</table>													
-												</div>
-												<h3><a href="#">Segmento D</a></h3>
-												<div>
-													<table>
-														<tr>
-															<td><label>Gestión Administrativa Segmento D de Encuesta</label></td>
-															<td><input type="image" src="{{STATIC_URL}}resources_icons/Login-in.ico" id="btn_GoSegD"></td>
-														</tr>
-													</table>													
-												</div>
-												<h3><a href="#">Segmento E</a></h3>
-												<div>
-													<table>
-														<tr>
-															<td><label>Gestión Administrativa Segmento E de Encuesta</label></td>
-															<td><input type="image" src="{{STATIC_URL}}resources_icons/Login-in.ico" id="btn_GoSegE"></td>
-														</tr>
-													</table>													
-												</div>
-												<h3><a href="#">Segmento F</a></h3>
-												<div>
-													<table>
-														<tr>
-															<td><label>Gestión Administrativa Segmento F de Encuesta</label></td>
-															<td><input type="image" src="{{STATIC_URL}}resources_icons/Login-in.ico" id="btn_GoSegF"></td>
-														</tr>
-													</table>													
-												</div>
-												<h3><a href="#">Segmento G</a></h3>
-												<div>
-													<table>
-														<tr>
-															<td><label>Gestión Administrativa Segmento G de Encuesta</label></td>
-															<td><input type="image" src="{{STATIC_URL}}resources_icons/Login-in.ico" id="btn_GoSegG"></td>
-														</tr>
-													</table>													
-												</div>									
-											</div>
-										</div>
-										<h3><a href="#">Visualización de Datos Geográficos</a></h3>
-										<div>
-											<div id = "sub_accordion2">
-												<h3><a href="#">Departamentos</a></h3>
-												<div>
-													Sección Inhabilitada
-												</div>
-												<h3><a href="#">Municipios</a></h3>
-												<div>
-													Sección Inhabilitada
-												</div>
-												<h3><a href="#">Centros Educativos</a></h3>
-												<div>
-													Sección Inhabilitada
-												</div>							
-											</div>									
-										</div>
-									</div>
-						</div>
-						<div id="tabs-3">
-							<div>
-								Sección Inhabilitada
-							</div>
+							<fieldset>
+							<legend>Gestión Administrativa</legend>
+								<ul id="selectable">
+									<li class="ui-widget-content" value = 0 id="btn_Usuarios">Administración de Usuarios</li>
+									<li class="ui-widget-content" >Administración de Segmentos de Encuesta</li>
+									<li class="ui-widget-content" >Administración de Encuestas de Usuarios</li>
+									<li class="ui-widget-content" >Reportes</li>
+								</ul>
+								<input type="button" id="select_action" value="OK" >	
+							</fieldset>
 						</div>
 					</div>
-				</section>
-				<!--<section id="aside">
-				    <div id="banner">
-				    	<img src="{{STATIC_URL}}resources_imgs/banner.png" height="600" width="300"/>
-				    </div>
-				</section>-->
+				</div>
 			</div>
-	</div>
 {%endblock%}

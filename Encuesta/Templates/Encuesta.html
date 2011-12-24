@@ -11,6 +11,7 @@
 {%block includes%}
 	<script type="text/javascript" src="{{STATIC_URL}}static_resources/jquery/jquery-1.6.2.min.js"></script>
 	<script type="text/javascript" src="{{STATIC_URL}}static_resources/jquery/jquery-ui-1.8.16.custom.min.js"></script>
+	<script type="text/javascript" src="{{STATIC_URL}}static_resources/jquery/fancybox/jquery.fancybox-1.3.4.pack.js"></script>
 	<!--<script type="text/javascript" src="{{STATIC_URL}}static_resources/javascript/encuesta_js.js"></script>-->
 	
 	<!--<script type="text/javascript" src="{{STATIC_URL}}static_resources/jquery/jquery.js"></script>-->
@@ -18,7 +19,7 @@
 
 	<link rel="stylesheet" type="text/css" href="{{STATIC_URL}}resources_css/jquery-ui-1.8.16.custom.css" />
 	<link rel="stylesheet" type="text/css" href="{{STATIC_URL}}resources_css/styles_encuesta.css" />
-	
+	<link rel="stylesheet" type="text/css" href="{{STATIC_URL}}resources_css/fancybox/jquery.fancybox-1.3.4.css" />
 {%endblock%}
 {%block contenido%}
 	<script language="javascript">
@@ -45,9 +46,20 @@
 					}
 					f = "#" + form_2_val;
 					validated = $(f).valid();
+					if(validated == false) showMessage("Error, revise sus datos");
 					return validated;
     			}
 			});
+			function showMessage(message){
+			 
+				var content = $("<div>" + message + "<br /><br /></div>");
+    			var button = $("<input type='button' value='Ok' />");
+    			content.append(button);
+
+    			$.fancybox({ content: content});
+    			$(button).click(function () { $.fancybox.close(); });
+			
+			};
 			function validate_style(form,type){
 				try{
 					switch(form){
@@ -55,10 +67,34 @@
 									if(type=="temporal"){
 										$("#hidden_tiposave").val("temporal");
 										$("#pg1").validate({
-											rules: {
-
+											rules:{
+												tbxE_1 : {
+															max: $("#D_2").val()
+														},
+												tbxE_5 : {
+															max: $("#D_2").val()
+														},
+												tbxE_6 : {
+															max: $("#D_3").val()
+														},
+												tbxE_7 : {
+															max: Math.max($("#D_2").val(),$("#D_3").val())
+														}
 											},
-											messages :{	}
+											messages :{	
+												tbxE_1 : {
+															max:"Asegúrese que el valor sea igual o menor que D2._"
+														 },
+												tbxE_5 : {
+															max:"Asegúrese que el valor sea igual o menor que D2._"
+														 },	
+												tbxE_6 : {
+															max:"Asegúrese que el valor sea igual o menor que D3._"
+														 },			
+												tbxE_7 : {
+															max:"Asegúrese que el valor sea igual o menor que el mayor entre D2._ y D3._"
+														 }											 
+											}				
 										});
 										$.validator.addMethod("Numeric_tbxs", $.validator.methods.number, "Ingrese elementos numéricos");
 										$.validator.addClassRules("number_inputs", { Numeric_tbxs: true});										
@@ -111,7 +147,9 @@
 											}				
 										});
 										$.validator.addMethod("Numeric_tbxs2", $.validator.methods.number, "Ingrese elementos numéricos");
-										$.validator.addClassRules("inputs_parteE", { Numeric_tbxs2: true});
+										$.validator.addMethod("Required", $.validator.methods.required, "Ingrese este elemento");
+										$.validator.addClassRules("inputs_parteE", { Numeric_tbxs2: true , Required : true});
+
 									}
 									else {
 										$("#hidden_tiposave2").val("final");
@@ -196,7 +234,9 @@
 							if($("#pg2").valid()) {
 								$("#pg1,#pg2").submit();
 							}
+							else showMessage("Error, revise sus datos");
 						}
+						else showMessage("Error, revise sus datos");
 					}
 					else {
 						validate_style("pg2","temporal");
@@ -205,7 +245,9 @@
 							if($("#pg1").valid()) {
 								$("#pg2,#pg1").submit();
 							}
+							else showMessage("Error, revise sus datos");
 						}
+						else showMessage("Error, revise sus datos");
 					}
 				}
 				catch(err){
@@ -239,6 +281,9 @@
 					alert(err);
 				}
 				}
+			});
+			$("#btn_Delete").click(function(){
+			
 			});
 			$("#cbxF_3").click(function(){
 				document.getElementById("cbxF_4").checked = false;
@@ -412,7 +457,7 @@
 							{%for d in infoD%}
 								<tr>
 									<td><label>D{{d.codigo}}._{{d.descripcion}}</label></td>
-									<td class="right_align"><input type="number" name="tbxD_{{d.codigo}}" id = "D_{{d.codigo}}" class="number_inputs"></td>
+									<td class="right_align"><input type="number" name="tbxD_{{d.codigo}}" id = "D_{{d.codigo}}" class="number_inputs" value=0></td>
 									<td class="status"></td>
 								</tr>
 							{%endfor%}
@@ -433,7 +478,7 @@
 							{%for e in infoE%}
 								<tr>
 									<td><label>E{{e.codigo}}._{{e.descripcion}}</label></td>
-									<td class="right_align"><input type="number"  name="tbxE_{{e.codigo}}" id = "tbxE_{{e.codigo}}"  class="inputs_parteE"></td>
+									<td class="right_align"><input type="number"  name="tbxE_{{e.codigo}}" id = "tbxE_{{e.codigo}}"  class="inputs_parteE" value=0></td>
 								</tr>
 							{%endfor%}
 						</table>

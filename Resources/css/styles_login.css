@@ -1,7 +1,10 @@
 #aside
 {
 	display: table-cell; 
-	float:left;
+	float:right;
+	margin-left:1050px;
+	margin-top:-165px;
+	
 }
 #content 
 {  
@@ -11,7 +14,8 @@
 {  
 
         display: table-cell;
-	float:right;
+	float:left;
+	width:50%;
 
 /*
 	'text-align:center;
@@ -69,20 +73,20 @@
 {
  /* border:3px solid silver;
   position:relative;
-*/
+
 	border: 2px solid silver;
 	width: 50%;
 	padding: 3px
-
+*/
 }
 #lg 
 {
-
+/*
 	background: silver;
 	padding: 6px;
 	font-weight: bold;
 	color : white;
-/*
+
   padding: 0.2em 0.5em;
   border:5px solid silver;
   'color:blue;
