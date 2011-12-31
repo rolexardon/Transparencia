@@ -127,6 +127,11 @@ class Usuario(models.Model):
     @classmethod
     def BringAll(Usuario):
         return Usuario.objects.all()
+    @classmethod
+    def BringByTipo(Usuario,tipo):
+        tipousuario = TipoUsuario.objects.get(nombre = tipo)
+        return Usuario.objects.filter(tipo_usuario = tipousuario)
+        
        
 
 # Create your models here.

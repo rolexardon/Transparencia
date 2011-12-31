@@ -128,12 +128,14 @@ def SaveBasic(datos,codigo_tabla):
             zona = datos.POST['cbx_zonacentro']
             p.update(zona=zona)
         else :
+            departamento = DP.objects.get(pk=datos.POST['cbx_dep'])
+            municipio = MN.objects.get(pk=datos.POST['cbx_mun'])
             centro = CE.objects.get(pk=datos.POST['cbx_centros'])
             fecha = datos.POST['tbx_fecha']
             zona = datos.POST['cbx_zonacentro']
             t1=datos.POST['tbx_tel1']
             
-            row=E(codigo_usuario = datos.user,fecha=fecha,codigo_centro = centro,zona=zona,tel=t1,fecha_apertura = dt.today())
+            row=E(codigo_usuario = datos.user,fecha=fecha,codigo_departamento = departamento, codigo_municipio = municipio, codigo_centro = centro,zona=zona,tel=t1,fecha_apertura = dt.today())
             row.save()
             return row   
     except Exception as inst:     

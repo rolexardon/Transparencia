@@ -2,6 +2,7 @@ from django.shortcuts import render_to_response,redirect,get_object_or_404
 from django.template import RequestContext
 from django.http import HttpResponseRedirect, Http404, HttpResponse
 from django.contrib.auth import authenticate, login
+from django.contrib.auth.decorators import login_required
 
 from Administration.models import TipoUsuario as TU
 from Administration.models import Rol as RU
@@ -10,19 +11,27 @@ from Encuesta.models import Encuesta as E
 
 def view_home(request):
     
-    state=False
-    if state:
-        return redirect('url_home')
+    print request.user
+    if request.user.is_active:
+        print "activo"  
+        return PrepareContent(request.user,request)
+        
     else:
+        print "inactivo"
+        return redirect('/admin/')
+
+        
+   # else:
         #return render_to_response('Login.html',context_instance=RequestContext(request))
-        return render_to_response('admin/login.html',context_instance=RequestContext(request))
+        #return render_to_response('admin/login.html',context_instance=RequestContext(request))
         #return redirect('url_autenticar')
     #return HttpResponseRedirect('transparencia/home/autenticar')
     #return render_to_response('Login.html',context_instance=RequestContext(request))
-    return HttpResponse("Home")
+   # return HttpResponse("Home")
 
+#@login_required(login_url='/admin/')
 def view_autenticar(request):
-    
+    print 'autenticando...'
     if request.method=='POST':
         #un = request.POST['user_tbx']
         #pd = request.POST['pass_tbx']

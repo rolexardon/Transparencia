@@ -117,6 +117,8 @@ class Encuesta(models.Model):
     fecha_apertura = models.DateField()
     fecha = models.DateField()
     codigo_usuario = models.ForeignKey(User)
+    codigo_departamento = models.ForeignKey(AdMod.Departamento)
+    codigo_municipio = models.ForeignKey(AdMod.Municipio)
     codigo_centro = models.ForeignKey(AdMod.CentroEducativo)
     zona = models.CharField(max_length=50)
     tel = models.IntegerField()

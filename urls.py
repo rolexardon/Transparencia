@@ -17,8 +17,8 @@ urlpatterns = patterns('views',
      url(r'^admin/', include(admin.site.urls)),
     
 
-    #url(r'^$',redirect_to, {'url': 'transparencia/home/'},name = 'url_home'),
-    url(r'^$',redirect_to, {'url': 'admin/'},name = 'url_home'),
+    url(r'^$',redirect_to, {'url': 'transparencia/home/'},name = 'url_home'),
+    #url(r'^$',redirect_to, {'url': 'admin/'},name = 'url_home'),
     url(r'^transparencia/home/$','view_home',name = 'url_home'),
     url(r'^transparencia/home/autenticar/$','view_autenticar', name = 'url_autenticar'),
     url(r'^transparencia/administracion/',include('Administration.urls')),

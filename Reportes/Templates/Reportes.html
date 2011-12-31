@@ -13,7 +13,74 @@
 	<script>
 		$(document).ready(function() {	
 			$("#tabs").tabs();
+			$( "#datepicker" ).datepicker({ 
+				dateFormat: 'yy-mm-dd'
+			});
+			$( "#accordion" ).accordion({
+				autoHeight: false,
+				navigation: true
+
+			});
+			$("#id_dep").change(function() {
+				dep = $(this).val();
+				$("#id_mun").empty();
+				$("#id_mun").append("<option value='0' selected='selected'>Seleccione</option>");
+				$("#id_centros").empty();			
+				$.ajax({
+							type:"GET",
+							data:
+								{
+									data:"muns",
+									iddep:$(this).val()
+								},
+							url: "{% url url_bringmunicipio %}",
+							success: function(msg){
+										$.each(msg,function(key,val){
+											$("#id_mun").append("<option value="+val.pk+">"+val.descripcion+"</option>");
+						});
+					}
+				});
+			});
+			$("#id_mun").change(function() {
+				$("#id_centros").empty();
+				$("#id_centros").append("<option value='0' selected='selected'>Seleccione</option>");
+				$.ajax({
+							type:"GET",
+							data:
+								{
+									data:"centros",
+									iddep : dep,
+									idmun:$(this).val()
+								},
+							url: "{% url url_bringcentros %}",
+							success: function(msg){
+										$.each(msg,function(key,val){
+											$("#id_centros").append("<option value="+val.pk+">"+val.descripcion+"</option>");
+						});
+					}
+				});
+			});
+			$("#cbx_tipos").change(function() {
+				tipo = $(this).val();
+				$("#cbx_usuarios").empty();
+				$("#id_usuaros").append("<option value='0' selected='selected'>Todos</option>");							
+				$.ajax({
+							type:"GET",
+							data:
+								{
+									data:"tipo",
+									tipo:tipo,
+								},
+							url: "{% url url_bringusuarios %}",
+							success: function(msg){
+										$.each(msg,function(key,val){
+											$("#cbx_usuarios").append("<option value="+val.pk+">"+val.usuario+"</option>");
+						});
+					}
+				});
+			});
 		});
+		
 	</script>
 	{%load customfilters_reportes%}
 	<div id="tabs">
@@ -24,42 +91,143 @@
 		<div id="tabs-1">
 			<fieldset>
 			<legend>Filtros de Reporte</legend>
-				<form>
-					<fieldset>
-					<legend>Filtro por Usuarios</legend>
-						<table>
-							<tr>
-								<td><label>Tipo de Usuario:</label></td>
-								<td><select>
-										<option>Todos</option>
-										{%for t in tipos%}
-											<option>{{t.descripcion}}</option>
-										{%endfor%}
-									</select>
-								</td>
-							</tr>
-							<tr>
-								<td><label>Usuario:</label></td>
-								<td><select>
-										<option>Todos</option>
-										{%for u in usuarios%}
-											<option>{{u|getfullname}}</option>
-										{%endfor%}
-									</select>
-								</td>
-							</tr>
-						</table>
-					</fieldset>
-					<fieldset>
-					<legend>Filtro Geográfico</legend>
-
-					</fieldset>
-					<fieldset>
-					<legend>Filtro por Segmentos de Encuesta</legend>
-					
-					</fieldset>
-				</form>
+			<div id="accordion">
+				<h3><a href="#">Reportes Estadísticos</a></h3>
+					<div>
+						<form id = "form:_estadisticos" method = "POST" action = "{%url url_reportestadistico%}">{% csrf_token %}
+							<fieldset>
+							<legend>Rango de Fecha</legend>
+								<table>
+									<tr>
+										<td><label>Entre:</label></td>
+										<td><input id="datepicker" type="text" name="tbx_fecha1"></td>
+									</tr>
+									<tr>
+										<td><label>y:</label></td>
+										<td><input id="datepicker" type="text" name="tbx_fecha2"></td>
+									</tr>
+								</table>
+							</fieldset>
+							<fieldset>
+							<legend>Filtro por Usuarios</legend>
+								<table>
+									<tr>
+										<td><label>Tipo de Usuario:</label></td>
+										<td><select id = "cbx_tipos" name = "cbx_tipousuario">
+												<option>Todos</option>
+												{%for t in tipos%}
+													<option>{{t.nombre}}</option>
+												{%endfor%}
+											</select>
+										</td>
+									</tr>
+									<tr>
+										<td><label>Usuario:</label></td>
+										<td><select id = "cbx_usuarios" name = "cbx_usuario">
+												<option>Todos</option>
+												{%for u in usuarios%}
+													<option>{{u|getfullname}}</option>
+												{%endfor%}
+											</select>
+										</td>
+									</tr>
+								</table>
+							</fieldset>
+							<fieldset>
+							<legend>Filtro Geográfico</legend>
+								<table>
+									<tr>
+										<td><label>Departamento:</label></td>
+										<td><select name="cbx_dep" id="id_dep">
+												<option>Todos</option>
+												{%for d in deps%}
+													<option value="{{d.pk}}"> {{d.nombre}} </option>
+												{%endfor%}
+											</select>
+										</td>
+									</tr>
+									<tr>
+										<td><label>Municipio:</label></td>
+										<td><select name="cbx_mun" id="id_mun">
+												<option>Todos</option>
+											</select>
+										</td>
+									</tr>
+									<tr>
+										<td><label>Centro:</label></td>
+										<td><select name="cbx_centro" id="id_centros">
+												<option>Todos</option>
+											</select>
+										</td>
+									</tr>
+								</table>
+							</fieldset>
+							<fieldset>
+							<legend>Segmentos de Encuesta a Visualizar</legend>
+								<table>
+									<tr><td><input type="checkbox" name = "check_seg" checked = "checked">Segmento A</td></tr>
+									<tr><td><input type="checkbox" name = "check_seg" checked = "checked">Segmento B</td></tr>
+									<tr><td><input type="checkbox" name = "check_seg" checked = "checked">Segmento C</td></tr>
+									<tr><td><input type="checkbox" name = "check_seg" checked = "checked">Segmento D</td></tr>
+									<tr><td><input type="checkbox" name = "check_seg" checked = "checked">Segmento E</td></tr>
+									<tr><td><input type="checkbox" name = "check_seg" checked = "checked">Segmento F</td></tr>
+									<tr><td><input type="checkbox" name = "check_seg" checked = "checked">Segmento G</td></tr>
+								</table>
+							</fieldset>
+						<input type="submit" value ="Generar Reporte">
+						</form>
+					</div>
+				<h3><a href="#">Reportes Comparativos</a></h3>
+					<div>
+						<fieldset>
+						<legend>Seleccione el Centro Educativo<legend>
+							<fieldset>
+							<legend>Rango de Fecha</legend>
+								<table>
+									<tr>
+										<td><label>Entre:</label></td>
+										<td><input id="datepicker" type="text" name="tbx_fecha1"></td>
+									</tr>
+									<tr>
+										<td><label>y:</label></td>
+										<td><input id="datepicker" type="text" name="tbx_fecha2"></td>
+									</tr>
+								</table>
+							</fieldset>
+						<fieldset>
+							<legend>Filtro Geográfico</legend>
+								<table>
+									<tr>
+										<td><label>Departamento:</label></td>
+										<td><select name="cbx_dep" id="id_dep">
+												<option>Todos</option>
+												{%for d in deps%}
+													<option value="{{d.pk}}"> {{d.nombre}} </option>
+												{%endfor%}
+											</select>
+										</td>
+									</tr>
+									<tr>
+										<td><label>Municipio:</label></td>
+										<td><select name="cbx_mun" id="id_mun">
+												<option>Todos</option>
+											</select>
+										</td>
+									</tr>
+									<tr>
+										<td><label>Centro:</label></td>
+										<td><select name="cbx_centros" id="id_centros">
+												<option>Todos</option>
+											</select>
+										</td>
+									</tr>
+								</table>
+							</fieldset>	
+							</fieldset>
+					</div>
+			</div>
 			</fieldset>
+			</div>	
 		</div>
 		<div id="tabs-2">
 			<label>Resultado de Reporte</label>
