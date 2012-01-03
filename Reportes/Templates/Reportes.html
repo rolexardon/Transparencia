@@ -13,7 +13,10 @@
 	<script>
 		$(document).ready(function() {	
 			$("#tabs").tabs();
-			$( "#datepicker" ).datepicker({ 
+			$( "#datepicker1" ).datepicker({ 
+				dateFormat: 'yy-mm-dd'
+			});
+			$( "#datepicker2" ).datepicker({ 
 				dateFormat: 'yy-mm-dd'
 			});
 			$( "#accordion" ).accordion({
@@ -24,8 +27,10 @@
 			$("#id_dep").change(function() {
 				dep = $(this).val();
 				$("#id_mun").empty();
-				$("#id_mun").append("<option value='0' selected='selected'>Seleccione</option>");
-				$("#id_centros").empty();			
+				$("#id_mun").append("<option value='0' selected='selected'>Todos</option>");
+				$("#id_centros").empty();
+				$("#id_centros").append("<option value='0' selected='selected'>Todos</option>"); 
+				if(dep != "Todos"){			
 				$.ajax({
 							type:"GET",
 							data:
@@ -40,10 +45,11 @@
 						});
 					}
 				});
+				}
 			});
 			$("#id_mun").change(function() {
 				$("#id_centros").empty();
-				$("#id_centros").append("<option value='0' selected='selected'>Seleccione</option>");
+				$("#id_centros").append("<option value='0' selected='selected'>Todos</option>");
 				$.ajax({
 							type:"GET",
 							data:
@@ -100,11 +106,11 @@
 								<table>
 									<tr>
 										<td><label>Entre:</label></td>
-										<td><input id="datepicker" type="text" name="tbx_fecha1"></td>
+										<td><input id="datepicker1" type="text" name="tbx_fecha1"></td>
 									</tr>
 									<tr>
 										<td><label>y:</label></td>
-										<td><input id="datepicker" type="text" name="tbx_fecha2"></td>
+										<td><input id="datepicker2" type="text" name="tbx_fecha2"></td>
 									</tr>
 								</table>
 							</fieldset>
@@ -162,7 +168,7 @@
 									</tr>
 								</table>
 							</fieldset>
-							<fieldset>
+							<!--<fieldset>
 							<legend>Segmentos de Encuesta a Visualizar</legend>
 								<table>
 									<tr><td><input type="checkbox" name = "check_seg" checked = "checked">Segmento A</td></tr>
@@ -173,7 +179,7 @@
 									<tr><td><input type="checkbox" name = "check_seg" checked = "checked">Segmento F</td></tr>
 									<tr><td><input type="checkbox" name = "check_seg" checked = "checked">Segmento G</td></tr>
 								</table>
-							</fieldset>
+							</fieldset>-->
 						<input type="submit" value ="Generar Reporte">
 						</form>
 					</div>

@@ -3,6 +3,8 @@ from django.template import RequestContext
 from django.http import HttpResponseRedirect, Http404, HttpResponse
 from django.utils import simplejson
 
+import string
+
 from django.contrib.auth.models import User
 from Administration.models import Usuario as U 
 from Administration.models import TipoUsuario as TU
@@ -61,28 +63,53 @@ def view_reportestadistico(request):
         departamento = request.POST['cbx_dep']
         municipio = request.POST['cbx_mun']
         centro = request.POST['cbx_centro']
-        segmentos = lista = request.POST.getlist("check_seg")
+       # segmentos_lista = request.POST.getlist("check_seg")
         
-        sql = "SELECT * FROM Encuesta_encuesta WHERE fecha BETWEEN " + fecha1 + " AND " + fecha2
+        sql = "SELECT * FROM Encuesta_encuesta WHERE fecha BETWEEN '" + fecha1 + "' AND '" + fecha2 + "'"
         if centro != 'Todos':
-            sql = sql + " AND codigo_centro = " + centro
+            sql = sql + " AND codigo_centro_id = " + centro
         if municipio != 'Todos':
-            sql = sql + " AND "
-  #              if departamento == 'Todos':
-   #                 if usuario == 'Todos':
-    #                    if tipousuario != 'Todos':
-     #                       sql = sql + 
-      #                      encuestas = E.objects.filter(date__range=[fecha1, fecha2])
-       #                 else:
-        #                    users = U.objects.all.get_profile(tipo_usuario=tipousuario)
-         #                   encuestas = E.objects.filter(date__range=[fecha1, fecha2],codigo_usuario = users.id)
-          #          else:
-           #             user = U.objects.get(U.get_full_name()==usuario)
-            #            encuestas = E.objects.filter(date__range=[fecha1, fecha2],codigo_usuario = user.id)
-             #   else:
-                    
-                        
-                
+            sql = sql + " AND codigo_municipio_id = " + municipio
+        if departamento != 'Todos':
+            sql = sql + " AND codigo_departamento_id = " + departamento
+        if usuario != 'Todos':
+            words = string.split(usuario, ' ')
+            sql = sql + " AND codigo_usuario_id = (SELECT id FROM auth_user WHERE first_name = '" + words[0] + "' AND last_name = '" + words[1] + "')"
+        if tipousuario != 'Todos':
+            sql = sql + " AND codigo_usuario_id = (SELECT user_id FROM Administration_usuario WHERE tipo_usuario_id = (SELECT id FROM Administration_tipousuario WHERE nombre = '" + tipousuario + "'))"
+
+        encuestas = E.objects.raw(sql)
+      #  PrepareReporteEstadistico(encuestas,segmentos_lista)
+        PrepareReporteEstadistico(encuestas)
+    return HttpResponse('Cheque')
+
+def PrepareReporteEstadistico(encuestas):
+    #segmentos = []
+    #for l in lista:
+     #   if l == 'Segmento A': segmentos.append(0)
+      #  if l == 'Segmento B': segmentos.append(1)
+       # if l == 'Segmento C': segmentos.append(2)
+        #if l == 'Segmento D': segmentos.append(3)
+        #if l == 'Segmento E': segmentos.append(4)
+        #if l == 'Segmento F': segmentos.append(5)
+        #if l == 'Segmento G': segmentos.append(6)
+    
+    totala = 0
+    totalb = 0
+    totalc = 0
+    totald = 0
+    totale = 0
+    totalf = 0
+    totalg = 0
+    
+    #for e in encuestas:
+     #   for s in segmentos:
+     
+     for e in encuestas:
+         
+            
         
         
+            
+
     
