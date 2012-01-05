@@ -19,6 +19,7 @@ from Encuesta.models import SegmentoF as SF
 from Encuesta.models import SegmentoG as SG
 
 from Encuesta.models import Encuesta as E
+from Encuesta.models import EncuestaData as ED
 
 def view_reporte(request):
     
@@ -80,35 +81,525 @@ def view_reportestadistico(request):
 
         encuestas = E.objects.raw(sql)
       #  PrepareReporteEstadistico(encuestas,segmentos_lista)
-        PrepareReporteEstadistico(encuestas)
-    return HttpResponse('Cheque')
+        return PrepareReporteEstadistico(encuestas,request)
 
-def PrepareReporteEstadistico(encuestas):
-    #segmentos = []
-    #for l in lista:
-     #   if l == 'Segmento A': segmentos.append(0)
-      #  if l == 'Segmento B': segmentos.append(1)
-       # if l == 'Segmento C': segmentos.append(2)
-        #if l == 'Segmento D': segmentos.append(3)
-        #if l == 'Segmento E': segmentos.append(4)
-        #if l == 'Segmento F': segmentos.append(5)
-        #if l == 'Segmento G': segmentos.append(6)
-    
-    totala = 0
-    totalb = 0
-    totalc = 0
-    totald = 0
-    totale = 0
-    totalf = 0
-    totalg = 0
-    
-    #for e in encuestas:
-     #   for s in segmentos:
+
+def PrepareReporteEstadistico(encuestas,request):
+
+    sega = SA.BringAll()
+    segb = SB.BringAll()
+    segc = SC.BringAll()
+    segf = SF.BringAll()
+    segg = SG.BringAll()
      
-     for e in encuestas:
+    lista = []
+    for sa in sega:
+        lista.append(sa.codigo)
+    sum_lista = []
+    for l in lista:
+        sum_lista.append(0)
          
-            
+    listb = []
+    for sb in segb:
+        listb.append(sb.codigo)
+    sum_listb = []
+    for l in listb:
+        sum_listb.append(0)
+         
+    listc = []
+    for sc in segc:
+        listc.append(sc.codigo)
+    sum_listcSI = []
+    sum_listcNO = []
+    for l in listc:
+        sum_listcSI.append(0)
+        sum_listcNO.append(0)
+         
+    listf = []
+    for sf in segf:
+        listf.append(sf.codigo)
+    sum_listf = []
+    for l in listf:
+        sum_listf.append(0)
+         
+    listg = []
+    for sg in segg:
+        listg.append(sg.codigo)
+    sum_listgE = []
+    sum_listgMB = []
+    sum_listgB = []
+    sum_listgR = []
+    sum_listgM = []
+    for l in listg:
+        sum_listgE.append(0)
+        sum_listgMB.append(0)
+        sum_listgB.append(0)
+        sum_listgR.append(0)
+        sum_listgM.append(0)
+     
+    for e in encuestas:
+        data = ED.objects.filter(encuesta=e)
+        GetDataSegmentoA(data.filter(segmento = 'A'),lista,sum_lista)
+        GetDataSegmentoB(data.filter(segmento = 'B'),listb,sum_listb)
+        GetDataSegmentoC(data.filter(segmento = 'C'),listc,sum_listcSI,sum_listcNO)
+        GetDataSegmentoF(data.filter(segmento = 'F'),listf,sum_listf)
+        GetDataSegmentoG(data.filter(segmento = 'G'),listg,sum_listgE,sum_listgMB,sum_listgB,sum_listgR,sum_listgM)
+    
+    js = ""
         
+    #Segmento A
+    porcent_lista = []
+    sumaa = 0
+    for obj in sum_lista:
+        sumaa = sumaa + obj
+    for obj in sum_lista:
+        element = (float(obj) / float(sumaa)) * 100.0
+        porcent_lista.append(element)
+         
+    js = js + ("chartA = new Highcharts.Chart({"                                                    +
+                    "chart: {"                                                                      +
+                    "renderTo: 'SegmentoA',"                                                           +
+                    "    plotBackgroundColor: null,"                                                +
+                    "    plotBorderWidth: null,"                                                    +
+                    "    plotShadow: false"                                                         +    
+                    "        },"                                                                    +
+                    "title:{"                                                                       +
+                    "    text: 'Instalacion y Ubicacion del Mural'"                                 +
+                    "    },"                                                                        +
+                    "tooltip: {"                                                                    +
+                    "    formatter: function() {"                                                   +
+                    "        return '<b>'+ this.point.name +'</b>: '+ this.percentage +' %';"       +
+                    "    }"                                                                         +
+                    "},"                                                                            +
+                    "plotOptions: {"                                                                +
+                    "    pie: {"                                                                    +
+                    "        allowPointSelect: true,"                                               +
+                    "        cursor: 'pointer',"                                                    +
+                    "        dataLabels: {"                                                         +
+                    "            enabled: true,"                                                    +
+                    "            color: '#000000',"                                                 +
+                    "            connectorColor: '#000000',"                                        +
+                    "            formatter: function() {"                                           +
+                    "               return '<b>'+ this.point.name +'</b>: '+ this.percentage +' %';"+
+                    "            }"                                                                 +
+                    "        }"                                                                     +
+                    "    }"                                                                         +
+                    "},"                                                                            +
+                    "series: [{"                                                                    +                                                
+                    "    type: 'pie',"                                                              +    
+                    "    name: 'Segmento A',"                                                       +    
+                    "    data: ["                                                                   
+                    )
+
+    index = 0;
+    for item in porcent_lista:
+        if index != 0:
+            js = js + ","
+        js = js + ("['" + unicode(sega[index].descripcion) +"' , "+ unicode(item) + "]")
+        index = index + 1
+
+    js = js + (                     "]" +
+                                "}]"+
+                            "});")
+    
+    #Segmento B
+    porcent_listb = []
+    sumab = 0
+    for obj in sum_listb:
+        sumab = sumab + obj
+    for obj in sum_listb:
+        element = (float(obj) / float(sumab)) * 100.0
+        print element
+        porcent_listb.append(element)
+         
+    js = js + ("chartB = new Highcharts.Chart({"                                                    +
+                    "chart: {"                                                                      +
+                    "renderTo: 'SegmentoB',"                                                           +
+                    "    plotBackgroundColor: null,"                                                +
+                    "    plotBorderWidth: null,"                                                    +
+                    "    plotShadow: false"                                                         +    
+                    "        },"                                                                    +
+                    "title:{"                                                                       +
+                    "    text: 'Informacion Obligatoria Publicada en Mural'"                        +
+                    "    },"                                                                        +
+                    "tooltip: {"                                                                    +
+                    "    formatter: function() {"                                                   +
+                    "        return '<b>'+ this.point.name +'</b>: '+ this.percentage +' %';"       +
+                    "    }"                                                                         +
+                    "},"                                                                            +
+                    "plotOptions: {"                                                                +
+                    "    pie: {"                                                                    +
+                    "        allowPointSelect: true,"                                               +
+                    "        cursor: 'pointer',"                                                    +
+                    "        dataLabels: {"                                                         +
+                    "            enabled: true,"                                                    +
+                    "            color: '#000000',"                                                 +
+                    "            connectorColor: '#000000',"                                        +
+                    "            formatter: function() {"                                           +
+                    "               return '<b>'+ this.point.name +'</b>: '+ this.percentage +' %';"+
+                    "            }"                                                                 +
+                    "        }"                                                                     +
+                    "    }"                                                                         +
+                    "},"                                                                            +
+                    "series: [{"                                                                    +                                                
+                    "    type: 'pie',"                                                              +    
+                    "    name: 'Segmento B',"                                                       +    
+                    "    data: ["                                                                   
+                    )
+
+
+    index = 0;
+    for item in porcent_listb:
+        if index != 0:
+            js = js + ","
+        js = js + ("['" + unicode(segb[index].descripcion) +"' , "+ unicode(item) + "]")
+        index = index + 1
+    js = js + (                     "]" +
+                                "}]"+
+                            "});")
+
+    #Segmento C
+    sumacSI = 0
+    sumacNO = 0
+    for obj in sum_listcSI:
+        sumacSI = sumacSI + obj
+    for obj in sum_listcNO:
+        sumacNO = sumacNO + obj
+         
+    js = js + ("chartC = new Highcharts.Chart({"                                                    +
+                    "chart: {"                                                                      +
+                        "renderTo: 'SegmentoC',"                                                           +
+                        "defaultSeriesType: 'bar'"                                                      +
+                    "        },"                                                                    +
+                    "title:{"                                                                       +
+                    "    text: 'Orden de la Informacion'"                        +
+                    "    },"                                                                        +
+
+                "xAxis: {"+
+                "categories: [")
+    
+    index = 0
+    for item in segc:
+        if index !=0:
+            js = js + ","
+        js = js + "'" + item.descripcion +"'"
+        index = index + 1
+        
+    js = js + ("],"+
+         "title: {"+
+            "text: null"+
+         "}"+
+      "},"+
+                    "  yAxis: {"+
+                     "    min: 0,"+
+                      "   title: {"+
+                       "     text: 'Resultados',"+
+                        "    align: 'high'"+
+                         "}"+
+                      "},"+
+                    "tooltip: {"                                                                    +
+                    "formatter: function() {"+
+                    "    return ''+"+
+                    "        this.series.name +': '+ this.y;"+
+                    " }"                                     +
+                    "},"                                                                            +
+                    "plotOptions: {"                                                                +
+                     "bar: {"+
+                      "  dataLabels: {"+
+                       "    enabled: true"+
+                        "}}"+
+                     "},"                                                                            +
+                     " legend: {"+
+                     "    layout: 'vertical',"+
+                     "    align: 'right',"+
+                     "    verticalAlign: 'top',"+
+                     "    x: -100,"+
+                     "    y: 100,"+
+                     "    floating: true,"+
+                     "    borderWidth: 1,"+
+                    "backgroundColor: '#FFFFFF',"+
+                     "    shadow: true"+
+                      "},"+
+                      "credits: {"+
+                         "enabled: false"+
+                      "},"+
+                    "series: [{"+
+                        "name:'SI',"+
+                        "data:["                                                                                                                                                                         
+                    )
+    index = 0;
+    for item in listc:
+        if index != 0:
+            js = js + ","
+        js = js + (unicode(sum_listcSI[index]))
+        index = index + 1
+    js = js + ("]},{"+
+                        "name : 'NO',"+
+                        "data:["  )
+    index = 0;
+    for item in listc:
+        if index != 0:
+            js = js + ","
+        js = js + (unicode(sum_listcNO[index]))
+        index = index + 1
+    js = js + ("]}]"+
+ "});")
+    
+    #Segmento F
+    porcent_listf = []
+    sumaf = 0
+    for obj in sum_listf:
+        sumaf = sumaf + obj
+    for obj in sum_listf:
+        element = (float(obj) / float(sumaf)) * 100.0
+        porcent_listf.append(element)
+         
+    js = js + ("chartF = new Highcharts.Chart({"                                                    +
+                    "chart: {"                                                                      +
+                    "renderTo: 'SegmentoF',"                                                           +
+                    "    plotBackgroundColor: null,"                                                +
+                    "    plotBorderWidth: null,"                                                    +
+                    "    plotShadow: false"                                                         +    
+                    "        },"                                                                    +
+                    "title:{"                                                                       +
+                    "    text: 'Hallazgos e Irregularidades en Matricula Gratis'"                        +
+                    "    },"                                                                        +
+                    "tooltip: {"                                                                    +
+                    "    formatter: function() {"                                                   +
+                    "        return '<b>'+ this.point.name +'</b>: '+ this.percentage +' %';"       +
+                    "    }"                                                                         +
+                    "},"                                                                            +
+                    "plotOptions: {"                                                                +
+                    "    pie: {"                                                                    +
+                    "        allowPointSelect: true,"                                               +
+                    "        cursor: 'pointer',"                                                    +
+                    "        dataLabels: {"                                                         +
+                    "            enabled: true,"                                                    +
+                    "            color: '#000000',"                                                 +
+                    "            connectorColor: '#000000',"                                        +
+                    "            formatter: function() {"                                           +
+                    "               return '<b>'+ this.point.name +'</b>: '+ this.percentage +' %';"+
+                    "            }"                                                                 +
+                    "        }"                                                                     +
+                    "    }"                                                                         +
+                    "},"                                                                            +
+                    "series: [{"                                                                    +                                                
+                    "    type: 'pie',"                                                              +    
+                    "    name: 'Segmento F',"                                                       +    
+                    "    data: ["                                                                   
+                    )
+
+
+    index = 0;
+    for item in porcent_listf:
+        if index != 0:
+            js = js + ","
+        js = js + ("['" + unicode(segf[index].descripcion) +"' , "+ unicode(item) + "]")
+        index = index + 1
+    js = js + (                     "]" +
+                                "}]"+
+                            "});")
+    
+    #SegmentoG
+
+    sumagE = 0
+    sumagMB = 0
+    sumagB = 0
+    sumagR = 0
+    sumagM = 0
+    for obj in sum_listgE:
+        sumagE = sumagE + obj
+    for obj in sum_listgMB:
+        sumagMB = sumagMB + obj
+    for obj in sum_listgB:
+        sumagB = sumagB + obj
+    for obj in sum_listgR:
+        sumagR = sumagR + obj
+    for obj in sum_listgM:
+        sumagM = sumagM + obj
+
+         
+    js = js + ("chartC = new Highcharts.Chart({"                                                    +
+                    "chart: {"                                                                      +
+                        "renderTo: 'SegmentoG',"                                                           +
+                        "defaultSeriesType: 'bar'"                                                      +
+                    "        },"                                                                    +
+                    "title:{"                                                                       +
+                    "    text: 'Creatividad'"                        +
+                    "    },"                                                                        +
+
+                "xAxis: {"+
+                "categories: [")
+    
+    index = 0
+    for item in segc:
+        if index !=0:
+            js = js + ","
+        js = js + "'" + item.descripcion +"'"
+        index = index + 1
+        
+    js = js + ("],"+
+         "title: {"+
+            "text: null"+
+         "}"+
+      "},"+
+                    "  yAxis: {"+
+                     "    min: 0,"+
+                      "   title: {"+
+                       "     text: 'Resultados',"+
+                        "    align: 'high'"+
+                         "}"+
+                      "},"+
+                    "tooltip: {"                                                                    +
+                    "formatter: function() {"+
+                    "    return ''+"+
+                    "        this.series.name +': '+ this.y;"+
+                    " }"                                     +
+                    "},"                                                                            +
+                    "plotOptions: {"                                                                +
+                     "bar: {"+
+                      "  dataLabels: {"+
+                       "    enabled: true"+
+                        "}}"+
+                     "},"                                                                            +
+                     " legend: {"+
+                     "    layout: 'vertical',"+
+                     "    align: 'right',"+
+                     "    verticalAlign: 'top',"+
+                     "    x: -100,"+
+                     "    y: 100,"+
+                     "    floating: true,"+
+                     "    borderWidth: 1,"+
+                    "backgroundColor: '#FFFFFF',"+
+                     "    shadow: true"+
+                      "},"+
+                      "credits: {"+
+                         "enabled: false"+
+                      "},"+
+                    "series: [{"+
+                        "name:'Excelente',"+
+                        "data:["                                                                                                                                                                         
+                    )
+    index = 0;
+    for item in listc:
+        if index != 0:
+            js = js + ","
+        js = js + (unicode(sum_listgE[index]))
+        index = index + 1
+    js = js + ("]},{"+
+                        "name : 'Muy Bueno',"+
+                        "data:["  )
+    index = 0;
+    for item in listc:
+        if index != 0:
+            js = js + ","
+        js = js + (unicode(sum_listgMB[index]))
+        index = index + 1
+    js = js + ("]},{"+
+                        "name : 'Bueno',"+
+                        "data:["  )
+    index = 0;
+    for item in listc:
+        if index != 0:
+            js = js + ","
+        js = js + (unicode(sum_listgB[index]))
+        index = index + 1
+    js = js + ("]},{"+
+                        "name : 'Regular',"+
+                        "data:["  )
+    index = 0;
+    for item in listc:
+        if index != 0:
+            js = js + ","
+        js = js + (unicode(sum_listgR[index]))
+        index = index + 1
+    js = js + ("]},{"+
+                        "name : 'Malo',"+
+                        "data:["  )
+    index = 0;
+    for item in listc:
+        if index != 0:
+            js = js + ","
+        js = js + (unicode(sum_listgM[index]))
+        index = index + 1
+    js = js + ("]}]"+
+ "});")
+
+    return render_to_response('Resultados.html',{'js':js},context_instance=RequestContext(request))
+ 
+    
+
+def GetDataSegmentoA(datos,items,sum_lista):
+     for d in datos:
+         code = d.codigo_item
+         if code in items:
+             index = items.index(code)
+             sum = sum_lista[index] + 1
+             del sum_lista[index]
+             sum_lista.insert(index,sum)
+def GetDataSegmentoB(datos,items,sum_listb):
+
+     for d in datos:
+         code = d.codigo_item
+         if code in items:
+             index = items.index(code)
+             sum = sum_listb[index] + 1
+             del sum_listb[index]
+             sum_listb.insert(index,sum)
+def GetDataSegmentoC(datos,items,sum_listcSI,sum_listcNO):
+
+     for d in datos:
+         code = d.codigo_item
+         if d.valor_item == 'SI':
+             index = items.index(code)
+             sum = sum_listcSI[index] + 1
+             del sum_listcSI[index]
+             sum_listcSI.insert(index,sum)
+         else:
+             index = items.index(code)
+             sum = sum_listcNO[index] + 1
+             del sum_listcNO[index]
+             sum_listcNO.insert(index,sum)
+
+def GetDataSegmentoF(datos,items,sum_listf):
+
+     for d in datos:
+         code = d.codigo_item
+         if code in items:
+             index = items.index(code)
+             sum = sum_listf[index] + 1
+             del sum_listf[index]
+             sum_listf.insert(index,sum)
+def GetDataSegmentoG(datos,items,sum_listgE,sum_listgMB,sum_listgB,sum_listgR,sum_listgM):
+
+     for d in datos:
+         code = d.codigo_item
+         if d.valor_item == 'Excelente':
+             index = items.index(code)
+             sum = sum_listgE[index] + 1
+             del sum_listgE[index]
+             sum_listgE.insert(index,sum)
+         if d.valor_item == 'Muy Bueno':
+             index = items.index(code)
+             sum = sum_listgMB[index] + 1
+             del sum_listgMB[index]
+             sum_listgMB.insert(index,sum)
+         if d.valor_item == 'Bueno':
+             index = items.index(code)
+             sum = sum_listgB[index] + 1
+             del sum_listgB[index]
+             sum_listgB.insert(index,sum)
+         if d.valor_item == 'Regular':
+             index = items.index(code)
+             sum = sum_listgR[index] + 1
+             del sum_listgR[index]
+             sum_listgR.insert(index,sum)
+         if d.valor_item == 'Malo':
+             index = items.index(code)
+             sum = sum_listgM[index] + 1
+             del sum_listgM[index]
+             sum_listgM.insert(index,sum)
+     
         
             
 

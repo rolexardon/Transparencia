@@ -63,6 +63,7 @@ STATICFILES_DIRS = (
     ("resources_imgs","/home/rolex/workspace/Transparencia/Transparencia/Resources/css/images"),
     ("resources_css","/home/rolex/workspace/Transparencia/Transparencia/Resources/css"),
     ("admin_css","/home/rolex/workspace/Transparencia/Transparencia/Resources/admin/media/css"),
+    ("resources_reportes","/home/rolex/workspace/Transparencia/Transparencia/Resources/jquery/HighCharts/js"),
     
 )
 
