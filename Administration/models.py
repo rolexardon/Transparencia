@@ -123,11 +123,13 @@ class Usuario(models.Model):
     #activo = models.BooleanField(default = True)
     user = models.ForeignKey(User, unique=True)
 
+    def __unicode__(self):
+        return self.user.username
     
     @classmethod
     def BringAll(Usuario):
         return Usuario.objects.all()
-    @classmethod
+    @classmethod 
     def BringByTipo(Usuario,tipo):
         tipousuario = TipoUsuario.objects.get(nombre = tipo)
         return Usuario.objects.filter(tipo_usuario = tipousuario)

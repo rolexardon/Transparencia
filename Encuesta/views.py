@@ -328,7 +328,59 @@ def view_encuesta(request,encuesta):
         data_f2 = CompleteSpaces(data_f2,3)
         data_d = CompleteSpaces(data_d,len(infoD))
         data_e = CompleteSpaces(data_e,len(infoE))
-        return render_to_response('Encuesta.html',{'usuario':username,'id_usuario':userid,'codigo_enc':encuesta,'tipo_save':tipo_save,'deps':deps,'centros':centros,'infoA':infoA,'infoB':infoB,'infoC':infoC,'infoD':infoD,'infoE':infoE,'infoF':infoF,'infoG':infoG,'muns':muns,'tipo':"existente",'encuesta':e, 'da':data_a, 'db':data_b,'db2':data_b2, 'dc':data_c, 'dd':data_d, 'de':data_e, 'df':data_f, 'df2':data_f2,'dg':data_g, 'range': range(4)},context_instance=RequestContext(request))
+        
+        showbtns = True
+        return render_to_response('Encuesta.html',{'usuario':username,'id_usuario':userid,'codigo_enc':encuesta,'tipo_save':tipo_save,'deps':deps,'centros':centros,'infoA':infoA,'infoB':infoB,'infoC':infoC,'infoD':infoD,'infoE':infoE,'infoF':infoF,'infoG':infoG,'muns':muns,'tipo':"existente",'encuesta':e, 'da':data_a, 'db':data_b,'db2':data_b2, 'dc':data_c, 'dd':data_d, 'de':data_e, 'df':data_f, 'df2':data_f2,'dg':data_g, 'range': range(4),'show':showbtns},context_instance=RequestContext(request))
+
+def view_publicadas(request,encuesta):
+    
+    usuario = request.user
+    username = usuario.username
+    userid = usuario.id
+    
+    infoA= SA.BringAll()
+    infoB= SB.BringAll()
+    infoC= SC.BringAll()
+    infoD= SD.BringAll()
+    infoE= SE.BringAll()
+    infoF= SF.BringAll()
+    infoG= SG.BringAll()
+        
+    centros = CE.BringAll()
+    deps = DP.BringAll()
+    muns= MN.BringAll()
+        
+    e = E.objects.get(pk=encuesta)
+    #data = ETD.objects.filter(encuesta=e)
+
+    data_a = ConvertToDict(ED.objects.filter(encuesta=e,segmento = "A").values())
+    data_b = ConvertToDict(ED.objects.filter(encuesta=e,segmento = "B",tipo_valor="seleccion").values())
+    data_b2 = ConvertToDict(ED.objects.filter(encuesta=e,segmento = "B",tipo_valor="extra").values())
+    data_c = ConvertToDict(ED.objects.filter(encuesta=e,segmento = "C").values())
+    data_d = ConvertToDict(ED.objects.filter(encuesta=e,segmento = "D").values())
+    data_e = ConvertToDict(ED.objects.filter(encuesta=e,segmento = "E").values())
+    data_f = ConvertToDict(ED.objects.filter(encuesta=e,segmento = "F",tipo_valor="seleccion").values())
+    data_f2 = ConvertToDict(ED.objects.filter(encuesta=e,segmento = "F",tipo_valor="extra").values())
+    data_g = ConvertToDict(ED.objects.filter(encuesta=e,segmento = "G").values())
+    
+    #data_a = data_a[0].get('codigo_item')
+    data_a = GetList(data_a,1)
+    data_b = GetList(data_b,1)
+    data_b2 = GetList(data_b2,2)
+    data_c = GetList(data_c,2)
+    data_d = GetList(data_d,2) 
+    data_e = GetList(data_e,2)
+    data_f = GetList(data_f,1)
+    data_f2 = GetList(data_f2,2)
+    data_g = GetList(data_g,2)        
+    
+    data_b2 = CompleteSpaces(data_b2,4)
+    data_f2 = CompleteSpaces(data_f2,3)
+    data_d = CompleteSpaces(data_d,len(infoD))
+    data_e = CompleteSpaces(data_e,len(infoE))
+    
+    showbtns = False
+    return render_to_response('Encuesta.html',{'usuario':username,'id_usuario':userid,'codigo_enc':encuesta,'tipo_save':tipo_save,'deps':deps,'centros':centros,'infoA':infoA,'infoB':infoB,'infoC':infoC,'infoD':infoD,'infoE':infoE,'infoF':infoF,'infoG':infoG,'muns':muns,'tipo':"existente",'encuesta':e, 'da':data_a, 'db':data_b,'db2':data_b2, 'dc':data_c, 'dd':data_d, 'de':data_e, 'df':data_f, 'df2':data_f2,'dg':data_g, 'range': range(4),'show':showbtns},context_instance=RequestContext(request))
 
 def ConvertToDict(valuesqueryset):
     return [item for item in valuesqueryset]

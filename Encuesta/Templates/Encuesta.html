@@ -306,9 +306,11 @@
 			</ul>
 			<fieldset id="topbar">
 				<div id="topbar_btns">
-					<input type="image" src="{{STATIC_URL}}resources_icons/Save.ico" id="btnSave">
-					<input type="image" src="{{STATIC_URL}}resources_icons/Delete.ico" id="btn_Delete" >
-					<input type="image" src="{{STATIC_URL}}resources_icons/Accept.ico" id="btn_Publish" >
+					{% if show %}
+						<input type="image" src="{{STATIC_URL}}resources_icons/Save.ico" id="btnSave">
+						<input type="image" src="{{STATIC_URL}}resources_icons/Delete.ico" id="btn_Delete" >
+						<input type="image" src="{{STATIC_URL}}resources_icons/Accept.ico" id="btn_Publish" >
+					{% endif%}
 				</div>
 			</fieldset>
 			{%if tipo == "nueva"%}
@@ -822,10 +824,10 @@
 				
 				</div>
 				<fieldset id="footbar">
-					<div id="footbar_btns">
+					<!--<div id="footbar_btns">
 						<input type="image" src="{{STATIC_URL}}resources_icons/back.ico" id="btnBack">
 						<input type="image" src="{{STATIC_URL}}resources_icons/forward.ico" id="btnFwd">
-					</div>
+					</div>-->
 				</fieldset>
 			
 			

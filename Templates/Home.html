@@ -46,8 +46,8 @@
 						location.href = '{%url url_adminsegmentos%}'; 
 					break;
 					case 2:
-						location.href = '{%url url_adminencuestas%}'; 
-					creak;
+						/*location.href = '{%url url_adminencuestas%}';*/ 
+					break;
 					case 3:
 						location.href = '{%url url_reporte%}'; 
 					break;
@@ -92,7 +92,7 @@
 							<legend>Encuestas Publicadas</legend>
 								<table>
 									{%for p in publicadas%}
-										<tr><td><strong><a href=""> Encuesta {{p.codigo}} , fecha de creación {{p.fecha_apertura}} </a></strong></td></tr>
+										<tr><td><strong><a href="{%url url_publicadas p.codigo%}"> Encuesta {{p.codigo}} , fecha de creación {{p.fecha_apertura}} </a></strong></td></tr>
 									{%endfor%}
 								</table>
 							</fieldset>

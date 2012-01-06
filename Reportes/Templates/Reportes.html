@@ -22,6 +22,12 @@
 			$( "#datepicker2" ).datepicker({ 
 				dateFormat: 'yy-mm-dd'
 			});
+			$( "#datepicker3" ).datepicker({ 
+				dateFormat: 'yy-mm-dd'
+			});
+			$( "#datepicker4" ).datepicker({ 
+				dateFormat: 'yy-mm-dd'
+			});
 			$( "#accordion" ).accordion({
 				autoHeight: false,
 				navigation: true
@@ -69,6 +75,48 @@
 					}
 				});
 			});
+			$("#id_dep2").change(function() {
+				dep = $(this).val();
+				$("#id_mun2").empty();
+				$("#id_mun2").append("<option value='0' selected='selected'>Todos</option>");
+				$("#id_centros2").empty();
+				$("#id_centros2").append("<option value='0' selected='selected'>Todos</option>"); 
+				if(dep != "Todos"){			
+				$.ajax({
+							type:"GET",
+							data:
+								{
+									data:"muns",
+									iddep:$(this).val()
+								},
+							url: "{% url url_bringmunicipio %}",
+							success: function(msg){
+										$.each(msg,function(key,val){
+											$("#id_mun2").append("<option value="+val.pk+">"+val.descripcion+"</option>");
+						});
+					}
+				});
+				}
+			});
+			$("#id_mun2").change(function() {
+				$("#id_centros2").empty();
+				$("#id_centros2").append("<option value='0' selected='selected'>Todos</option>");
+				$.ajax({
+							type:"GET",
+							data:
+								{
+									data:"centros",
+									iddep : dep,
+									idmun:$(this).val()
+								},
+							url: "{% url url_bringcentros %}",
+							success: function(msg){
+										$.each(msg,function(key,val){
+											$("#id_centros2").append("<option value="+val.pk+">"+val.descripcion+"</option>");
+						});
+					}
+				});
+			});
 			$("#cbx_tipos").change(function() {
 				tipo = $(this).val();
 				$("#cbx_usuarios").empty();
@@ -95,7 +143,6 @@
 	<div id="tabs">
 		<ul>
 			<li><a href="#tabs-1">Generación de Reportes</a></li>
-			<li><a href="#tabs-2">Resultado de Reporte</a></li>
 		</ul>
 		<div id="tabs-1">
 			<fieldset>
@@ -188,6 +235,7 @@
 					</div>
 				<h3><a href="#">Reportes Comparativos</a></h3>
 					<div>
+					<form id = "form_comparativo" method = "POST" action = "{%url url_reportecomparativo%}">{% csrf_token %}
 						<fieldset>
 						<legend>Seleccione el Centro Educativo<legend>
 							<fieldset>
@@ -195,11 +243,11 @@
 								<table>
 									<tr>
 										<td><label>Entre:</label></td>
-										<td><input id="datepicker" type="text" name="tbx_fecha1"></td>
+										<td><input id="datepicker3" type="text" name="tbx_fecha1"></td>
 									</tr>
 									<tr>
 										<td><label>y:</label></td>
-										<td><input id="datepicker" type="text" name="tbx_fecha2"></td>
+										<td><input id="datepicker4" type="text" name="tbx_fecha2"></td>
 									</tr>
 								</table>
 							</fieldset>
@@ -208,7 +256,7 @@
 								<table>
 									<tr>
 										<td><label>Departamento:</label></td>
-										<td><select name="cbx_dep" id="id_dep">
+										<td><select name="cbx_dep" id="id_dep2">
 												<option>Todos</option>
 												{%for d in deps%}
 													<option value="{{d.pk}}"> {{d.nombre}} </option>
@@ -218,31 +266,24 @@
 									</tr>
 									<tr>
 										<td><label>Municipio:</label></td>
-										<td><select name="cbx_mun" id="id_mun">
+										<td><select name="cbx_mun" id="id_mun2">
 												<option>Todos</option>
 											</select>
 										</td>
 									</tr>
 									<tr>
 										<td><label>Centro:</label></td>
-										<td><select name="cbx_centros" id="id_centros">
+										<td><select name="cbx_centro" id="id_centros2">
 												<option>Todos</option>
 											</select>
 										</td>
 									</tr>
 								</table>
 							</fieldset>	
-							</fieldset>
-					</div>
-			</div>
+											<input type="submit" value ="Generar Reporte">
+			</form>
 			</fieldset>
 			</div>	
-		</div>
-		<div id="tabs-2">
-			<label>Resultado de Reporte</label>
-			<div id="resultados">
-
-			</div>
 		</div>
 	</div>
 {%endblock%}

@@ -1,3 +1,4 @@
+from django.template.response import TemplateResponse
 from django.shortcuts import render_to_response,redirect,get_object_or_404
 from django.template import RequestContext
 from django.http import HttpResponseRedirect, Http404, HttpResponse
@@ -21,6 +22,7 @@ from Encuesta.models import SegmentoG as SG
 from Encuesta.models import Encuesta as E
 from Encuesta.models import EncuestaData as ED
 
+    
 def view_reporte(request):
     
     usuarios = User.objects.all
@@ -83,7 +85,50 @@ def view_reportestadistico(request):
       #  PrepareReporteEstadistico(encuestas,segmentos_lista)
         return PrepareReporteEstadistico(encuestas,request)
 
-
+def view_reportecomparativo(request):
+    if request.method == 'POST':
+        fecha1 = request.POST['tbx_fecha1']
+        fecha2 = request.POST['tbx_fecha2']
+        centro = request.POST['cbx_centro']
+        
+        encuestas = E.objects.filter(codigo_centro = centro , fecha__range=(fecha1,fecha2))
+        return PrepareReporteComparativo(encuestas,request)
+    
+def PrepareReporteComparativo(encuestas,request):
+    
+    idtipo = TU.objects.get(nombre = 'Director Distrital')
+    iduser = U.objects.filter(tipo_usuario = idtipo.pk)
+    encuestas_directordistrital = encuestas.filter(codigo_usuario__in = iduser.filter(user = iduser))
+    
+    llenado_dd = ""
+    for e in encuestas_directordistrital:
+        codigo = str(e.codigo)
+        fecha = str(e.fecha_apertura)
+        llenado_dd = llenado_dd + ("<tr><td><strong><a href='{%url url_encuesta " + codigo + "%}'> Encuesta " + codigo + " , fecha de creacion "+ fecha +" </a></strong></td></tr>")
+       
+    idtipo = TU.objects.get(nombre = 'Sociedad Civil')
+    iduser = U.objects.filter(tipo_usuario = idtipo.pk)
+    encuestas_sociedadcivil = encuestas.filter(codigo_usuario__in = iduser.filter(user = iduser))
+    
+    llenado_sc = ""
+    for e in encuestas_directordistrital:
+        codigo = str(e.codigo)
+        fecha = str(e.fecha_apertura)
+        llenado_sc = llenado_sc + ("<tr><td><strong><a href='{%url url_encuesta " + codigo + "%}'> Encuesta " + codigo + " , fecha de creacion "+fecha+" </a></strong></td></tr>")
+        
+    idtipo = TU.objects.get(nombre = 'Unidad de Transparencia')
+    iduser = U.objects.filter(tipo_usuario = idtipo.pk)
+    encuestas_unidadtransparencia = encuestas.filter(codigo_usuario__in = iduser.filter(user = iduser))
+    
+    llenado_ut = ""
+    for e in encuestas_directordistrital:
+        codigo = str(e.codigo)
+        fecha = str(e.fecha_apertura)
+        llenado_ut = llenado_ut + ("<tr><td><strong><a href='{%url url_encuesta " + codigo + "%}'> Encuesta " + codigo + " , fecha de creacion "+fecha+" </a></strong></td></tr>")
+   
+    #return TemplateResponse('Resultados_Comparativos.html',{'llenado_dd':llenado_dd})
+    return render_to_response('Resultados_Comparativos.html',{'enc_dd': encuestas_directordistrital,'enc_sc': encuestas_sociedadcivil ,'enc_ut':encuestas_unidadtransparencia},context_instance=RequestContext(request))
+ 
 def PrepareReporteEstadistico(encuestas,request):
 
     sega = SA.BringAll()
@@ -525,7 +570,7 @@ def PrepareReporteEstadistico(encuestas,request):
     js = js + ("]}]"+
  "});")
 
-    return render_to_response('Resultados.html',{'js':js},context_instance=RequestContext(request))
+    return render_to_response('Resultados_Estadisticos.html',{'js':js},context_instance=RequestContext(request))
  
     
 
