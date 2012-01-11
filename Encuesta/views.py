@@ -295,10 +295,13 @@ def view_encuesta(request,encuesta):
         
     if encuesta == "nueva":
         p = ET(codigo_usuario=request.user,fecha_apertura = dt.today())
+        print request.user
         p.save()
+        print "jola"
         today = dt.today()
         
-        return render_to_response('Encuesta.html',{'usuario':username,'id_usuario':userid,'codigo_enc':p.codigo,'tipo_save':tipo_save,'deps':deps,'centros':centros,'infoA':infoA,'infoB':infoB,'infoC':infoC,'infoD':infoD,'infoE':infoE,'infoF':infoF,'infoG':infoG,'muns':muns,'tipo':"nueva", 'range1':range(4),'range2':range(3),'today':today},context_instance=RequestContext(request))
+        showbtns = True
+        return render_to_response('Encuesta.html',{'usuario':username,'id_usuario':userid,'codigo_enc':p.codigo,'tipo_save':tipo_save,'deps':deps,'centros':centros,'infoA':infoA,'infoB':infoB,'infoC':infoC,'infoD':infoD,'infoE':infoE,'infoF':infoF,'infoG':infoG,'muns':muns,'tipo':"nueva", 'range1':range(4),'range2':range(3),'today':today,'show':showbtns},context_instance=RequestContext(request))
     else:
         e = ET.objects.get(pk=encuesta)
         #data = ETD.objects.filter(encuesta=e)
