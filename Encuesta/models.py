@@ -123,6 +123,8 @@ class Encuesta(models.Model):
     zona = models.CharField(max_length=50)
     tel = models.IntegerField()
     
+    
+    
 class EncuestaData(models.Model):
     encuesta = models.ForeignKey(Encuesta)
     segmento = models.CharField(max_length=2)

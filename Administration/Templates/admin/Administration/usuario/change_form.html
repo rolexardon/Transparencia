@@ -1,4 +1,4 @@
-{% extends "admin/change_form.html" %}
+{% extends "admin/base_site.html" %}
 {% load i18n admin_modify adminmedia %}
 {% load url from future %}
 {% block extrahead %}
@@ -14,8 +14,8 @@
 
 {% block breadcrumbs %}{% if not is_popup %}
 <div class="breadcrumbs">
-     <a href="../../../">{% trans "Home" %}</a> &rsaquo;
-     <a href="../../">{{ app_label|capfirst|escape }}</a> &rsaquo;
+     <a href={%url 'url_home'%}>{% trans "Home" %}</a> &rsaquo;
+     <label>{{ app_label|capfirst|escape }}</label> &rsaquo;
      {% if has_change_permission %}<a href="../">{{ opts.verbose_name_plural|capfirst }}</a>{% else %}{{ opts.verbose_name_plural|capfirst }}{% endif %} &rsaquo;
      {% if add %}{% trans "Add" %} {{ opts.verbose_name }}{% else %}{{ original|truncatewords:"18" }}{% endif %}
 </div>

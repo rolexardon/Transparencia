@@ -98,33 +98,39 @@ def PrepareReporteComparativo(encuestas,request):
     
     idtipo = TU.objects.get(nombre = 'Director Distrital')
     iduser = U.objects.filter(tipo_usuario = idtipo.pk)
-    encuestas_directordistrital = encuestas.filter(codigo_usuario__in = iduser.filter(user = iduser))
-    
-    llenado_dd = ""
-    for e in encuestas_directordistrital:
-        codigo = str(e.codigo)
-        fecha = str(e.fecha_apertura)
-        llenado_dd = llenado_dd + ("<tr><td><strong><a href='{%url url_encuesta " + codigo + "%}'> Encuesta " + codigo + " , fecha de creacion "+ fecha +" </a></strong></td></tr>")
-       
+    encuestas_directordistrital = encuestas.filter(codigo_usuario__in = iduser.filter(user__in = iduser))
+
+    #llenado_dd = ""
+    #for e in encuestas_directordistrital:
+     #   codigo = str(e.codigo)
+      #  fecha = str(e.fecha_apertura)
+       # llenado_dd = llenado_dd + ("<tr><td><strong><a href='{%url url_encuesta " + codigo + "%}'> Encuesta " + codigo + " , fecha de creacion "+ fecha +" </a></strong></td></tr>")
+    #for i in iduser:
+     #   for e in encuestas:
+      #      if str(e.codigo_usuario) == str(i) :
+       #         codigo = str(e.codigo)
+        #        fecha = str(e.fecha_apertura)
+         #       llenado_dd = llenado_dd + ("<tr><td><strong><a href='{%url url_encuesta " + codigo + "%}'> Encuesta " + codigo + " , fecha de creacion "+ fecha +" </a></strong></td></tr>")
+                   
     idtipo = TU.objects.get(nombre = 'Sociedad Civil')
     iduser = U.objects.filter(tipo_usuario = idtipo.pk)
-    encuestas_sociedadcivil = encuestas.filter(codigo_usuario__in = iduser.filter(user = iduser))
+    encuestas_sociedadcivil = encuestas.filter(codigo_usuario__in = iduser.filter(user__in = iduser))
     
-    llenado_sc = ""
-    for e in encuestas_directordistrital:
-        codigo = str(e.codigo)
-        fecha = str(e.fecha_apertura)
-        llenado_sc = llenado_sc + ("<tr><td><strong><a href='{%url url_encuesta " + codigo + "%}'> Encuesta " + codigo + " , fecha de creacion "+fecha+" </a></strong></td></tr>")
+    #llenado_sc = ""
+    #for e in encuestas_directordistrital:
+     #   codigo = str(e.codigo)
+      #  fecha = str(e.fecha_apertura)
+       # llenado_sc = llenado_sc + ("<tr><td><strong><a href='{%url url_encuesta " + codigo + "%}'> Encuesta " + codigo + " , fecha de creacion "+fecha+" </a></strong></td></tr>")
         
     idtipo = TU.objects.get(nombre = 'Unidad de Transparencia')
     iduser = U.objects.filter(tipo_usuario = idtipo.pk)
-    encuestas_unidadtransparencia = encuestas.filter(codigo_usuario__in = iduser.filter(user = iduser))
+    encuestas_unidadtransparencia = encuestas.filter(codigo_usuario__in = iduser.filter(user__in = iduser))
     
-    llenado_ut = ""
-    for e in encuestas_directordistrital:
-        codigo = str(e.codigo)
-        fecha = str(e.fecha_apertura)
-        llenado_ut = llenado_ut + ("<tr><td><strong><a href='{%url url_encuesta " + codigo + "%}'> Encuesta " + codigo + " , fecha de creacion "+fecha+" </a></strong></td></tr>")
+    #llenado_ut = ""
+    #for e in encuestas_directordistrital:
+     #   codigo = str(e.codigo)
+      #  fecha = str(e.fecha_apertura)
+       # llenado_ut = llenado_ut + ("<tr><td><strong><a href='{%url url_encuesta " + codigo + "%}'> Encuesta " + codigo + " , fecha de creacion "+fecha+" </a></strong></td></tr>")
    
     #return TemplateResponse('Resultados_Comparativos.html',{'llenado_dd':llenado_dd})
     return render_to_response('Resultados_Comparativos.html',{'enc_dd': encuestas_directordistrital,'enc_sc': encuestas_sociedadcivil ,'enc_ut':encuestas_unidadtransparencia},context_instance=RequestContext(request))

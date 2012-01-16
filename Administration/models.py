@@ -5,7 +5,7 @@ from django.contrib.auth.models import User
 
 
 class CentroEducativo(models.Model):
-    #codigo = models.AutoField(primary_key=True)
+    
     codigo_departamento = models.CharField(max_length=100)
     descripcion_departamento = models.CharField(max_length=300)
     codigo_municipio = models.CharField(max_length=100)
@@ -110,17 +110,11 @@ class Barrio(models.Model):
     caserio = models.ForeignKey(Caserio)
     
 class Usuario(models.Model):
-    #codigo = models.AutoField(primary_key=True)
-    #nombre_completo = models.CharField(max_length=300)
-    #usuario = models.CharField(max_length=100,unique=True)
-    #password = models.CharField(max_length=50,unique=True,widget=PasswordInput(render_value=False))
-    #password = models.CharField(max_length=50,unique=True)
+    
     tipo_usuario = models.ForeignKey(TipoUsuario)
     telefono = models.CharField(max_length = 10)
-    #email = models.EmailField()
     direccion = models.CharField(max_length = 500)
     rol = models.ForeignKey(Rol)
-    #activo = models.BooleanField(default = True)
     user = models.ForeignKey(User, unique=True)
 
     def __unicode__(self):

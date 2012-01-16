@@ -7,9 +7,7 @@
 	<script type="text/javascript" src="{{STATIC_URL}}static_resources/jquery/jquery-ui-1.8.16.custom.min.js"></script>
 	
 	<link rel="stylesheet" type="text/css" href="{{STATIC_URL}}resources_css/jquery-ui-1.8.16.custom.css" />
-	<link rel="stylesheet" type="text/css" href="{{STATIC_URL}}resources_css/styles_login.css" />
-	
-
+	<link rel="stylesheet" type="text/css" href="{{STATIC_URL}}resources_css/styles_reportes.css" />
 	
 {%endblock%}
 {%block contenido%}
@@ -164,6 +162,7 @@
 									</tr>
 								</table>
 							</fieldset>
+							<br>
 							<fieldset>
 							<legend>Filtro por Usuarios</legend>
 								<table>
@@ -189,6 +188,7 @@
 									</tr>
 								</table>
 							</fieldset>
+							<br>
 							<fieldset>
 							<legend>Filtro Geográfico</legend>
 								<table>
@@ -237,7 +237,7 @@
 					<div>
 					<form id = "form_comparativo" method = "POST" action = "{%url url_reportecomparativo%}">{% csrf_token %}
 						<fieldset>
-						<legend>Seleccione el Centro Educativo<legend>
+						<legend>Seleccione el Centro Educativo</legend>
 							<fieldset>
 							<legend>Rango de Fecha</legend>
 								<table>
@@ -251,6 +251,7 @@
 									</tr>
 								</table>
 							</fieldset>
+						<br>
 						<fieldset>
 							<legend>Filtro Geográfico</legend>
 								<table>

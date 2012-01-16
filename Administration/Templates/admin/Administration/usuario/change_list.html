@@ -1,6 +1,9 @@
 {% extends "admin/base_site.html" %}
+
 {% load adminmedia admin_list i18n %}
+
 {% load url from future %}
+
 {% block extrastyle %}
   {{ block.super }}
   <link rel="stylesheet" type="text/css" href="{% admin_media_prefix %}css/changelists.css" />
@@ -38,13 +41,13 @@
 {% if not is_popup %}
   {% block breadcrumbs %}
     <div class="breadcrumbs">
-      <a href="../../">
+      <a href={%url 'url_home'%}>
         {% trans "Home" %}
       </a>
        &rsaquo;
-       <a href="../">
+       <label>
          {{ app_label|capfirst }}
-      </a>
+      </label>
       &rsaquo;
       {{ cl.opts.verbose_name_plural|capfirst }}
     </div>

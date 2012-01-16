@@ -1,0 +1,120 @@
+{%extends 'Main.html'%}
+{%block header%}
+{%endblock%}
+
+{%block includes%}
+	<script type="text/javascript" src="{{STATIC_URL}}static_resources/jquery/jquery-1.6.2.min.js"></script>
+	<script type="text/javascript" src="{{STATIC_URL}}static_resources/jquery/jquery-ui-1.8.16.custom.min.js"></script>
+	
+	<link rel="stylesheet" type="text/css" href="{{STATIC_URL}}resources_css/jquery-ui-1.8.16.custom.css" />
+	<link rel="stylesheet" type="text/css" href="{{STATIC_URL}}resources_css/styles_home.css" />
+{%endblock%}
+
+{%block contenido%}
+	<meta charset="utf-8">
+	<script>
+		$(document).ready(function() {
+			$("#tabs").tabs();
+			$("#cbx_tipos").change(function() {
+				tipo = $(this).val();
+				$("#cbx_usuarios").empty();
+				$("#cbx_usuarios").append("<option selected = \'selected\'>Seleccione</option>");							
+				$.ajax({
+							type:"GET",
+							data:
+								{
+									data:"tipo",
+									tipo:tipo,
+								},
+							url: "{% url url_bringusuarios %}",
+							success: function(msg){
+										$.each(msg,function(key,val){
+											$("#cbx_usuarios").append("<option value="+val.usuario+">"+val.usuario+"</option>");
+						});
+					}
+				});
+			});
+			$("#cbx_usuarios").change(function() {
+				usuario = $(this).val();
+				if(usuario != "Seleccione"){
+			    var otable=document.getElementById("tabla_encuestas"); 
+			    while(otable.rows.length>0){ 
+			    	otable.deleteRow(otable.rows.length-1); 	
+			    	}						
+				$.ajax({
+							type:"GET",
+							data:
+								{
+									data:"usuario",
+									usuario:usuario,
+								},
+							url: "{% url url_bringencuestas %}",
+							success: function(msg){
+								$.each(msg,function(key,val){
+ 									var table = document.getElementById("tabla_encuestas");
+						            var rowCount = table.rows.length;
+						            var row = table.insertRow(rowCount);
+						            var cell1 = row.insertCell(0);
+						            var p1 = "<strong><a href=\'/transparencia/encuesta/ver/encuesta/"
+						            var p2 = val.pk
+						            var p3 = "\'> Encuesta "
+						            var p4 = '</a></strong><input type = "button" value = \'Despublicar\' onClick = "location.href = \'/transparencia/home/unpublish/encuesta/'
+						            var p5 = '\'">'
+						            var el1 = p1.concat(p2)
+						            var el2 = p3.concat(p2)
+						            var el3 = (p4.concat(p2)).concat(p5)
+						            var element1 = (el1.concat(el2)).concat(el3)
+						            element1.type = "text";
+						            cell1.innerHTML = element1;
+						            
+						});
+					}
+				});
+				}
+			});
+
+		});
+	</script>
+	{%load customfilters_reportes%}
+	<div id="tabs">
+		<ul>
+			<li><a href="#tabs-1">Administración de Encuestas</a></li>
+		</ul>
+		<div id="tabs-1">
+		<fieldset>
+		<legend>Filtro por Usuarios</legend>
+			<table>
+				<tr>
+					<td><label>Tipo de Usuario:</label></td>
+					<td><select id = "cbx_tipos" name = "cbx_tipousuario">
+							<option>Todos</option>
+							{%for t in tipos%}
+								<option>{{t.nombre}}</option>
+							{%endfor%}
+						</select>
+					</td>
+				</tr>
+				<tr>
+					<td><label>Usuario:</label></td>
+					<td><select id = "cbx_usuarios" name = "cbx_usuario">
+							<option selected = "selected">Todos</option>
+							{%for u in usuarios%}
+								<option>{{u|getfullname}}</option>
+							{%endfor%}
+						</select>
+					</td>
+				</tr>
+			</table>
+		</fieldset>
+		<br>
+		<fieldset>
+		<legend>Encuestas</legend>
+			<table id = "tabla_encuestas">
+		
+			</table>
+		</fieldset>
+		</div>
+	</div>
+
+{%endblock%}
+		

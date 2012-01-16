@@ -83,7 +83,7 @@ def view_save(request,pg,encuesta_id):
             ETD.objects.filter(encuesta= encuesta_id).delete()
         else:
             encuesta = SaveBasic(request,-1)
-            
+
         infoC=SC.BringAll()
         infoD=SD.BringAll()
         SavePartA(request.POST['cbx_parteA'],tipo_save,encuesta)
@@ -294,10 +294,9 @@ def view_encuesta(request,encuesta):
     muns= MN.BringAll()
         
     if encuesta == "nueva":
+        
         p = ET(codigo_usuario=request.user,fecha_apertura = dt.today())
-        print request.user
         p.save()
-        print "jola"
         today = dt.today()
         
         showbtns = True
