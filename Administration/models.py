@@ -1,8 +1,8 @@
 # -*- coding: latin-1 -*-
 from django.db import models
 from django.forms.widgets import PasswordInput
-from django.contrib.auth.models import User
-
+from django.contrib.auth.models import User, UserManager
+from django.db.models.signals import post_save
 
 class CentroEducativo(models.Model):
     
@@ -70,8 +70,11 @@ class Departamento(models.Model):
     def BringAll(Departamento):
         return Departamento.objects.all()
         
+    #def __unicode__(self):
+     #   return self.BringAll
+    
     def __unicode__(self):
-        return self.BringAll
+        return self.nombre
 
 class Municipio(models.Model):
     codigo = models.CharField(max_length=2)
@@ -109,25 +112,52 @@ class Barrio(models.Model):
     nombre = models.CharField(max_length=300)
     caserio = models.ForeignKey(Caserio)
     
-class Usuario(models.Model):
+#class Usuario(models.Model):
+class Usuario(User):
     
-    tipo_usuario = models.ForeignKey(TipoUsuario)
-    telefono = models.CharField(max_length = 10)
-    direccion = models.CharField(max_length = 500)
-    rol = models.ForeignKey(Rol)
-    user = models.ForeignKey(User, unique=True)
+    #user = models.OneToOneField(User)
+    
+    tipo_usuario = models.ForeignKey(TipoUsuario, null = True, blank = True,default = None)
+    telefono = models.CharField(max_length = 10, null = True, blank = True,default = None)
+    direccion = models.CharField(max_length = 500, null = True, blank = True,default = None)
+    rol = models.ForeignKey(Rol,  null = True, blank = True,default = None)
+    
+    objects = UserManager()
+    #user = models.ForeignKey(User, unique=True)
 
-    def __unicode__(self):
-        return self.user.username
+   # def __unicode__(self):
+    #    return self.user.username
+
     
     @classmethod
     def BringAll(Usuario):
         return Usuario.objects.all()
     @classmethod 
     def BringByTipo(Usuario,tipo):
-        tipousuario = TipoUsuario.objects.get(nombre = tipo)
-        return Usuario.objects.filter(tipo_usuario = tipousuario)
-        
-       
+        tipousuario = TipoUsuario.objects.get(codigo = tipo)
+        #user = getattr(User, 'tipo_usuario', None)
+        #usuarios=Usuario.objects.filter(tipo_usuario = tipousuario)
+        usuarios=Userio.objects.filter(tipo_usuario = tipousuario)
+        return usuarios
+    @classmethod 
+    def BringByTipo_Username(Usuario,tipo,un):
+		if tipo:
+			if un:
+				#tipousuario = TipoUsuario.objects.get(codigo = tipo)
+				#user = getattr(Usuario, 'tipo_usuario', None)
+				usuarios=Usuario.objects.filter(tipo_usuario = tipo,username__contains=un)
+			else:
+				#tipousuario = TipoUsuario.objects.get(codigo = tipo)
+				#user = getattr(Usuario, 'tipo_usuario', None)
+				usuarios=Usuario.objects.filter(tipo_usuario = tipo)
 
-# Create your models here.
+		else:
+			 if un:
+				 usuarios=User.objects.filter(username__contains=un)
+			 else:
+				 usuarios=User.objects.all()
+
+		return usuarios
+
+
+

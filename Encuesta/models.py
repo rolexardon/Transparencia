@@ -104,6 +104,10 @@ class EncuestaTemp(models.Model):
     codigo_centro = models.ForeignKey(AdMod.CentroEducativo, null = True, blank = True,default = None)
     zona = models.CharField(max_length=50,null=True,blank=True,default=None)
     tel = models.IntegerField(null=True,blank=True)
+    observacion = models.CharField(max_length=300,null=True,blank=True,default="")
+    alumnos = models.IntegerField(null=True,blank=True,default=0)
+    imagen01 = models.ImageField(upload_to='imagenes_%d%m%Y',null = True)
+    imagen02 = models.ImageField(upload_to='imagenes_%d%m%Y',null = True)
     
 class EncuestaTempData(models.Model):
     encuesta = models.ForeignKey(EncuestaTemp)
@@ -122,8 +126,10 @@ class Encuesta(models.Model):
     codigo_centro = models.ForeignKey(AdMod.CentroEducativo)
     zona = models.CharField(max_length=50)
     tel = models.IntegerField()
-    
-    
+    observacion = models.CharField(max_length=300,default="")
+    alumnos = models.IntegerField()
+    imagen01 = models.ImageField(upload_to='imagenes_%d%m%Y',null=True,default=None)
+    imagen02 = models.ImageField(upload_to='imagenes_%d%m%Y',null=True,default=None)
     
 class EncuestaData(models.Model):
     encuesta = models.ForeignKey(Encuesta)
@@ -131,3 +137,41 @@ class EncuestaData(models.Model):
     codigo_item = models.IntegerField()
     tipo_valor = models.CharField(max_length = 100)
     valor_item =  models.CharField(max_length = 255)
+    
+    
+    @classmethod
+    def BringValue(EncuestaData,enc,seg,cod):
+        return EncuestaData.objects.get(encuesta = enc, segmento = seg, codigo_item = cod).valor_item
+        
+    def __unicode__(self):
+        return self.BringAll
+    
+class ListadoDocentesTemp(models.Model):
+    encuesta = models.ForeignKey(EncuestaTemp)
+    segmento = models.CharField(max_length=2)
+    id_personal =  models.CharField(max_length = 255)
+    nombre =  models.CharField(max_length = 255)
+    
+    @classmethod
+    def BringAll(ListadoDocentesTemp,encuesta,segmento):
+        return ListadoDocentesTemp.objects.filter(encuesta = encuesta, segmento = segmento)
+        
+    def __unicode__(self):
+        return self.BringAll
+ #   def __unicode__(self):
+#      return self.descripcion
+    
+class ListadoDocentes(models.Model):
+    encuesta = models.ForeignKey(Encuesta)
+    segmento = models.CharField(max_length=2)
+    id_personal =  models.CharField(max_length = 255)
+    nombre =  models.CharField(max_length = 255)
+    
+    @classmethod
+    def BringAll(ListadoDocentes,encuesta,segmento):
+        return ListadoDocentes.objects.filter(encuesta = encuesta, segmento = segmento)
+        
+    def __unicode__(self):
+        return self.BringAll
+    
+    

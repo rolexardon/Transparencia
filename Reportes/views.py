@@ -5,7 +5,7 @@ from django.http import HttpResponseRedirect, Http404, HttpResponse
 from django.utils import simplejson
 
 import string
-
+from dateutil import parser
 from django.contrib.auth.models import User
 from Administration.models import Usuario as U 
 from Administration.models import TipoUsuario as TU
@@ -25,7 +25,7 @@ from Encuesta.models import EncuestaData as ED
     
 def view_reporte(request):
     
-    usuarios = User.objects.all
+    usuarios = User.objects.all()
     tipos = TU.BringAll()
     deps = DP.BringAll()
     
@@ -47,58 +47,130 @@ def view_bringusuarios(request):
                 if tipo == 'Todos':
                     users = U.BringAll()
                 else :
+                    #tipousuario = TU.objects.get(codigo = tipo)
+                   # users=User.objects.filter(U__tipo_usuario = tipousuario)
                     users = U.BringByTipo(tipo)
-                data = [{'pk':u.user.id,'usuario':u.user.get_full_name()} for u in users]
+
+                #data = [{'pk':u.user.id,'usuario':u.user} for u in users]    
+                #data = [{'pk':u.user.id,'usuario':u.user.get_full_name()} for u in users]
+                data = [{'pk':u.user.id,'usuario':u.user.username} for u in users]
                 return HttpResponse(simplejson.dumps(data), mimetype="application/json")
+                #return HttpResponse(simplejson.dumps(list(users)), mimetype="application/json")
             except Exception,e:
-                print e
+
                 return HttpResponse('Error')
             else:
-                return HttpResponse(simplejson.dumps(data), mimetype="application/json")   
+                return HttpResponse(simplejson.dumps(data), mimetype="application/json")
+                #return HttpResponse(simplejson.dumps(list(users)), mimetype="application/json")   
             
 def view_reportestadistico(request):
     if request.method == "POST":
         
+        
         fecha1 = request.POST['tbx_fecha1']
         fecha2 = request.POST['tbx_fecha2']
+        
+        #if fecha1 != '' and fecha2!= '':
+        dt = parser.parse(fecha1)
+        m = dt.strftime("%d")
+        d = dt.strftime("%m")
+        y = dt.strftime("%Y")
+        #dt = dt.strftime("%Y-%d-%m")
+        fecha1 = str(y) + "-" + str(d) + "-" + str(m)
+        dt = parser.parse(fecha2)
+        m = dt.strftime("%d")
+        d = dt.strftime("%m")
+        y = dt.strftime("%Y")
+        #dt = dt.strftime("%Y-%d-%m")
+        fecha2 = str(y) + "-" + str(d) + "-" + str(m)
+
+        print fecha1,fecha2
         tipousuario = request.POST['cbx_tipousuario']
-        usuario = request.POST['cbx_usuario']
+        #usuario = request.POST['cbx_usuario']
+        usuario = request.POST['name_codeselecteduser']
         departamento = request.POST['cbx_dep']
         municipio = request.POST['cbx_mun']
         centro = request.POST['cbx_centro']
        # segmentos_lista = request.POST.getlist("check_seg")
         
-        sql = "SELECT * FROM Encuesta_encuesta WHERE fecha BETWEEN '" + fecha1 + "' AND '" + fecha2 + "'"
+        sql = "SELECT * FROM Encuesta_encuesta WHERE fecha BETWEEN '" + str(fecha1) + "' AND '" + str(fecha2) + "'"
         if centro != 'Todos':
             sql = sql + " AND codigo_centro_id = " + centro
         if municipio != 'Todos':
             sql = sql + " AND codigo_municipio_id = " + municipio
         if departamento != 'Todos':
             sql = sql + " AND codigo_departamento_id = " + departamento
-        if usuario != 'Todos':
-            words = string.split(usuario, ' ')
-            sql = sql + " AND codigo_usuario_id = (SELECT id FROM auth_user WHERE first_name = '" + words[0] + "' AND last_name = '" + words[1] + "')"
+        if usuario != '-1':
+            #words = string.split(usuario, ' ')
+            #sql = sql + " AND codigo_usuario_id = (SELECT id FROM auth_user WHERE first_name = '" + words[0] + "' AND last_name = '" + words[1] + "')"
+            sql = sql + " AND codigo_usuario_id = " + usuario
         if tipousuario != 'Todos':
             sql = sql + " AND codigo_usuario_id = (SELECT user_id FROM Administration_usuario WHERE tipo_usuario_id = (SELECT id FROM Administration_tipousuario WHERE nombre = '" + tipousuario + "'))"
 
+
         encuestas = E.objects.raw(sql)
+        print encuestas
       #  PrepareReporteEstadistico(encuestas,segmentos_lista)
         return PrepareReporteEstadistico(encuestas,request)
 
 def view_reportecomparativo(request):
     if request.method == 'POST':
-        fecha1 = request.POST['tbx_fecha1']
-        fecha2 = request.POST['tbx_fecha2']
-        centro = request.POST['cbx_centro']
+        try:
+            fecha1 = request.POST['tbx_fecha1']
+            fecha2 = request.POST['tbx_fecha2']
+            
+            #if fecha1 != '' and fecha2!= '':
+            dt = parser.parse(fecha1)
+            m = dt.strftime("%d")
+            d = dt.strftime("%m")
+            y = dt.strftime("%Y")
+            #dt = dt.strftime("%Y-%d-%m")
+            fecha1 = str(y) + "-" + str(d) + "-" + str(m)
+            dt = parser.parse(fecha2)
+            m = dt.strftime("%d")
+            d = dt.strftime("%m")
+            y = dt.strftime("%Y")
+            #dt = dt.strftime("%Y-%d-%m")
+            fecha2 = str(y) + "-" + str(d) + "-" + str(m)
         
-        encuestas = E.objects.filter(codigo_centro = centro , fecha__range=(fecha1,fecha2))
-        return PrepareReporteComparativo(encuestas,request)
-    
+        
+            centro = request.POST['cbx_centro']
+            if centro != "Todos":
+                encuestas = E.objects.filter(codigo_centro = centro , fecha__range=(fecha1,fecha2))
+            else:
+                encuestas = E.objects.filter(fecha__range=(fecha1,fecha2))
+            print "voy"
+            if encuestas:
+                return PrepareReporteComparativo(encuestas,request)
+            else:
+                usuarios = User.objects.all()
+                tipos = TU.BringAll()
+                deps = DP.BringAll()
+                
+                infoA= SA.BringAll()
+                infoB= SB.BringAll()
+                infoC= SC.BringAll()
+                infoD= SD.BringAll()
+                infoE= SE.BringAll()
+                infoF= SF.BringAll()
+                infoG= SG.BringAll()
+                
+                return render_to_response('Reportes.html',{'err':'No hay encuestas','usuarios':usuarios,'tipos':tipos, 'deps':deps,'infoA':infoA,'infoB':infoB,'infoC':infoC,'infoD':infoD,'infoE':infoE,'infoF':infoF,'infoG':infoG},context_instance=RequestContext(request))
+        except Exception,e:
+            HttpResponse(e)
+    else:
+        HttpResponse("nada")
+    return render_to_response('Reportes.html',context_instance=RequestContext(request))
+            
 def PrepareReporteComparativo(encuestas,request):
-    
+
     idtipo = TU.objects.get(nombre = 'Director Distrital')
     iduser = U.objects.filter(tipo_usuario = idtipo.pk)
-    encuestas_directordistrital = encuestas.filter(codigo_usuario__in = iduser.filter(user__in = iduser))
+    l = []
+    for i in iduser:
+        l.append(i)
+    #encuestas_directordistrital = encuestas.filter(codigo_usuario__in = iduser.filter(user__in = iduser))
+    encuestas_directordistrital = encuestas.filter(codigo_usuario__in = l)
 
     #llenado_dd = ""
     #for e in encuestas_directordistrital:
@@ -111,11 +183,16 @@ def PrepareReporteComparativo(encuestas,request):
        #         codigo = str(e.codigo)
         #        fecha = str(e.fecha_apertura)
          #       llenado_dd = llenado_dd + ("<tr><td><strong><a href='{%url url_encuesta " + codigo + "%}'> Encuesta " + codigo + " , fecha de creacion "+ fecha +" </a></strong></td></tr>")
-                   
+              
     idtipo = TU.objects.get(nombre = 'Sociedad Civil')
     iduser = U.objects.filter(tipo_usuario = idtipo.pk)
-    encuestas_sociedadcivil = encuestas.filter(codigo_usuario__in = iduser.filter(user__in = iduser))
-    
+    l = []
+    for i in iduser:
+        l.append(i)
+
+    #encuestas_sociedadcivil = encuestas.filter(codigo_usuario__in = iduser.filter(user__in = iduser))
+    encuestas_sociedadcivil = encuestas.filter(codigo_usuario__in = l)
+
     #llenado_sc = ""
     #for e in encuestas_directordistrital:
      #   codigo = str(e.codigo)
@@ -124,14 +201,17 @@ def PrepareReporteComparativo(encuestas,request):
         
     idtipo = TU.objects.get(nombre = 'Unidad de Transparencia')
     iduser = U.objects.filter(tipo_usuario = idtipo.pk)
-    encuestas_unidadtransparencia = encuestas.filter(codigo_usuario__in = iduser.filter(user__in = iduser))
-    
+    l = []
+    for i in iduser:
+        l.append(i)
+    #encuestas_unidadtransparencia = encuestas.filter(codigo_usuario__in = iduser.filter(user__in = iduser))
+    encuestas_unidadtransparencia = encuestas.filter(codigo_usuario__in = l)
     #llenado_ut = ""
     #for e in encuestas_directordistrital:
      #   codigo = str(e.codigo)
       #  fecha = str(e.fecha_apertura)
        # llenado_ut = llenado_ut + ("<tr><td><strong><a href='{%url url_encuesta " + codigo + "%}'> Encuesta " + codigo + " , fecha de creacion "+fecha+" </a></strong></td></tr>")
-   
+
     #return TemplateResponse('Resultados_Comparativos.html',{'llenado_dd':llenado_dd})
     return render_to_response('Resultados_Comparativos.html',{'enc_dd': encuestas_directordistrital,'enc_sc': encuestas_sociedadcivil ,'enc_ut':encuestas_unidadtransparencia},context_instance=RequestContext(request))
  
@@ -190,7 +270,7 @@ def PrepareReporteEstadistico(encuestas,request):
      
     for e in encuestas:
         data = ED.objects.filter(encuesta=e)
-        GetDataSegmentoA(data.filter(segmento = 'A'),lista,sum_lista)
+        GetDataSegmentoA(data.filter(segmento = 'A',tipo_valor = "texto"),lista,sum_lista)
         GetDataSegmentoB(data.filter(segmento = 'B'),listb,sum_listb)
         GetDataSegmentoC(data.filter(segmento = 'C'),listc,sum_listcSI,sum_listcNO)
         GetDataSegmentoF(data.filter(segmento = 'F'),listf,sum_listf)
@@ -204,7 +284,9 @@ def PrepareReporteEstadistico(encuestas,request):
     for obj in sum_lista:
         sumaa = sumaa + obj
     for obj in sum_lista:
-        element = (float(obj) / float(sumaa)) * 100.0
+        if sumaa == 0:
+            element = 0
+        else : element = (float(obj) / float(sumaa)) * 100.0
         porcent_lista.append(element)
          
     js = js + ("chartA = new Highcharts.Chart({"                                                    +
@@ -259,13 +341,15 @@ def PrepareReporteEstadistico(encuestas,request):
     for obj in sum_listb:
         sumab = sumab + obj
     for obj in sum_listb:
-        element = (float(obj) / float(sumab)) * 100.0
-        print element
+        if sumab == 0:
+            element = 0
+        else : element = (float(obj) / float(sumab)) * 100.0
+
         porcent_listb.append(element)
          
     js = js + ("chartB = new Highcharts.Chart({"                                                    +
                     "chart: {"                                                                      +
-                    "renderTo: 'SegmentoB',"                                                           +
+                    "renderTo: 'SegmentoB',"                                                        +
                     "    plotBackgroundColor: null,"                                                +
                     "    plotBorderWidth: null,"                                                    +
                     "    plotShadow: false"                                                         +    
@@ -402,7 +486,9 @@ def PrepareReporteEstadistico(encuestas,request):
     for obj in sum_listf:
         sumaf = sumaf + obj
     for obj in sum_listf:
-        element = (float(obj) / float(sumaf)) * 100.0
+        if sumaf == 0:
+            element = 0
+        else :element = (float(obj) / float(sumaf)) * 100.0
         porcent_listf.append(element)
          
     js = js + ("chartF = new Highcharts.Chart({"                                                    +

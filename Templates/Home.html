@@ -1,117 +1,228 @@
 {%extends 'Main.html'%}
 {%block header%}
 {%endblock%}
-
 {%block includes%}
-	<script type="text/javascript" src="{{STATIC_URL}}static_resources/jquery/jquery-1.6.2.min.js"></script>
-	<script type="text/javascript" src="{{STATIC_URL}}static_resources/jquery/jquery-ui-1.8.16.custom.min.js"></script>
-	<script type="text/javascript" src="{{STATIC_URL}}static_resources/jquery/fancybox/jquery.fancybox-1.3.4.pack.js"></script>
-	
-	<link rel="stylesheet" type="text/css" href="{{STATIC_URL}}resources_css/jquery-ui-1.8.16.custom.css" />
-	<link rel="stylesheet" type="text/css" href="{{STATIC_URL}}resources_css/styles_home.css" />
-	<link rel="stylesheet" type="text/css" href="{{STATIC_URL}}resources_css/fancybox/jquery.fancybox-1.3.4.css" />
-{%endblock%}
 
+	<script type="text/javascript" src="{{STATIC_URL}}jquery/jquery-1.6.2.min.js"></script>
+	<script type="text/javascript" src="{{STATIC_URL}}jquery/jquery-ui-1.8.16.custom.min.js"></script>
+	<link rel="stylesheet" type="text/css" href="{{STATIC_URL}}css/jquery-ui-1.8.16.custom.css" />
+	<link rel="stylesheet" type="text/css" href="{{STATIC_URL}}css/styles_home.css" />
+	
+{%endblock%}
 {%block contenido%}
 	<meta charset="utf-8">
-	<script>
-		$(document).ready(function() {
-			var mssg = "{{mssg}}";
-			var action;
-			if(mssg == "temporal"){
-				showMessage("Encuesta temporal guardada!");
+	<script type="text/javascript">
+	$(document).ready(function() {
+		var mssg = "{{mssg}}";
+		var despub = "{{despub}}";
+		var action;
+		if(mssg == "temporal"){
+			showMessage("Encuesta temporal guardada!");
+			mssg = "";
+		}
+		if(mssg == "final"){
+			showMessage("Encuesta publicada!");
+			mssg = "";
+		}
+		if(mssg == "delete"){
+			showMessage("Encuesta eliminada");
+			mssg = "";
+		}
+        if(mssg == "pssw_modif"){
+			showMessage("Contraseña modificada");
+			mssg = "";
+		}
+        if(mssg == "pssw_error"){
+			showMessage("No se pudo cambiar la contraseña, revise los datos");
+			mssg = "";
+		}
+		if(despub == "despub"){
+			showMessage("Encuesta despublicada!");
+			despub = "";
+		}
+		var rol_usuario = "{{rol_usuario}}";
+		if(rol_usuario == "Digitador"){
+			$("#tabs").tabs({ disabled: [2] });
+		}
+		$("#tabs_principal").tabs();
+		$("#tabs").tabs().addClass('ui-tabs-vertical ui-helper-clearfix');
+		$("#tabs li").removeClass('ui-corner-top').addClass('ui-corner-left');
+		$( "#selectable" ).selectable({
+			stop: function() {
+				$( ".ui-selected", this ).each(function() {
+					action = $( "#selectable li" ).index( this );
+				});
 			}
-			if(mssg == "final"){
-				showMessage("Encuesta publicada!");
-			}
-			var rol_usuario = "{{rol_usuario}}";
-			if(rol_usuario == "Digitador"){
-				$("#tabs").tabs({ disabled: [1] });
-			}
-			$("#tabs_principal").tabs();
-			$("#tabs").tabs().addClass('ui-tabs-vertical ui-helper-clearfix');
-			$("#tabs li").removeClass('ui-corner-top').addClass('ui-corner-left');
-			$( "#selectable" ).selectable({
-				stop: function() {
-					$( ".ui-selected", this ).each(function() {
-						action = $( "#selectable li" ).index( this );
-					});
-				}
-			});
-			$("#select_action").click(function(){
-				switch(action){
-					case 0:
-						location.href = '{%url url_adminusuarios%}'; 
-					break;
-					case 1:
-						location.href = '{%url url_adminsegmentos%}'; 
-					break;
-					case 2:
-						location.href = '{%url url_adminencuestas%}';
-					break;
-					case 3:
-						location.href = '{%url url_reporte%}'; 
-					break;
-				}
-			});
-			$("#logout_btn").click(function(){
-				location.href = '/admin/logout/'; 
-			});
-			
-			function showMessage(message){
-			 
-				var content = $("<div>" + message + "<br /><br /></div>");
-    			var button = $("<input type='button' value='Ok' />");
-    			content.append(button);
-
-    			$.fancybox({ content: content});
-    			$(button).click(function () { $.fancybox.close(); });
-			
-			};
 		});
+		$("#select_action").click(function(){
+			switch(action){
+				case 0:
+					location.href = '{%url url_adminencuestas%}';
+					
+				break;
+				case 1:
+					location.href = '{%url url_reporte%}';
+					
+				break;
+				case 2:
+					location.href = '{%url url_menuusuarios%}';
+				break;
+				case 3:
+					location.href = '{%url url_adminsegmentos%}';
+				break;
+			}
+		});
+		$("#logout_btn").click(function(){
+			//location.href = '/transparencia/logout/';
+			location.href = '{%url url_logout%}';
+		});
+		$("#principal_btn").click(function(){
+			//location.href = '/transparencia/home/';
+			location.href = '{%url url_home%}';
+		});
+		
+		function showMessage(message){
+
+			$("#Mensaje").empty();
+			$("#Mensaje").append(message);
+			$( "#dialog-message" ).dialog({
+			modal: true,
+			buttons: {
+				Ok: function() {
+					$( this ).dialog( "close" );
+				}
+			}
+		});
+		
+		};
+				
+
+		
+});
+	
 	</script>
-	<div id="tabs_principal">
-		<label id="lbl_user">Bienvenido {{usuario}}</label>
-		<input type = "button" id="logout_btn" value = "Salir">
+	
+    {%load customfilters%}
+	<div id="dialog-message" title="Mensaje del Sistema">
+		<p id="Mensaje"> </p>
+	</div>
+	<div id="tabs_principal" class="row-fluid">
+		<h6 id="lbl_user">Bienvenido {{usuario}}</h6>
 		<ul>
-			<li><a href="#tabs1">Home</a></li>
+			<li><a href="#tabs1">Principal</a></li>
 		</ul>
-		<div id="tabs1">
+		<div id="tabs1" >
 					<div id="tabs">
 						<ul>
 							<li><a href="#tabs-1">Encuestas</a></li>
-							<li><a href="#tabs-2">Administración</a></li>
+                            <li><a href="#tabs-2">Usuario</a></li>
+							<li><a href="#tabs-3">Administración</a></li>
 						</ul>
 						<div id="tabs-1">
+                            <div class="row-fluid">
+                                <span class="span6">
+                                <strong><a href="{%url url_encuesta "nueva"%}"> Nueva Encuesta </a></strong>
+                                </span>
+                            </div>
 							<fieldset>
 							<legend>Encuestas Pendientes</legend>
-								<table>
-									<tr><td><strong><a href="{%url url_encuesta "nueva"%}"> Nueva Encuesta </a></strong></td></tr>
+								<table class="table table-striped">
+									
 									{%for e in encuestas%}
-										<tr><td><strong><a href="{%url url_encuesta e.codigo%}"> Encuesta {{e.codigo}} , fecha de creación {{e.fecha_apertura}} </a></strong></td></tr>
+										<tr><td><a href="{%url url_encuesta e.codigo%}"> Encuesta {{e.codigo}} , {{e.fecha|parsed_date}} , {{e.codigo_centro|centroinfo}}, creada en {{e.fecha_apertura|parsed_date}} </a></td></tr>
 									{%endfor%}
 								</table>
 							</fieldset>
 							<br>
 							<fieldset>
 							<legend>Encuestas Publicadas</legend>
-								<table>
+								<table class="table table-striped">
 									{%for p in publicadas%}
-										<tr><td><strong><a href="{%url url_publicadas p.codigo%}"> Encuesta {{p.codigo}} , fecha de creación {{p.fecha_apertura}} </a></strong></td></tr>
+										<tr><td><a href="{%url url_publicadas p.codigo%}"> Encuesta {{p.codigo}} , {{p.fecha|parsed_date}} , {{p.codigo_centro|centroinfo}}, creada en {{p.fecha_apertura}} </a></td></tr>
 									{%endfor%}
 								</table>
 							</fieldset>
 						</div>
-						<div id="tabs-2">
+                        <div id="tabs-2">
+                            <div class="well">
+                                <fieldset>
+                                     <legend>
+                                        Gesti&oacute;n de Datos de Acceso
+                                     </legend>
+                                </fieldset>
+                                <div class="row-fluid">
+                                    <form method='post' action="{% url url_modificarusuario 'contrasena'%}"> {%	csrf_token	%}
+                                    <span class="span6">
+                                        <div class="control-group">
+                                            <label class="control-label" for="id_conactual">Contrasena Actual:</label>
+                                            <div class="controls">
+                                                {%	if	errores.conactual %}
+                                                    <div class="row-fluid">
+                                                        <span class="label label-important">
+                                                            {{errores.conactual}}
+                                                        </span>
+                                                    </div>
+                                                {%	endif	%}
+                                                <input id="id_conactual" name="name_conactual" type="password" value=''>
+                                                <span	class="help-block">Ingrese su contrasena actual</span>
+                                            </div>
+                                        </div>
+                                    </span>
+                                    <span class="span6">
+                                        <div class="control-group">
+                                            <label class="control-label" for="id_connueva01">Nueva Contrasena:</label>
+                                            <div class="controls">
+                                                {%	if	errores.connueva01 %}
+                                                    <div class="row-fluid">
+                                                        <span class="label label-important">
+                                                            {{errores.connueva01}}
+                                                        </span>
+                                                    </div>
+                                                {%	endif	%}
+                                                <input id="id_connueva01" name="name_connueva01" type="password">
+                                                <span	class="help-block">Ingrese su nueva contrasena</span>
+                                            </div>
+                                        </div>
+                                    </span>
+                                    <span class="span6">
+                                        <div class="control-group">
+                                            <label class="control-label" for="id_connueva02">Confirme Contrasena:</label>
+                                            <div class="controls">
+                                                {%	if	errores.connueva02 %}
+                                                    <div class="row-fluid">
+                                                        <span class="label label-important">
+                                                            {{errores.connueva02}}
+                                                        </span>
+                                                    </div>
+                                                {%	endif	%}
+                                                <input id="id_connueva02" name="name_connueva02" type="password" >
+                                                <span	class="help-block">Confirme su nueva contrasena</span>
+                                            </div>
+                                        </div>
+                                    </span>
+                                    <span class="span6">
+                                    <legend></legend>
+                                        <button id="_modificar" type="submit" class="btn btn-warning">
+                                            <i class="icon-edit icon-white"></i>
+                                            Modificar
+                                        </button>
+                                    </span>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+						<div id="tabs-3" >
 							<fieldset>
 							<legend>Gestión Administrativa</legend>
 								<ul id="selectable">
+									<li class="ui-widget-content" >Administración de Encuestas</li>
+									<li class="ui-widget-content" >Reportes</li>
+									<legend></legend>
 									<li class="ui-widget-content" value = 0 id="btn_Usuarios">Administración de Usuarios</li>
 									<li class="ui-widget-content" >Administración de Segmentos de Encuesta</li>
-									<li class="ui-widget-content" >Administración de Encuestas de Usuarios</li>
-									<li class="ui-widget-content" >Reportes</li>
+									
 								</ul>
-								<input type="button" id="select_action" value="OK" >	
+                                <button type="submit" id="select_action" class="btn">OK</button>
 							</fieldset>
 						</div>
 					</div>

@@ -2,24 +2,21 @@
 {%block header%}
 	<h1>
 		<table id="tb_header">
-			<tr><td><label id="title01">SECRETARÍA DE EDUCACIÓN DE HONDURAS</label></td></tr>
-			<tr><td><label id="title02">UNIDAD DE TRANSPARENCIA</label></td></tr>
-			<tr><td><label id="title03">FICHA PARA VERIFICACIÓN DE MURALES DE TRANSPARENCIA</label><td></tr>
+			<tr><td><h5 id="title01">SECRETARÍA DE EDUCACIÓN DE HONDURAS</h5></td></tr>
+			<tr><td><h4 id="title02">UNIDAD DE TRANSPARENCIA</h4></td></tr>
+			<tr><td><h3 id="title03">FICHA PARA VERIFICACIÓN DE MURALES DE TRANSPARENCIA</h3><td></tr>
 		</table>
 	</h1>
 {%endblock%}
 {%block includes%}
-	<script type="text/javascript" src="{{STATIC_URL}}static_resources/jquery/jquery-1.6.2.min.js"></script>
-	<script type="text/javascript" src="{{STATIC_URL}}static_resources/jquery/jquery-ui-1.8.16.custom.min.js"></script>
-	<script type="text/javascript" src="{{STATIC_URL}}static_resources/jquery/fancybox/jquery.fancybox-1.3.4.pack.js"></script>
-	<!--<script type="text/javascript" src="{{STATIC_URL}}static_resources/javascript/encuesta_js.js"></script>-->
+	<script type="text/javascript" src="{{STATIC_URL}}jquery/jquery-1.6.2.min.js"></script>
+	<script type="text/javascript" src="{{STATIC_URL}}jquery/jquery-ui-1.8.16.custom.min.js"></script>
+	<script type="text/javascript" src="{{STATIC_URL}}jquery/jquery.validate.js"></script>
+	<script type="text/javascript" src="{{STATIC_URL}}jquery/jquery.form.js"></script>
 	
-	<!--<script type="text/javascript" src="{{STATIC_URL}}static_resources/jquery/jquery.js"></script>-->
-	<script type="text/javascript" src="{{STATIC_URL}}static_resources/jquery/jquery.validate.js"></script>
-
-	<link rel="stylesheet" type="text/css" href="{{STATIC_URL}}resources_css/jquery-ui-1.8.16.custom.css" />
-	<link rel="stylesheet" type="text/css" href="{{STATIC_URL}}resources_css/styles_encuesta.css" />
-	<link rel="stylesheet" type="text/css" href="{{STATIC_URL}}resources_css/fancybox/jquery.fancybox-1.3.4.css" />
+	<link rel="stylesheet" type="text/css" href="{{STATIC_URL}}css/jquery-ui-1.8.16.custom.css" />
+	<link rel="stylesheet" type="text/css" href="{{STATIC_URL}}css/styles_encuesta.css" />
+	
 {%endblock%}
 {%block contenido%}
 	<script language="javascript">
@@ -28,7 +25,31 @@
 			var validated = false;
 			var valorE1 = 0 ;
 			var dep=0;
+			var TipoEncuesta = "";
 			var fecha = document.getElementById('hidden_date').value;
+			//var fecha = $("#hidden_date").val();
+			//var fecha = "{{fecha}}"
+			//alert(fecha);
+			var segmento ="";
+			var cantidad_docentes = 0;
+			var agregados = 0;
+			var docente_text;
+          
+            var D1= $("#D_1").val();
+            var D2= $("#D_2").val();
+            var D3= $("#D_3").val();
+            
+			if (document.getElementById("cbxB_3").checked){
+					document.getElementById("parteD").style.display = 'block';
+					document.getElementById("parteE").style.display = 'block';
+					document.getElementById("parteF").style.display = 'block';
+			}
+			if (document.getElementById("cbxB_4").checked){
+					document.getElementById("parteD").style.display = 'block';
+					document.getElementById("parteE").style.display = 'block';
+					document.getElementById("parteF").style.display = 'block';
+			}
+
 			$( "#tabs" ).tabs({
 			    select: function(event, ui) {
 					selectedTabIndex = ui.index;
@@ -36,7 +57,7 @@
 					if (selectedTabIndex == 0 ) form_2_val = "pg2";
 					if (selectedTabIndex == 1 ) form_2_val = "pg1";
 					
-					switch(form_2_val){
+					/*switch(form_2_val){
 						case "pg1" :
 									validate_style(form_2_val,"temporal")
 									break
@@ -47,126 +68,209 @@
 					f = "#" + form_2_val;
 					validated = $(f).valid();
 					if(validated == false) showMessage("Error, revise sus datos");
-					return validated;
+					return validated;*/
     			}
 			});
 			function showMessage(message){
-			 
-				var content = $("<div>" + message + "<br /><br /></div>");
-    			var button = $("<input type='button' value='Ok' />");
-    			content.append(button);
-
-    			$.fancybox({ content: content});
-    			$(button).click(function () { $.fancybox.close(); });
-			
-			};
-			function validate_style(form,type){
-				try{
-					switch(form){
-						case "pg1":
-									if(type=="temporal"){
-										$("#hidden_tiposave").val("temporal");
-										$("#pg1").validate({
-											rules:{
-												tbxE_1 : {
-															max: $("#D_2").val()
-														},
-												tbxE_5 : {
-															max: $("#D_2").val()
-														},
-												tbxE_6 : {
-															max: $("#D_3").val()
-														},
-												tbxE_7 : {
-															max: Math.max($("#D_2").val(),$("#D_3").val())
-														}
-											},
-											messages :{	
-												tbxE_1 : {
-															max:"Asegúrese que el valor sea igual o menor que D2._"
-														 },
-												tbxE_5 : {
-															max:"Asegúrese que el valor sea igual o menor que D2._"
-														 },	
-												tbxE_6 : {
-															max:"Asegúrese que el valor sea igual o menor que D3._"
-														 },			
-												tbxE_7 : {
-															max:"Asegúrese que el valor sea igual o menor que el mayor entre D2._ y D3._"
-														 }											 
-											}				
-										});
-										$.validator.addMethod("Numeric_tbxs", $.validator.methods.number, "Ingrese elementos numéricos");
-										$.validator.addClassRules("number_inputs", { Numeric_tbxs: true});										
-									}
-									else {
-											$("#hidden_tiposave").val("final");
-											$("#pg1").validate({
-												onsubmit: false,
-												rules: {
-													tbx_fecha : "required",
-													cbx_centros : "required",
-													tbx_tel1 : "required",
-													
-												},
-												messages :{	}
-											});							
-									}
-									break
-						case "pg2":
-									if(type=="temporal"){
-									    $("#hidden_tiposave2").val("temporal");
-										$("#pg2").validate({
-											onsubmit: false,
-											rules: {
-												tbxE_1 : {
-															max: $("#D_2").val()
-														},
-												tbxE_5 : {
-															max: $("#D_2").val()
-														},
-												tbxE_6 : {
-															max: $("#D_3").val()
-														},
-												tbxE_7 : {
-															max: Math.max($("#D_2").val(),$("#D_3").val())
-														}
-											},
-											messages :{	
-												tbxE_1 : {
-															max:"Asegúrese que el valor sea igual o menor que D2._"
-														 },
-												tbxE_5 : {
-															max:"Asegúrese que el valor sea igual o menor que D2._"
-														 },	
-												tbxE_6 : {
-															max:"Asegúrese que el valor sea igual o menor que D3._"
-														 },			
-												tbxE_7 : {
-															max:"Asegúrese que el valor sea igual o menor que el mayor entre D2._ y D3._"
-														 }											 
-											}				
-										});
-										$.validator.addMethod("Numeric_tbxs2", $.validator.methods.number, "Ingrese elementos numéricos");
-										$.validator.addMethod("Required", $.validator.methods.required, "Ingrese este elemento");
-										$.validator.addClassRules("inputs_parteE", { Numeric_tbxs2: true , Required : true});
-
-									}
-									else {
-										$("#hidden_tiposave2").val("final");
-									
-									}
-									break								
+					$("#Mensaje").empty();
+					$("#Mensaje").append(message);
+					$( "#dialog-message" ).dialog({
+					modal: true,
+					buttons: {
+						Ok: function() {
+							$( this ).dialog( "close" );
+						}
 					}
+				});
+			};
+            
+            $("#D_1").change(function() {
+                D1 = 0;
+                D1= $("#D_1").val();
+            });
+            $("#D_2").change(function() {
+                D2=0;
+                D2= $("#D_2").val();
+            });
+            $("#D_3").change(function() {
+                D3=0;
+                D3= $("#D_3").val();
+            });
+            
+            
+			function validate_style(type){
+				try{
+					switch(type){
+						case "temporal":
+							$("#hidden_tiposave").val("temporal");
+							$("#hidden_tiposave2").val("temporal");
+                            $('#pg1').removeData('validator');
+							$("#pg1").validate({
+									rules:{
+										tbx_fecha : "required",
+										tbxE_1 : {
+													//max: $("#D_2").val()
+                                                    max: Number(D2)
+												},
+										tbxE_2 : {
+													//max: $("#D_2").val()
+                                                    max: Number(D2)
+												},
+										tbxE_3 : {
+													//max: $("#D_3").val()
+                                                    max: Number(D3)
+												},
+										tbxE_4 : {
+													//max: $("#D_1").val()
+                                                    max: Number(D1)
+												},
+										tbxE_5 : {
+													//max: $("#D_2").val()
+                                                    max: Number(D2)
+												},
+										tbxE_6 : {
+													//max: $("#D_3").val()
+                                                    max: Number(D3)
+												},
+										tbxE_7 : {
+													//max: Math.max($("#D_2").val(),$("#D_3").val())
+                                                    max: Math.max(Number(D2),Number(D3))
+												},
+										tbx_alumnos : { max : 9999}
+									},
+									messages :{
+										tbxE_1 : {
+													max:"Asegúrese que el valor sea igual o menor que D2._"
+												 },
+										tbxE_2 : {
+													max:"Asegúrese que el valor sea igual o menor que D2._"
+												 },
+										tbxE_3 : {
+													max:"Asegúrese que el valor sea igual o menor que D3._"
+												 },
+										tbxE_4 : {
+													max:"Asegúrese que el valor sea igual o menor que D1._"
+												 },
+										tbxE_5 : {
+													max:"Asegúrese que el valor sea igual o menor que D2._"
+												 },	
+										tbxE_6 : {
+													max:"Asegúrese que el valor sea igual o menor que D3._"
+												 },			
+										tbxE_7 : {
+													max:"Asegúrese que el valor sea igual o menor que el mayor entre D2._ y D3._"
+												 },
+										tbx_alumnos : {
+													max:"Asegúrese de ingresar un valor correcto; Debe contener menos de 5 dígitos"
+												 }
+									}				
+							
+								});
+							
+							$.validator.addMethod("Numeric_tbxs", $.validator.methods.number, "Ingrese elementos numéricos");
+							$.validator.addMethod("Numeric_tbxs2", $.validator.methods.number, "Ingrese elementos numéricos");
+							$.validator.addClassRules("number_inputs", { Numeric_tbxs: true});										
+							$.validator.addClassRules("inputs_parteE", { Numeric_tbxs2: true });
+							
+							//$.validator.addMethod("Required", $.validator.methods.required, "Ingrese este elemento");
+							//$.validator.addClassRules("inputs_parteE", { Numeric_tbxs2: true , Required : true});
+										
+						break;
+						case "final":
+							$("#hidden_tiposave").val("final");
+							$("#hidden_tiposave2").val("final");
+                            $('#pg1').removeData('validator');
+								$("#pg1").validate({
+									onsubmit: false,
+									rules: {
+										tbx_fecha : "required",
+										cbx_centros : "required",
+										tbx_tel1 : "required",
+										//imagen01 : "required",
+										//imagen02 : "required",
+										selC_1 : "required",
+										selC_2 : "required",
+										selC_3 : "required",
+										selG_1 : "required",
+										selG_2 : "required",
+										selG_3 : "required",
+										tbxE_1 : {
+													max: $("#D_2").val()
+												},
+										tbxE_2 : {
+													max: $("#D_2").val()
+												},
+										tbxE_3 : {
+													max: $("#D_3").val()
+												},
+										tbxE_4 : {
+													max: $("#D_1").val()
+												},
+										tbxE_5 : {
+													max: $("#D_2").val()
+												},
+										tbxE_6 : {
+													max: $("#D_3").val()
+												},
+										tbxE_7 : {
+													max: Math.max($("#D_2").val(),$("#D_3").val())
+												},
+										tbx_alumnos : { required:true, max : 9999}
+											},
+											
+									messages :{		
+										tbxE_1 : {
+													max:"Asegúrese que el valor sea igual o menor que D2._"
+												 },
+										tbxE_2 : {
+													max:"Asegúrese que el valor sea igual o menor que D2._"
+												 },
+										tbxE_3 : {
+													max:"Asegúrese que el valor sea igual o menor que D3._"
+												 },
+										tbxE_4 : {
+													max:"Asegúrese que el valor sea igual o menor que D1._"
+												 },
+										tbxE_5 : {
+													max:"Asegúrese que el valor sea igual o menor que D2._"
+												 },	
+										tbxE_6 : {
+													max:"Asegúrese que el valor sea igual o menor que D3._"
+												 },			
+										tbxE_7 : {
+													max:"Asegúrese que el valor sea igual o menor que el mayor entre D2._ y D3._"
+												 },	
+										tbx_alumnos : {
+														max:"Asegúrese de ingresar un valor correcto; Debe contener menos de 5 dígitos",
+														required: "Ingrese este campo"
+														 }
+											}				
+										});
+										
+								$.validator.addMethod("Numeric_tbxs", $.validator.methods.number, "Ingrese elementos numéricos");
+								$.validator.addClassRules("number_inputs", { Numeric_tbxs: true});
+								$.validator.addMethod("Numeric_tbxs2", $.validator.methods.number, "Ingrese elementos numéricos");
+								$.validator.addMethod("Required", $.validator.methods.required, "Ingrese este elemento");
+								$.validator.addClassRules("inputs_parteE", { Numeric_tbxs2: true , Required : true});
+						
+						break;	
+						}							
 				}
 				catch(err){
 					alert(err.description);
 				}
 			};
-			$( "#datepicker" ).datepicker({ 
-					dateFormat: 'yy-mm-dd'
-					});
-			$("#datepicker").datepicker('setDate', fecha); 
+			
+			
+			$( "#datepicker" ).datepicker({
+					//setDate: fecha,
+                    
+					//dateFormat: 'yy-mm-dd'
+					dateFormat: 'dd/mm/yy'
+					
+			});
+			//$("#datepicker").datepicker('setDate', fecha);
+
 			$("#id_dep").change(function() {
 				dep = $(this).val();
 				$("#id_mun").empty();
@@ -225,69 +329,81 @@
 							}
 				});
 			});
-			$("#btnSave").click(function(){
+			/*$('#pg1').ajaxForm({
+			  success: function() {
+				$("#pg2").submit();
+			  }
+			});*/
+			
+			function Save(){
 				try{
-					var selectedTabIndex = $("#tabs").tabs("option", "selected");
-					if(selectedTabIndex == 0 ){
-						validate_style("pg1","temporal");
+						validate_style("temporal");
 						if($("#pg1").valid()) {
-							validate_style("pg2","temporal");
-							if($("#pg2").valid()) {
-								$("#pg1,#pg2").submit();
-							}
-							else showMessage("Error, revise sus datos");
+								$('#pg1').submit();
 						}
 						else showMessage("Error, revise sus datos");
-					}
-					else {
-						validate_style("pg2","temporal");
-						if($("#pg2").valid()) {
-							validate_style("pg1","temporal");
-							if($("#pg1").valid()) {
-								$("#pg2,#pg1").submit();
-							}
-							else showMessage("Error, revise sus datos");
-						}
-						else showMessage("Error, revise sus datos");
-					}
 				}
 				catch(err){
 					alert(err);
 				}				
+			};
+			function Publish(){
+				if(confirm("¿Está seguro que desea publicar la encuesta y guardar los datos permanentemente?")){
+					try{
+						validate_style("final");
+						if($("#pg1").valid()) {
+								$('#pg1').submit();
+							}
+						else showMessage("Error, revise sus datos");
+					}
+					catch(err){
+						alert(err);
+					}
+				}
+			};
+			
+			
+			function Delete(){
+				if(confirm("¿Está seguro que desea borrar la encuesta permanentemente?")){
+					var idenc = {{codigo_enc}}
+					$.ajax({
+									type:"GET",
+									data:
+										{
+											data : "delete",
+											idenc: idenc,
+											msj : 'delete'
+										},
+									url: "{% url url_borrartemporal %}",
+									success: function(){
+										location.href = '{%url url_rethome%}';
+									}
+						});
+					}
+			};
+			$("#btnSave").click(function(){
+				Save();
+			});
+			$("#btnSave2").click(function(){
+				Save();
 			});
 			$("#btn_Publish").click(function(){
-				if(confirm("¿Está seguro que desea publicar la encuesta y guardar los datos permanentemente?")){
-				try{
-					var selectedTabIndex = $("#tabs").tabs("option", "selected");
-					if(selectedTabIndex == 0 ){
-						validate_style("pg1","final");
-						if($("#pg1").valid()) {
-							validate_style("pg2","final");
-							if($("#pg2").valid()) {
-								$("#pg1,#pg2").submit();
-							}
-						}
-					}
-					else {
-						validate_style("pg2","final");
-						if($("#pg2").valid()) {
-							validate_style("pg1","final");
-							if($("#pg1").valid()) {
-								$("#pg2,#pg1").submit();
-							}
-						}
-					}
-				}
-				catch(err){
-					alert(err);
-				}
-				}
+				Publish();
+			});
+			$("#btn_Publish2").click(function(){
+				Publish();
 			});
 			$("#btn_Delete").click(function(){
-			
+				Delete();
+			});
+			$("#btn_Delete2").click(function(){
+				Delete();
 			});
 			$("#cbxF_3").click(function(){
 				document.getElementById("cbxF_4").checked = false;
+				if(document.getElementById("cbxF_2").checked == true || document.getElementById("cbxF_4").checked == true){
+					document.getElementById("cbxF_3").checked = false;
+				}
 			});
 			$("#cbxF_4").click(function(){
 				document.getElementById("cbxF_3").checked = false;
@@ -297,10 +413,234 @@
 					document.getElementById("cbxF_5").checked = false;
 					}
 			});
+			$( "#selectable" ).selectable({
+				stop: function() {
+				$( ".ui-selected", this ).each(function() {
+					docente_text = $( "#selectable li" ).text( this );
+				});
+			}
+			});
+			$(".btnList").click(function(){
+				$("#label_dialog").empty();
+					agregados = 0;
+					var elementId= $(this).children().first().attr('id');
+					var array = elementId.split("_");
+					segmento = array[1];
+					//var id = ;//$(this).parent().parent().children('input[type="number"]').first().val();
+					//var form = document.forms[0];
+					//console.log(form.elements);
+					cantidad_docentes = $('input#'+ "tbxE_" + segmento +'[type="number"]').val();// form.elements[id].value;
+					console.log(cantidad_docentes);
+
+				if(segmento != 1){
+					PrepareList();
+				}
+			
+			});
+			function PrepareList(){
+
+				var enc = {{codigo_enc}}
+				var EsTemp = '{{show}}'
+				$.ajax({
+							type:"GET",
+							data:
+								{
+									data: "show",
+									enc: enc,
+									seg: segmento,
+									temp: EsTemp
+								},
+							url: "{% url url_adddocente codigo_enc%}",
+							success: function(data){
+										$("#selectable").empty();
+										$.each(data,function(key,val){
+											$("#selectable").append("<li class='ui-widget-content' value = val.pk>" + val.pk + "~" + val.nombre + "</li>");
+											agregados = agregados + 1;
+										});
+										document.getElementById("tbx_id").value = "";
+										document.getElementById("tbx_name").value = "";
+
+									}
+				});
+				$("#label_dialog").append("Adicion de Docentes para segmento " + segmento);
+				$( "#dialog-form" ).dialog( "open" );
+			};
+			$( "#dialog-form" ).dialog({
+				autoOpen: false,
+				height: 500,
+				width: 500,
+				modal: false,
+				buttons: {
+					Agregar: function() {
+						SendDocentes();
+						document.getElementById("tbx_id").value = "";
+						document.getElementById("tbx_name").value = "";
+					},
+					Cerrar: function() {
+						
+						$("#tbx_id").empty();
+						$("#tbx_name").empty();
+						$( this ).dialog( "close" );
+					}
+				}
+			});
+			function SendDocentes(){
+				if(cantidad_docentes > 0){
+					if(agregados < cantidad_docentes){
+					var id = $("#tbx_id").val();
+					var nombre = $("#tbx_name").val();
+					var enc = {{codigo_enc}}
+					
+					$.ajax({
+									type:"GET",
+									data:
+										{
+											data: "save",
+											id: id,
+											name: nombre,
+											enc: enc,
+											seg: segmento
+										},
+									url: "{% url url_adddocente codigo_enc%}",
+									success: function(data){
+												$("#selectable").empty();
+												$.each(data,function(key,val){
+													$("#selectable").append("<li class='ui-widget-content' value = val.pk>" + val.pk + "~" + val.nombre + "</li>");
+													
+												});
+												document.getElementById("tbx_id").value = "";
+												document.getElementById("tbx_name").value = "";
+												agregados = agregados + 1;
+											}
+						});
+						}
+						else{
+							showMessage("No puede agregar otro docente");
+						}
+					}
+				else{
+					showMessage("NO ha especificado la cantidad de docentes a ingresar");
+				}
+			};
+			$("#btnBack").click(function(){
+				var selectedTabIndex = $("#tabs").tabs("option", "selected");
+				if(selectedTabIndex == 1){
+					$("#tabs").tabs( "select" , 0 );
+					window.scrollTo(0,0);
+				}
+			});
+			$("#btnFwd").click(function(){
+				var selectedTabIndex = $("#tabs").tabs("option", "selected");
+				if(selectedTabIndex == 0){
+					$("#tabs").tabs( "select" , 1 );
+					window.scrollTo(0,0);
+				}
+			});
+			$("#valueA").change(function(){
+				var d = document.getElementById("valueA").value;
+				if(d == 8){
+					$("#Div_otra").append("<label>Otra:</label><input type='text' name='tbx_otraubi' maxlength='200'>");
+				}
+				else{
+					$("#Div_otra").empty();
+				}
+			});
+			$("#cbxB_3").click(function(){
+				if (this.checked){
+					document.getElementById("parteD").style.display = 'block';
+					document.getElementById("parteE").style.display = 'block';
+					document.getElementById("parteF").style.display = 'block';
+				}
+				else{
+					document.getElementById("parteD").style.display = 'none';
+					document.getElementById("parteE").style.display = 'none';
+					document.getElementById("parteF").style.display = 'none';
+				}
+			});
+			$("#cbxB_4").click(function(){
+				if (this.checked){
+					document.getElementById("parteD").style.display = 'block';
+					document.getElementById("parteE").style.display = 'block';
+					document.getElementById("parteF").style.display = 'block';
+				}
+								else{
+					document.getElementById("parteD").style.display = 'none';
+					document.getElementById("parteE").style.display = 'none';
+					document.getElementById("parteF").style.display = 'none';
+				}
+			
+			});
+		$("#btnEraseItem").click(function(){
+			var enc = {{codigo_enc}}
+			$.ajax({
+										type:"GET",
+										data:
+											{
+												data: "erase",
+												enc: enc,
+												texto : docente_text,
+												seg: segmento
+											},
+										url: "{% url url_adddocente codigo_enc%}",
+										success: function(data){
+													$("#selectable").empty();
+													$.each(data,function(key,val){
+														$("#selectable").append("<li class='ui-widget-content' value = val.pk>" + val.pk + "~" + val.nombre + "</li>");
+														
+													});
+													$("#tbx_id").empty();
+													$("#tbx_name").empty();
+													agregados = agregados - 1;
+												}
+							});
+		});
+		$("#logout_btn").click(function(){
+			//location.href = '/transparencia/logout/';
+			location.href = '{%url url_logout%}';
+		});
+		$("#principal_btn").click(function(){
+			//location.href = '/transparencia/home/';
+			location.href = '{%url url_home%}';
+		});
 		});
 	</script>
+	
+		<div id="dialog-message" title="Mensaje del Sistema">
+			<p id="Mensaje"> </p>
+		</div>
+		<div id = "dialog-form" title="Gestión de Listado" >
+			<div id="topbar_btns">
+				{% if show %}
+					<img src="{{STATIC_URL}}css/images/icons/Delete.ico" id="btnEraseItem" height = '20' width = '20' class = "">
+				{% endif%}
+			</div>
+			<label id="label_dialog"></label>
+			<br>
+			<br>
+			<label>Listado Docentes:</label>
+			<fieldset>
+				<ul id="selectable">
+		    	</ul>
+			</fieldset>
+			<br>
+			<form id="AddUser" action = "">
+				<table>
+					<tr>
+						<td><label>Id: </label></td>
+						<td><input id="tbx_id" type="text" name="tbx_id"></td>
+					</tr>
+					<tr>
+						<td><label>Nombre: </label></td>
+						<td><input id="tbx_name" type="text" name="tbx_name"></td>
+					</tr>
+				</table>
+			</form>
+		</div>
+        
+        
+        
 		<div id="tabs">
-			<label>Usuario: {{usuario}}</label>
+			<h6>Usuario: {{usuario}}</h6>
 			<ul>
 				<li><a href="#tabs-2">Página 1</a></li>
 				<li><a href="#tabs-3">Página 2</a></li>		
@@ -308,17 +648,24 @@
 			<fieldset id="topbar">
 				<div id="topbar_btns">
 					{% if show %}
-						<input type="image" src="{{STATIC_URL}}resources_icons/Save.ico" id="btnSave">
-						<input type="image" src="{{STATIC_URL}}resources_icons/Delete.ico" id="btn_Delete" >
-						<input type="image" src="{{STATIC_URL}}resources_icons/Accept.ico" id="btn_Publish" >
+						<input title = "Guardado Temporal de Encuesta" type="image" src="{{STATIC_URL}}css/images/icons/Save.ico" height = '20' width = '20' id="btnSave">
+						<input title = "Eliminar Encuesta" type="image" src="{{STATIC_URL}}css/images/icons/Delete.ico" height = '20' width = '20' id="btn_Delete" >
+						<input title = "Publicar Encuesta" type="image" src="{{STATIC_URL}}css/images/icons/Accept.ico" height = '20' width = '20' id="btn_Publish" >
 					{% endif%}
 				</div>
 			</fieldset>
+            
+            
+            
+            
+            
 			{%if tipo == "nueva"%}
+			<form id="pg1" method = 'post' action={%url url_save codigo_enc%} class="val_form"  enctype="multipart/form-data" >{% csrf_token %}
 				<div id="tabs-2">
-				<form id="pg1" method='post' action={%url url_save "pg1",codigo_enc%} class="val_form">{% csrf_token %}
 					<input type="hidden" name="tipo_save" value="" id ="hidden_tiposave">
-					<input type="hidden" name="" value={{today}} id ="hidden_date">
+					<input type="hidden" name="" value="" id ="hidden_date">
+					<input type="hidden" name="hidden_si" value="SI" id ="hidden_si">
+					<input type="hidden" name="hidden_no" value="NO" id ="hidden_no">
 					<fieldset id="basico">
 						<table id="tb_basico">
 							<tr>
@@ -327,7 +674,7 @@
 							</tr>
 							<tr>
 								<td><label class="lbl_basico">Fecha:</label></td>
-								<td><input id="datepicker" type="text" name="tbx_fecha"></td>
+								<td><input id="datepicker" type="text" name="tbx_fecha"  ></td>
 							</tr>
 						</table>
 					</fieldset>
@@ -341,7 +688,7 @@
 						<table>
 							<tr>
 								<td><label class="lbl_centro">Departamento:</label></td>
-								<td class="right_align"><select name="cbx_dep" id="id_dep">
+								<td><select name="cbx_dep" id="id_dep">
 										<option selected="selected">Seleccione</option>
 					                	{%for d in deps%}
 											<option value="{{d.pk}}"> {{d.nombre}} </option>
@@ -351,23 +698,23 @@
 							</tr>
 							<tr>
 								<td><label class="lbl_centro">Municipio:</label></td>
-								<td class="right_align"><select name="cbx_mun" id="id_mun"></select></td>
+								<td><select name="cbx_mun" id="id_mun"></select></td>
 							</tr>
 							<tr>
 								<td><label class="lbl_centro">Centro Educativo:</label></td>
-								<td class="right_align"><select name="cbx_centros" id="id_centros"></select></td>
+								<td><select name="cbx_centros" id="id_centros"></select></td>
 							</tr>
 							<tr>
 								<td><label class="lbl_centro">Código Centro:</label></td>
-								<td class="right_align"><input type="text" name="tbx_idcentro" id="id_codigocentro" disabled = "disabled"></ td>
+								<td><input type="text" name="tbx_idcentro" id="id_codigocentro" disabled = "disabled"></td>
 							</tr>
 							<tr>
 								<td><label class="lbl_centro">Tipo de Centro:</label></td>
-								<td class="right_align"><input type="text" name="tbx_tipocentro" id="id_tipocentro" disabled = "disabled"></td>
+								<td><input type="text" name="tbx_tipocentro" id="id_tipocentro" disabled = "disabled"></td>
 							</tr>
 							<tr>
 								<td><label class="lbl_centro">Zona:</label></td>
-								<td class="right_align"><select name="cbx_zonacentro" id="">
+								<td><select name="cbx_zonacentro" id="">
 										<option> Rural </option>
 										<option> Urbano </option>
 									</select>
@@ -375,12 +722,20 @@
 							</tr>
 							<tr>
 								<td><label class="lbl_centro">Contacto Telefónico:</label></td>
-								<td class="right_align"><input type="text" name="tbx_tel1" id="id_tel1" class ="number_inputs"></td>
+								<td><input type="text" name="tbx_tel1" id="id_tel1" class ="number_inputs"></td>
 							</tr>
-							<!--<tr>
-								<td><label class="lbl_centro">Contacto Telefónico:</label></td>
-								<td class="right_align"><input type="text" name="tbx_tel2" id="id_tel2" class ="number_inputs"></td>
-							</tr>-->
+							<tr>
+								<td><label class="lbl_centro">Observacion:</label></td>
+								<td><input type="text" name="tbx_obsv" id="id_obsv" maxlenght="300"></td>
+							</tr>
+							<tr>
+								<td><label class="lbl_centro">Matrícula de Alumnos Total:</label></td>
+								<td><input type="text" name="tbx_alumnos" id="id_alumnos" class ="number_inputs" max_lenght="4"></td>
+							</tr>
+							<tr>
+								<td><label class="lbl_centro">Imagenes:</label></td>
+								<td>{{etf}}</td>
+							</tr>
 						</table>
 					</fieldset>
 					<br>
@@ -393,12 +748,18 @@
 						<table>
 							<tr>
 								<td><label class="lbl_A">Instalación y Ubicación:</label></td>
-								<td class="right_align"><select name="cbx_parteA" id="valueA">
+								<td class="right_align"><select name="cbx_parteA" id="valueA" >
+                                        <option selected="selected"></option>
 										{%for a in infoA%}
-											<option> {{a.descripcion}} </option>
+											<option id="ParteA_{{a.codigo}}" value={{a.codigo}}> {{a.descripcion}} </option>
 										{%endfor%}
 									</select>
 								</td>
+							</tr>
+							<tr>
+								<td></td>
+								<td  class='right_align'><div id="Div_otra">
+								</div></td>
 							</tr>
 						</table>
 					</fieldset>
@@ -409,9 +770,9 @@
 							<label>Puede elegir varias opciones y escribir hasta 4 tipos de información extra</label>
 						</div>
 						<br>
-						<table id="tb_parteB01">
+						<table id="tb_parteB01" class="table table-striped">
 							{%for b in infoB%}
-								<tr><td>B{{b.codigo}}._<input type="checkbox" name="cbxB" value= {{b.codigo}} />{{b.descripcion}}</td></tr>
+								<tr><td>B{{b.codigo}}._ </td><td><input type="checkbox" id = "cbxB_{{b.codigo}}" name="cbxB" value= {{b.codigo}} /> {{b.descripcion}}</td></tr>
 							{%endfor%}
 						</table>
 						<br>			
@@ -420,11 +781,11 @@
 							<label>Ejemplos de otra información: Merienda escolar, ingreso por cafeterias, ingreso por parqueo y otra información financiera.</label>
 						</div>
 						<br>
-						<table id="tb_parteB02">
+						<table id="tb_parteB02" >
 							{%for r in range1%}
 								<tr>
-									<td><label>Otra Información:</label>
-									<input type="text" name="tbx_oi" maxlength="150"></td>
+									<td><label>Otra Información:</label></td>
+									<td><input type="text" name="tbx_oi" maxlength="150"></td>
 								</tr>
 							{%endfor%}
 						</table>
@@ -436,11 +797,12 @@
 							<label>Para cada casilla, seleccione SI o NO</label>
 						</div>
 						<br>
-						<table>
+						<table >
 							{%for c in infoC%}
 								<tr>
-									<td><label>C{{c.codigo}}._{{c.descripcion}}</label></td>
-									<td class="right_align"><select name="selC_{{c.codigo}}">
+									<td>C{{c.codigo}}._</td><td>{{c.descripcion}}</label></td>
+									<td class="right_align"><select id = "C_{{c.codigo}}" name="selC_{{c.codigo}}" class= "CompleteC">
+										    <option selected="selected"></option>
 											<option>SI</option>
 											<option>NO</option>
 										</select>
@@ -450,7 +812,7 @@
 						</table>
 					</fieldset>
 					<br>
-					<fieldset id="parteD">
+					<fieldset id="parteD" style="display: none;">
 					<legend>D. Cantidades totales de docentes</legend>
 						<div class="instruccion">
 							<label>Solo colocar números en cada casilla</label>
@@ -459,43 +821,44 @@
 						<table>
 							{%for d in infoD%}
 								<tr>
-									<td><label>D{{d.codigo}}._{{d.descripcion}}</label></td>
-									<td class="right_align"><input type="number" name="tbxD_{{d.codigo}}" id = "D_{{d.codigo}}" class="number_inputs" value=0></td>
+									<td><label>D{{d.codigo}}._</td><td>{{d.descripcion}}</label></td>
+									<td class="right_align"><input type="number" name="tbxD_{{d.codigo}}" id = "D_{{d.codigo}}" class="number_inputs" value=0 ></td>
 									<td class="status"></td>
 								</tr>
 							{%endfor%}
 						</table>
 					</fieldset>			
-				</form>
 				</div>
 				<div id="tabs-3">
-				<form id="pg2" method='post' action={%url url_save "pg2",codigo_enc%} class="val_form">{% csrf_token %}
 					<input type="hidden" name="tipo_save" value="" id ="hidden_tiposave2">
-					<fieldset id="parteE">
+					<fieldset id="parteE" style="display: none;">
 					<legend>E. Hallazgos e Irregularidades en LISTAS</legend>
 						<div class="instruccion">
 							<label>Solo colocar números en cada casilla</label>
 						</div>
 						<br>
-						<table>
+						<table class="table table-striped">
 							{%for e in infoE%}
 								<tr>
-									<td><label>E{{e.codigo}}._{{e.descripcion}}</label></td>
-									<td class="right_align"><input type="number"  name="tbxE_{{e.codigo}}" id = "tbxE_{{e.codigo}}"  class="inputs_parteE" value=0></td>
+									<td><label>E{{e.codigo}}._</td><td>{{e.descripcion}}</label></td>
+									<td class="right_align">
+										<input type="number"  name="tbxE_{{e.codigo}}" id="tbxE_{{e.codigo}}"  class="inputs_parteE"  value=0/>
+									</td>
+									<td><a href="#" class="btnList"><img src="{{STATIC_URL}}css/images/icons/Add.ico" id="btnListE_{{e.codigo}}" height='20' width = '20' /></a></td>
 								</tr>
 							{%endfor%}
 						</table>
 					</fieldset>
 					<br>
-					<fieldset id="parteF">
-					<legend>F. Hallazgos e irregularidades en MATRICULA GRATIS</legend>
+					<fieldset id="parteF" style="display: none;">
+					<legend>F. Hallazgos y/o irregularidades en matricula gratis y otros en general</legend>
 						<div class="instruccion">
 							<label>Seleccione la opción y si es necesario, digitar hasta otras tres irregularidades más</label>
 						</div>
 						<br>
-						<table id="tb_parteF01">
+						<table id="tb_parteF01" class="table table-striped">
 							{%for f in infoF%}
-								<tr><td>F{{f.codigo}}._<input type="checkbox" id="cbxF_{{f.codigo}}" name="cbxF" value= {{f.codigo}} />{{f.descripcion}}</td></tr>
+								<tr><td>F{{f.codigo}}._ </td><td><input type="checkbox" id="cbxF_{{f.codigo}}" name="cbxF" value= {{f.codigo}} /> {{f.descripcion}}</td></tr>
 							{%endfor%}
 						</table>
 						<br>
@@ -506,8 +869,8 @@
 						<table id="tb_parteF02">
 							{%for r in range2%}
 								<tr>
-									<td><label>Otra irregularidad de Matrícula Gratis:</label>
-									<input type="text" name="tbx_oi2" maxlength="100"></td>
+									<td><label>Otro hallazgo o irregularidad:</label></td>
+									<td><input type="text" name="tbx_oi2" maxlength="100"></td>
 								</tr>
 							{%endfor%}
 						</table>
@@ -522,33 +885,36 @@
 						<table>
 							{%for g in infoG%}
 								<tr>
-								<td><label>G{{g.codigo}}._{{g.descripcion}}</label></td>
-								<td class="right_align"><select name="selG_{{g.codigo}}">
+								<td><label>G{{g.codigo}}._</td><td>{{g.descripcion}}</label></td>
+								<td class="right_align"><select id = "G_{{g.codigo}}" name="selG_{{g.codigo}}">
+										<option selected="selected"></option>
 										<option> Excelente</option>
 										<option> Muy Bueno</option>
 										<option> Bueno</option>
 										<option> Regular</option>
 										<option> Malo </option>
-									</select></br>
+									</select><br>
 								</td>
 							{%endfor%}
 						</table>
 					</fieldset>
-				</form>
-				
 				</div>
-				<fieldset id="footbar">
-					<div id="footbar_btns">
-						<input type="image" src="{{STATIC_URL}}resources_icons/back.ico" id="btnBack">
-						<input type="image" src="{{STATIC_URL}}resources_icons/forward.ico" id="btnFwd">
-					</div>
-				</fieldset>
+			</form>
+            
+            
+            
+            
+            
+            
 			{%else%}
 			{%load customfilters%}
+			<form id="pg1" method='post' action={%url url_save codigo_enc%} class="val_form" enctype="multipart/form-data">{% csrf_token %}
 				<div id="tabs-2">
-				<form id="pg1" method='post' action={%url url_save "pg1",codigo_enc%} class="val_form">{% csrf_token %}
 					<input type="hidden" name="tipo_save" value="" id ="hidden_tiposave">
-					<input type="hidden" name="" value={{encuesta.fecha|setval:"fecha"}} id ="hidden_date">
+					<!--<input type="hidden" name="" value={{encuesta.fecha|setval:"fecha"}} id ="hidden_date">-->
+					<input type="hidden" name="" value="{{today}}" id ="hidden_date">
+					<input type="hidden" name="hidden_si" value="SI" id ="hidden_si">
+					<input type="hidden" name="hidden_no" value="NO" id ="hidden_no">
 					<fieldset id="basico">
 						<table id="tb_basico">
 							<tr>
@@ -557,7 +923,7 @@
 							</tr>
 							<tr>
 								<td><label class="lbl_basico">Fecha:</label></td>
-								<td><input id="datepicker" type="text" name="tbx_fecha" value=""></td>
+								<td><input id="datepicker" type="text" name="tbx_fecha" value="{{today}}" ></td>
 							</tr>
 						</table>
 					</fieldset>
@@ -571,21 +937,35 @@
 						<table>
 							<tr>
 								<td><label class="lbl_centro">Departamento:</label></td>
-								<td class="right_align"><select name="cbx_dep" id="id_dep">
-										<option selected="selected">Seleccione</option>
+								<td><select name="cbx_dep" id="id_dep">
+                                <option>Seleccione</option>
 					                	{%for d in deps%}
-											<option value="{{d.pk}}"> {{d.nombre}} </option>
+											{%if d.nombre == encuesta.codigo_centro|getdepforcentro%}
+												<option value={{d.codigo}} selected="selected"> {{d}} </option>
+											{%else%}
+												<option value="{{d.codigo}}"> {{d}} </option>
+											{%endif%}
 										{%endfor%}
 									</select>
 								</td>
 							</tr>
 							<tr>
 								<td><label class="lbl_centro">Municipio:</label></td>
-								<td class="right_align"><select name="cbx_mun" id="id_mun"></select></td>
+								<td><select name="cbx_mun" id="id_mun">
+									{%for item in encuesta.codigo_centro|getmunsforcentro%}
+										{%if item.nombre == encuesta.codigo_centro|getmunforcentro%}
+											<option value={{item.codigo}} selected="selected"> {{item}} </option>
+										{%else%}
+											<option value={{item.codigo}}> {{item}} </option>
+										{%endif%}
+									{%endfor%}
+									</select>
+								</td>
 							</tr>
 							<tr>
 								<td><label class="lbl_centro">Centro Educativo:</label></td>
-								<td class="right_align"><select name="cbx_centros" id="id_centros">
+								<td><select name="cbx_centros" id="id_centros">
+                                    
 									{%for item in encuesta.codigo_centro|getallcentros%}
 										{%if item.nombre == encuesta.codigo_centro|getinfocentro:"nombre"%}
 											<option value={{item.pk}} selected="selected"> {{item}} </option>
@@ -597,15 +977,15 @@
 							</tr>
 							<tr>
 								<td><label class="lbl_centro">Código Centro:</label></td>
-								<td class="right_align"><input type="text" name="tbx_idcentro" id="id_codigocentro" disabled = "disabled" value={{encuesta.codigo_centro|getinfocentro:"codigo"}}></ td>
+								<td><input type="text" name="tbx_idcentro" id="id_codigocentro" disabled = "disabled" value="{{encuesta.codigo_centro|getinfocentro:"codigo"}}"></td>
 							</tr>
 							<tr>
 								<td><label class="lbl_centro">Tipo de Centro:</label></td>
-								<td class="right_align"><input type="text" name="tbx_tipocentro" id="id_tipocentro" disabled = "disabled" value={{encuesta.codigo_centro|getinfocentro:"tipo"}}></td>
+								<td><input type="text" name="tbx_tipocentro" id="id_tipocentro" disabled = "disabled" value="{{encuesta.codigo_centro|getinfocentro:"tipo"}}"></td>
 							</tr>
 							<tr>
 								<td><label class="lbl_centro">Zona:</label></td>
-								<td class="right_align"><select name="cbx_zonacentro" id="" value="{{encuesta.zona}}">
+								<td><select name="cbx_zonacentro" id="" value="{{encuesta.zona}}">
 										<option> Rural </option>
 										<option> Urbano </option>
 									</select>
@@ -613,7 +993,19 @@
 							</tr>
 							<tr>
 								<td><label class="lbl_centro">Contacto Telefónico:</label></td>
-								<td class="right_align"><input type="text" name="tbx_tel1" id="id_tel1" class ="number_inputs" value={{encuesta.tel|setval:"tel"}}></td>
+								<td><input type="text" name="tbx_tel1" id="id_tel1" class ="number_inputs" value="{{encuesta.tel|setval:"tel"}}"></td>
+							</tr>
+							<tr>
+								<td><label class="lbl_centro">Observacion:</label></td>
+								<td><input type="text" name="tbx_obsv" id="id_obsv" maxlenght="300" value="{{encuesta.observacion}}" class =""></td>
+							</tr>
+							<tr>
+								<td><label class="lbl_centro">Matrícula de Alumnos Total:</label></td>
+								<td><input type="text" name="tbx_alumnos" id="id_alumnos" class ="number_inputs" value="{{encuesta.alumnos|setval:"alumnos"}}" max_lenght="4"></td>
+							</tr>
+							<tr>
+								<td><label class="lbl_centro">Imagenes:</label></td>
+								<td>{{etf}}</td>
 							</tr>
 						</table>
 					</fieldset>
@@ -628,15 +1020,31 @@
 							<tr>
 								<td><label class="lbl_A">Instalación y Ubicación:</label></td>
 								<td class="right_align"><select name="cbx_parteA" id="valueA">
+                                    {%if da|iteminlist:0 != ""%}
 										{%for a in infoA%}
 											{%if a.codigo == da.0%}
-												<option selected="selected"> {{a.descripcion}} </option>
+												<option selected="selected" value={{a.codigo}}> {{a.descripcion}} </option>
 											{%else%}
-												<option> {{a.descripcion}} </option>
+												<option value={{a.codigo}}> {{a.descripcion}} </option>
 											{%endif%}
 										{%endfor%}
+                                     {% else %}
+                                        <option selected="selected" value=""></option>
+                                        {%for a in infoA%}
+												<option value={{a.codigo}}> {{a.descripcion}} </option>
+										{%endfor%}
+                                    {% endif%}
 									</select>
 								</td>
+							</tr>
+							<tr>
+								<td></td>
+								<td  class='right_align'><div id="Div_otra">
+									{%if da2%}
+										<label>Otra:</label>
+										<input type="text" name="tbx_otraubi" maxlength="200" value="{{da2.0}}">
+									{%endif%}
+								</div></td>
 							</tr>
 						</table>
 					</fieldset>
@@ -647,12 +1055,12 @@
 							<label>Puede elegir varias opciones y escribir hasta 4 tipos de información extra</label>
 						</div>
 						<br>
-						<table id="tb_parteB01">
+						<table id="tb_parteB01" class="table table-striped">
 							{%for b in infoB%}
 								{%if b.codigo in db%}
-									<tr><td>B{{b.codigo}}._<input type="checkbox" name="cbxB" value= {{b.codigo}} checked="checked"/>{{b.descripcion}}</td></tr>
+									<tr><td>B{{b.codigo}}._ </td><td><input type="checkbox" id = "cbxB_{{b.codigo}}" name="cbxB" value= {{b.codigo}} checked="checked"/> {{b.descripcion}}</td></tr>
 								{%else%}
-									<tr><td>B{{b.codigo}}._<input type="checkbox" name="cbxB" value= {{b.codigo}} />{{b.descripcion}}</td></tr>
+									<tr><td>B{{b.codigo}}._ </td><td><input type="checkbox" name="cbxB" id = "cbxB_{{b.codigo}}" value= {{b.codigo}} /> {{b.descripcion}}</td></tr>
 								{%endif%}
 							{%endfor%}
 						</table>
@@ -665,8 +1073,8 @@
 						<table id="tb_parteB02">
 							{%for item in db2%}
 								<tr>
-									<td><label>Otra Información:</label>
-									<input type="text" name="tbx_oi" maxlength="150" value = {{item}}></td>
+									<td><label>Otra Información:</label></td>
+									<td><input type="text" name="tbx_oi" maxlength="150" value = "{{item}}" ></td>
 								</tr>
 							{%endfor%}
 						</table>
@@ -681,14 +1089,22 @@
 						<table>
 							{%for c in infoC%}
 								<tr>
-									<td><label>C{{c.codigo}}._{{c.descripcion}}</label></td>
-									<td class="right_align"><select name="selC_{{c.codigo}}">
+									<td><label>C{{c.codigo}}._</td><td>{{c.descripcion}}</label></td>
+									<td class="right_align"><select id = "C_{{c.codigo}}" name="selC_{{c.codigo}}" class= "CompleteC">
 										{%if dc|iteminlist:forloop.counter0 == "SI"%}
+											<option></option>
 											<option selected="selected">SI</option>
 											<option>NO</option>
 										{%else%}
+										{%if dc|iteminlist:forloop.counter0 == "NO"%}
+										    <option></option>
 											<option>SI</option>
 											<option selected="selected">NO</option>
+										{%else%}
+										    <option selected="selected"></option>
+											<option>SI</option>
+											<option>NO</option>
+										{%endif%}
 										{%endif%}	
 										</select>
 									</td>
@@ -697,7 +1113,7 @@
 						</table>
 					</fieldset>
 					<br>
-					<fieldset id="parteD">
+					<fieldset id="parteD" style="display: none;">
 					<legend>D. Cantidades totales de docentes</legend>
 						<div class="instruccion">
 							<label>Solo colocar números en cada casilla</label>
@@ -706,46 +1122,47 @@
 						<table>
 							{%for d in infoD%}
 								<tr>
-									<td><label>D{{d.codigo}}._{{d.descripcion}}</label></td>
+									<td><label>D{{d.codigo}}._</td><td>{{d.descripcion}}</label></td>
 									<td class="right_align"><input type="number" name="tbxD_{{d.codigo}}" id = "D_{{d.codigo}}" class="number_inputs" value= {{dd|iteminlist:forloop.counter0}}></td>
 									<td class="status"></td>
 								</tr>
 							{%endfor%}
 						</table>
 					</fieldset>			
-				</form>
 				</div>
 				<div id="tabs-3">
-				<form id="pg2" method='post' action={%url url_save "pg2",codigo_enc%} class="val_form">{% csrf_token %}
 					<input type="hidden" name="tipo_save" value="" id ="hidden_tiposave2">
-					<fieldset id="parteE">
+					<fieldset id="parteE" style="display: none;">
 					<legend>E. Hallazgos e Irregularidades en LISTAS</legend>
 						<div class="instruccion">
 							<label>Solo colocar números en cada casilla</label>
 						</div>
 						<br>
-						<table>
+						<table class="table table-striped">
 							{%for e in infoE%}
 								<tr>
-									<td><label>E{{e.codigo}}._{{e.descripcion}}</label></td>
-									<td class="right_align"><input type="number"  name="tbxE_{{e.codigo}}" class="inputs_parteE" value= {{de|iteminlist:forloop.counter0}}></td>
+									<td><label>E{{e.codigo}}._</td><td>{{e.descripcion}}</label></td>
+									<td class="right_align">
+										<input type="number" id="tbxE_{{e.codigo}}"  name="tbxE_{{e.codigo}}" class="inputs_parteE" value='{{de|iteminlist:forloop.counter0}}'>
+									</td>
+									<td><a href="#" class="btnList"><img src="{{STATIC_URL}}css/images/icons/Add.ico" id="btnListE_{{e.codigo}}" height='15' width = '15'/></a></td>
 								</tr>
 							{%endfor%}
 						</table>
 					</fieldset>
 					<br>
-					<fieldset id="parteF">
-					<legend>F. Hallazgos e irregularidades en MATRICULA GRATIS</legend>
+					<fieldset id="parteF" style="display: none;">
+					<legend>F. Hallazgos y/o irregularidades en matricula gratis y otros en general</legend>
 						<div class="instruccion">
 							<label>Seleccione la opción y si es necesario, digitar hasta otras tres irregularidades más</label>
 						</div>
 						<br>
-						<table id="tb_parteF01">
+						<table id="tb_parteF01" class="table table-striped">
 							{%for f in infoF%}
 								{%if f.codigo in df%}
-									<tr><td>F{{f.codigo}}._<input type="checkbox" id="cbxF_{{f.codigo}}" name="cbxF" value= {{f.codigo}} checked="checked"/>{{f.descripcion}}</td></tr>
+									<tr><td>F{{f.codigo}}._  </td><td><input type="checkbox" id="cbxF_{{f.codigo}}" name="cbxF" value= {{f.codigo}} checked="checked"/> {{f.descripcion}}</td></tr>
 								{%else%}
-									<tr><td>F{{f.codigo}}._<input type="checkbox" id="cbxF_{{f.codigo}}" name="cbxF" value= {{f.codigo}} />{{f.descripcion}}</td></tr>
+									<tr><td>F{{f.codigo}}._  </td><td><input type="checkbox" id="cbxF_{{f.codigo}}" name="cbxF" value= {{f.codigo}} /> {{f.descripcion}}</td></tr>
 								{%endif%}	
 							{%endfor%}
 						</table>
@@ -757,8 +1174,8 @@
 						<table id="tb_parteF02">
 							{%for item in df2%}
 								<tr>
-									<td><label>Otra irregularidad de Matrícula Gratis:</label>
-									<input type="text" name="tbx_oi2" maxlength="100" value = {{item}}></td>
+									<td><label>Otro hallazgo o irregularidad:</label></td>
+									<td><input type="text" name="tbx_oi2" maxlength="100" value = "{{item}}"></td>
 								</tr>
 							{%endfor%}
 						</table>
@@ -773,9 +1190,18 @@
 						<table>
 							{%for g in infoG%}
 								<tr>
-								<td><label>G{{g.codigo}}._{{g.descripcion}}</label></td>
-								<td class="right_align"><select name="selG_{{g.codigo}}">
+								<td><label>G{{g.codigo}}._</td><td>{{g.descripcion}}</label></td>
+								<td class="right_align"><select id = "G_{{g.codigo}}" name="selG_{{g.codigo}}">
+									{%if dg|iteminlist:forloop.counter0 == "Seleccion"%}
+										<option selected = "selected"></option>
+										<option> Excelente</option>
+										<option> Muy Bueno</option>
+										<option> Bueno</option>
+										<option> Regular</option>
+										<option> Malo</option>
+									{%endif%}
 									{%if dg|iteminlist:forloop.counter0 == "Excelente"%}
+										<option></option>
 										<option selected = "selected"> Excelente</option>
 										<option> Muy Bueno</option>
 										<option> Bueno</option>
@@ -783,6 +1209,7 @@
 										<option> Malo</option>
 									{%endif%}
 									{%if dg|iteminlist:forloop.counter0 == "Muy Bueno"%}
+										<option></option>
 										<option> Excelente</option>
 										<option selected = "selected"> Muy Bueno</option>
 										<option> Bueno</option>
@@ -790,6 +1217,7 @@
 										<option> Malo</option>
 									{%endif%}
 									{%if dg|iteminlist:forloop.counter0 == "Bueno"%}
+										<option></option>
 										<option> Excelente</option>
 										<option selected = "selected"> Muy Bueno</option>
 										<option> Bueno</option>
@@ -797,6 +1225,7 @@
 										<option> Malo</option>
 									{%endif%}
 									{%if dg|iteminlist:forloop.counter0 == "Regular"%}
+										<option></option>
 										<option> Excelente</option>
 										<option selected = "selected"> Muy Bueno</option>
 										<option> Bueno</option>
@@ -804,25 +1233,39 @@
 										<option> Malo</option>
 									{%endif%}
 									{%if dg|iteminlist:forloop.counter0 == "Malo"%}
+										<option></option>
 										<option> Excelente</option>
 										<option selected = "selected"> Muy Bueno</option>
 										<option> Bueno</option>
 										<option> Regular</option>
 										<option selected = "selected"> Malo</option>
 									{%else%}
+										<option></option>
 										<option> Excelente</option>
 										<option> Muy Bueno</option>
 										<option> Bueno</option>
 										<option> Regular</option>
 										<option> Malo</option>
 									{%endif%}
-									</select></br>
+									</select><br>
 								</td>
 							{%endfor%}
 						</table>
 					</fieldset>
-				</form>
 				</div>
-			{%endif%}			
+			</form>
+			{%endif%}
+			<fieldset id="footbar">
+				<div id="footbar_btns">
+					<input type="image" src="{{STATIC_URL}}css/images/icons/back.png" id="btnBack">
+					<input type="image" src="{{STATIC_URL}}css/images/icons/forward.png" id="btnFwd">
+					<br>
+					<!--{% if show %}
+						<input title = "Guardado Temporal de Encuesta" type="image" src="{{STATIC_URL}}css/images/icons/Save.ico" height = '20' width = '20' id="btnSave">
+						<input title = "Eliminar Encuesta" type="image" src="{{STATIC_URL}}css/images/icons/Delete.ico" height = '20' width = '20' id="btn_Delete" >
+						<input title = "Publicar Encuesta" type="image" src="{{STATIC_URL}}css/images/icons/Accept.ico" height = '20' width = '20' id="btn_Publish" >
+					{% endif%}-->
+				</div>
+			</fieldset>			
 		</div>
 {%endblock%}

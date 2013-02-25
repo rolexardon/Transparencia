@@ -1,34 +1,61 @@
 {%extends 'Main.html'%}
 {%block header%}
-
 {%endblock%}
 {%block includes%}
-	<script type="text/javascript" src="{{STATIC_URL}}static_resources/jquery/jquery-1.6.2.min.js"></script>
-	<script type="text/javascript" src="{{STATIC_URL}}static_resources/jquery/jquery-ui-1.8.16.custom.min.js"></script>
-	
-	<link rel="stylesheet" type="text/css" href="{{STATIC_URL}}resources_css/jquery-ui-1.8.16.custom.css" />
-	<link rel="stylesheet" type="text/css" href="{{STATIC_URL}}resources_css/styles_reportes.css" />
-	
+	<script type="text/javascript" src="{{STATIC_URL}}jquery/jquery-1.6.2.min.js"></script>
+	<script type="text/javascript" src="{{STATIC_URL}}jquery/jquery-ui-1.8.16.custom.min.js"></script>
+	<link rel="stylesheet" type="text/css" href="{{STATIC_URL}}css/jquery-ui-1.8.16.custom.css" />
+	<link rel="stylesheet" type="text/css" href="{{STATIC_URL}}css/styles_reportes.css" />
 {%endblock%}
 {%block contenido%}
+{%load customfilters_reportes%}
+
 	<script>
 		$(document).ready(function() {	
+		
+        
+            $("#selected_user").attr('hidden', 'hidden');
+            $("#field_resultados").attr('hidden', 'hidden');
+            $("#msj_users").attr('hidden', 'hidden');
+			
+            $("#code_selecteduser").val(-1);
+            
+			var currentTime = new Date()
+			var month = currentTime.getMonth() + 1
+			var day = currentTime.getDate()
+			var year = currentTime.getFullYear()
+			//var today= year + "-" + month + "-" + day
+            var today= day + "/" + month + "/" + year
+		
 			$("#tabs").tabs();
-			$( "#datepicker1" ).datepicker({ 
-				dateFormat: 'yy-mm-dd'
-			});
+			$( "#datepicker1" ).datepicker({
+				//dateFormat: 'yy-mm-dd',
+                dateFormat: 'dd/mm/yy',
+                //dateFormat: 'yy-dd-mm',
+				 
+			});//.val(today);
 			$( "#datepicker2" ).datepicker({ 
-				dateFormat: 'yy-mm-dd'
-			});
+				//dateFormat: 'yy-mm-dd',
+                dateFormat: 'dd/mm/yy',
+                //dateFormat: 'yy-dd-mm',
+			});//.val(today);
 			$( "#datepicker3" ).datepicker({ 
-				dateFormat: 'yy-mm-dd'
-			});
+				//dateFormat: 'yy-mm-dd',
+                dateFormat: 'dd/mm/yy',
+                //dateFormat: 'yy-dd-mm',
+			});//.val(today);
 			$( "#datepicker4" ).datepicker({ 
-				dateFormat: 'yy-mm-dd'
-			});
+				//dateFormat: 'yy-mm-dd',
+                dateFormat: 'dd/mm/yy',
+                //dateFormat: 'yy-dd-mm',
+			});//.val(today);
+            
 			$( "#accordion" ).accordion({
 				autoHeight: false,
-				navigation: true
+				navigation: true,
+				collapsible: true,
+				active: false
+				
 
 			});
 			$("#id_dep").change(function() {
@@ -134,21 +161,76 @@
 					}
 				});
 			});
+            
+            $("#btn_buscarusers").click(function(){
+                document.getElementById("id_tbody").innerHTML = "";
+                $('#field_resultados').removeAttr('hidden');
+                $("#selected_user").attr('hidden', 'hidden');
+                $("#msj_users").attr('hidden', 'hidden');
+                $.ajax({
+                                type:"GET",
+                                data:
+                                    {
+                                        data:"users",
+                                        username:$("#tbx_nombusuario").val(),
+                                        tipo:$("#cbx_tipo").val()
+                                    },
+                                url: "{% url url_bringusers %}",
+                                success: function(msg){
+                                if(msg != ""){
+                                            $.each(msg,function(key,val){
+                                                $("#id_tbody").append("<tr><td>"+val.pk+"</td><td>"+val.name+"</td><td>"+val.usuario+"</td><td><button onclick='UtilizarUsuario("+val.pk+")'; class='btn btn-small btn-inverse' type='button'>Seleccionar</button></td></tr>");
+                            });
+                            }
+                            else{
+                            $('#msj_users').removeAttr('hidden');
+                            }
+                        }
+                    });
+	});
+    
+    
+   
+		$("#logout_btn").click(function(){
+			//location.href = '/transparencia/logout/'; 
+			location.href = '{%url url_logout%}'; 
 		});
-		
+		$("#principal_btn").click(function(){
+			//location.href = '/transparencia/home/'; 
+			location.href = '{%url url_home%}';
+		});
+		});
+        
+         function UtilizarUsuario(pk){
+            
+            $("#code_selecteduser").val(pk);
+            $("#id_user_code").val(pk);
+            //$("#name_selecteduser").val({{ variable|getname }});
+            
+            $('#selected_user').removeAttr('hidden');
+        };
+    
+        
 	</script>
-	{%load customfilters_reportes%}
+	
 	<div id="tabs">
 		<ul>
 			<li><a href="#tabs-1">Generación de Reportes</a></li>
 		</ul>
 		<div id="tabs-1">
+            {%if err%}
+					<div class="alert alert-error">
+						<h6>{{err}}</h6>
+					</div>
+			{%endif%}
 			<fieldset>
 			<legend>Filtros de Reporte</legend>
 			<div id="accordion">
 				<h3><a href="#">Reportes Estadísticos</a></h3>
 					<div>
 						<form id = "form:_estadisticos" method = "POST" action = "{%url url_reportestadistico%}">{% csrf_token %}
+							<fieldset>
+							<legend>Seleccione Criterios para Encuestas</legend>
 							<fieldset>
 							<legend>Rango de Fecha</legend>
 								<table>
@@ -164,30 +246,48 @@
 							</fieldset>
 							<br>
 							<fieldset>
-							<legend>Filtro por Usuarios</legend>
-								<table>
-									<tr>
-										<td><label>Tipo de Usuario:</label></td>
-										<td><select id = "cbx_tipos" name = "cbx_tipousuario">
-												<option>Todos</option>
-												{%for t in tipos%}
-													<option>{{t.nombre}}</option>
-												{%endfor%}
-											</select>
-										</td>
-									</tr>
-									<tr>
-										<td><label>Usuario:</label></td>
-										<td><select id = "cbx_usuarios" name = "cbx_usuario">
-												<option>Todos</option>
-												{%for u in usuarios%}
-													<option>{{u|getfullname}}</option>
-												{%endfor%}
-											</select>
-										</td>
-									</tr>
-								</table>
-							</fieldset>
+                            <legend>Filtro de búsqueda</legend>
+                                    <table>
+                                        <tr>
+                                            <td><label>Tipo de Usuario:</label></td><td><select name="cbx_tipousuario" id="cbx_tipo">
+                                                                                            <option selected="selected">Todos</option>
+                                                                                            {%for t in tipos%}
+                                                                                                <option value="{{t.pk}}"> {{t.nombre}} </option>
+                                                                                            {%endfor%}
+                                                                                        </select></td>
+                                        </tr>
+                                        <tr>
+                                            <td><label>Usuario:</label></td><td><input type="input" id = "tbx_nombusuario"></td>
+                                            <td><button id="btn_buscarusers" class="btn" type="button">Buscar</button></td>
+                                        </tr>
+                                    </table>
+                            </fieldset>
+                            <fieldset id="field_resultados">
+                            <input type="hidden" id="id_user_code" name="user_code">
+                            <legend><h6>Resultados de Búsqueda</h6></legend>
+                            <div class="alert alert-error" id="msj_users">
+                                  <button type="button" class="close" data-dismiss="alert">&times;</button>
+                                  <h4>Atención</h4>
+                                  No se encontraron usuarios
+                            </div>
+                                <table id="table_users" class="table table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>Código</th><th>Nombre</th><th>Usuario</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="id_tbody">
+                                    
+                                    </tbody>
+                                </table>
+                            </fieldset>
+                            <div id="selected_user">
+                                    <form class="form-inline">
+                                        <label>Usuario Seleccionado:</label>
+                                        <input type="text" class="span1" id="code_selecteduser" name="name_codeselecteduser">
+                                        <!--<input type="text" class="span3" id="name_selecteduser">-->                                        
+                                    </form>
+                            </div>
 							<br>
 							<fieldset>
 							<legend>Filtro Geográfico</legend>
@@ -230,7 +330,10 @@
 									<tr><td><input type="checkbox" name = "check_seg" checked = "checked">Segmento G</td></tr>
 								</table>
 							</fieldset>-->
-						<input type="submit" value ="Generar Reporte">
+						<br>
+						
+                        <button class="btn">Generar Reporte</button>
+						</fieldset>
 						</form>
 					</div>
 				<h3><a href="#">Reportes Comparativos</a></h3>
@@ -280,8 +383,9 @@
 										</td>
 									</tr>
 								</table>
-							</fieldset>	
-											<input type="submit" value ="Generar Reporte">
+							</fieldset>
+							<br>	
+                        <button class="btn">Generar Reporte</button>
 			</form>
 			</fieldset>
 			</div>	

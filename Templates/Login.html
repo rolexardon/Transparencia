@@ -1,54 +1,51 @@
 {%extends 'Main.html'%}
+{%block header%}
+{%endblock%}
 {%block includes%}
 
-	<script type="text/javascript" src="{{STATIC_URL}}static_resources/jquery/jquery-1.6.2.min.js"></script>
-	<script type="text/javascript" src="{{STATIC_URL}}static_resources/jquery/jquery-ui-1.8.16.custom.min.js"></script>
-	
-	<link rel="stylesheet" type="text/css" href="{{STATIC_URL}}resources_css/jquery-ui-1.8.16.custom.css" />
-	<link rel="stylesheet" type="text/css" href="{{STATIC_URL}}resources_css/styles_login.css" />
-
-
+	<script type="text/javascript" src="{{STATIC_URL}}jquery/jquery-1.6.2.min.js"></script>
+	<script type="text/javascript" src="{{STATIC_URL}}jquery/jquery-ui-1.8.16.custom.min.js"></script>
+	<link rel="stylesheet" type="text/css" href="{{STATIC_URL}}css/jquery-ui-1.8.16.custom.css" />
 
 {%endblock%}
 {%block contenido%}
+	
 	<script>
 		$(document).ready(function() {	
 			$("#tabs").tabs();
 		});
 	</script>
-	<div id="tabs">
+	
+	<div id="tabs" >
 		<ul>
-			<li><a href="#tabs-1">Ingreso a Sistema</a></li>
+			<li><a href="#tab1">Ingresar</a></li>
 		</ul>
-		<div id="tabs-1">
-			<div id="content">
-				<section id="mainContent">
-					<fieldset id="login">
-					<legend id="lg">Ingresar</lengend>
-						<form  method='post' action={%url url_autenticar%}>{% csrf_token %}
-							<table>
-								<br>
-					  			<tr>
-					  				<td><label>Usuario:</label></td>
-					  				<td><input name="user_tbx" ></td>
-					  			</tr>
-					  			<tr>
-						  			<td><label>Contraseña:</label></td>
-						  			<td><input type="password" name="pass_tbx" ></td>
-					  			</tr>
-					  			<tr><td id="btn_log"><input type="submit" value="Autenticar" ></td></tr>
-				  			</table>
-						</form>
-					</fieldset>
-				</section>
-				<!--
-			    <section id="aside">
-				    <div id="banner">
-				    	<img src="{{STATIC_URL}}resources_imgs/banner.png" height="600" width="300"/>
-				    </div>
-				</section>
-				-->
-			</div>
+		<div id="tab1">
+			<form action={%url url_login%} method='post' class="form-horizontal">{% csrf_token %}
+				{%if err%}
+					<div class="alert alert-error">
+						<h6>{{err}}</h6>
+					</div>
+				{%endif%}
+                <div class="control-group">
+                    <label class="control-label" for="inputUser">Usuario:</label>
+                    <div class="controls">
+                      <input type="text" id="inputUser" placeholder="Ingrese usuario" name="username" value="{{ username}}">
+                    </div>
+                  </div>
+                  <div class="control-group">
+                    <label class="control-label" for="inputPassword">Contraseña:</label>
+                    <div class="controls">
+                      <input type="password" id="inputPassword" placeholder="Ingrese contraseña" name="password">
+                    </div>
+                  </div>
+                  <div class="control-group">
+                    <div class="controls">
+                      <button type="submit" class="btn">Ingresar</button>
+                    </div>
+                  </div>
+			</form>
 		</div>
 	</div>
+	
 {%endblock%}

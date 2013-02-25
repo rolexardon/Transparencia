@@ -1,0 +1,76 @@
+/* Vertical Tabs
+----------------------------------*/
+.ui-tabs-vertical { width: 55em; }
+.ui-tabs-vertical .ui-tabs-nav { padding: .2em .1em .2em .2em; float: left; width: 12em; }
+.ui-tabs-vertical .ui-tabs-nav li { clear: left; width: 100%; border-bottom-width: 1px !important; border-right-width: 0 !important; margin: 0 -1px .2em 0; }
+.ui-tabs-vertical .ui-tabs-nav li a { display:block; }
+.ui-tabs-vertical .ui-tabs-nav li.ui-tabs-selected { padding-bottom: 0; padding-right: .1em; border-right-width: 1px; border-right-width: 1px; }
+.ui-tabs-vertical .ui-tabs-panel { padding: 1em; float: right; width: 40em;}
+
+#aside
+{
+         display: table-cell;  
+         width: 300px;
+	 width:40%;
+         'position:absolute;
+	 left:-5%;
+           
+}
+#content 
+{  
+     display: table;  
+}
+#menu
+{  
+         display: table-cell;
+         'position:absolute;
+	 left:15%;
+	top:5%;
+right:0;
+bottom:0;
+width:100%;
+         /*#width: 620px;
+         #padding-right: 22px; 
+    
+    	width:400px;
+	#height:200px;
+	position:absolute;
+	left:55%;
+	top:50%;
+	margin:-100px 0 0 -150px;
+         */
+}
+
+
+#FramePrincipal
+    {
+ 
+        padding: 20px;
+        background: -webkit-gradient(linear, left top, left bottom, from(#243d63), to(#1a2638));
+        /*background: -moz-linear-gradient(top,  #d3d3d3,  #d3d3d3);*/
+ 
+        border-radius: 20px;
+        -moz-border-radius: 20px;
+        -webkit-border-radius: 20px;
+        -webkit-box-shadow: 0px 1px 0px #000;
+        border: 1px #1a2638 solid;
+    }
+
+#ControlBar
+    {
+ 
+        padding: 20px;
+        background: -webkit-gradient(linear, left top, left bottom, from(#243d63), to(#1a2638));
+        
+ 
+        border-radius: 20px;
+        -moz-border-radius: 20px;
+        -webkit-border-radius: 20px;
+        -webkit-box-shadow: 0px 1px 0px #000;
+        border: 1px #1a2638 solid;
+
+        height: 180px;
+	width: 10px;
+    }
+
+

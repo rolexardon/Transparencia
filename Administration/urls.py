@@ -1,19 +1,17 @@
-from django.conf.urls.defaults import patterns, include, url
+from django.conf.urls.defaults import *
 from django.views.generic.simple import redirect_to
-
-from django.contrib import admin
-admin.autodiscover()
+from django.views.generic.simple import direct_to_template
 
 urlpatterns = patterns('Administration.views',
                        
-    #url(r'^admin/', include(admin.site.urls)),
-    url(r'^usuarios$','view_usuarios',name = 'url_usuarios'),
-    url(r'^usuarios/tipos$','view_tipos',name = 'url_tipos'),
-    url(r'^usuarios/roles$','view_roles',name = 'url_roles'),
-            
-    url(r'^usuarios/guardar$','view_saveusuario',name = 'url_saveusuario'),
-    url(r'^usuarios/tipos/guardar$','view_savetipo',name = 'url_savetipo'),
-    url(r'^usuarios/roles/guardar$','view_saverol',name = 'url_saverol'),           
-                    
-)
+    url(r'^gestionar/usuarios$','view_menuusuarios',name = 'url_menuusuarios'),
+    url(r'^gestionar/segmentos$','view_gestionsegmentos',name = 'url_gestionsegmentos'),
+	url(r'^gestionar/usuarios/bring$','view_bringusers',name = 'url_bringusers'),
+    url(r'^gestionar/usuarios/delete(?P<pk>\d+)$','view_deleteuser',name = 'url_deleteuser'),
+	url(r'^gestionar/segmentos/bring$','view_bringsegmento',name = 'url_bringsegmento'),
+	url(r'^gestionar/usuarios/modificar/(?P<tipo>\w+)$','view_modificarusuario',name = 'url_modificarusuario'),
+	url(r'^gestionar/segmentos/modificar$','view_modificarsegmento',name = 'url_modificarsegmento'),
 
+	
+
+)

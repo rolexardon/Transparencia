@@ -1,0 +1,230 @@
+{%extends 'Main.html'%}
+{%block header%}
+{%endblock%}
+{%block includes%}
+
+	<script type="text/javascript" src="{{STATIC_URL}}jquery/jquery-1.6.2.min.js"></script>
+	<script type="text/javascript" src="{{STATIC_URL}}jquery/jquery-ui-1.8.16.custom.min.js"></script>
+	<link rel="stylesheet" type="text/css" href="{{STATIC_URL}}css/jquery-ui-1.8.16.custom.css" />
+	<link rel="stylesheet" type="text/css" href="{{STATIC_URL}}css/styles_login.css" />
+
+{%endblock%}
+{%block contenido%}
+	
+<script>
+
+    
+    var segmento;
+	$(document).ready(function() {	
+		
+		var mssg = "{{mssg}}";
+		if(mssg == "seg_mod"){
+			showMessage("Segmento Modificado");
+			mssg = "";
+		}
+		$("#tabs").tabs();
+		$( "#accordion" ).accordion({
+			collapsible: true,
+			active:false
+		});
+		
+	$("#btn_verseg").click(function(){
+		document.getElementById("id_tbody").innerHTML = "";
+		$.ajax({
+						type:"GET",
+						data:
+							{
+								data:"traer",
+								segmento:segmento
+							},
+						url: "{% url url_bringsegmento %}",
+						success: function(msg){
+									$.each(msg,function(key,val){
+										$("#id_tbody").append("<tr><td>"+val.pk+"</td><td>"+val.descripcion+"</td><td><button onclick='Modificar("+val.pk+")'; class='btn btn-small btn-inverse' type='button'>Modificar</button></td></tr>");
+					});
+				}
+			});
+	});
+	
+	$("#optionsRadios1").click(function(){
+		segmento="a";
+	});
+	$("#optionsRadios2").click(function(){
+		segmento="b";
+	});
+	$("#optionsRadios3").click(function(){
+		segmento="c";
+	});
+	$("#optionsRadios4").click(function(){
+		segmento="d";
+	});
+	$("#optionsRadios5").click(function(){
+		segmento="e";
+	});
+	$("#optionsRadios6").click(function(){
+		segmento="f";
+	});
+	$("#optionsRadios7").click(function(){
+		segmento="g";
+	});
+	
+	/*$("#btn_modificar").click(function(){
+		alert($(this).val());
+	});*/
+	
+	$("#logout_btn").click(function(){
+		//location.href = '/transparencia/logout/'; 
+		location.href = '{%url url_logout%}'; 
+	});
+	$("#principal_btn").click(function(){
+		//location.href = '/transparencia/home/'; 
+		location.href = '{%url url_home%}';
+	});
+	
+	function showMessage(message){
+
+			$("#Mensaje").empty();
+			$("#Mensaje").append(message);
+			$( "#dialog-message" ).dialog({
+			modal: true,
+			buttons: {
+				Ok: function() {
+					$( this ).dialog( "close" );
+				}
+			}
+		});
+		};
+	});
+	
+	function Modificar(pk){
+		$("#hid_id").val(pk);
+		$("#hid_seg").val(segmento);
+		$.ajax({
+						type:"GET",
+						data:
+							{
+								data:"modificar",
+								segmento:segmento,
+								id_seg:pk
+								
+							},
+						url: "{% url url_bringsegmento %}",
+						success: function(msg){
+							//$("#table_modificar").append(msg.as_table);
+							$("#table_modificar").html(msg.html);
+				}
+			});
+	};
+	
+	
+</script>
+
+<div id="dialog-message" title="Mensaje del Sistema">
+		<p id="Mensaje"> </p>
+</div>
+
+	<div id="tabs">
+		<ul>
+			<li><a href="#tab1">Gestion de Segementos</a></li>
+		</ul>
+		<div id="tab1">
+			<div id="accordion">
+				<h3><a href="#">Editar Segmento</a></h3>
+				<div>
+					<fieldset>
+					<legend>Seleccione Segmento de Encuesta a Editar</legend>
+							<div>
+								<table>
+									<tr>
+                                        <td>
+                                            <label class="radio">
+                                              <input type="radio" name="optionsRadios" id="optionsRadios1" value="option1">
+                                                Segmento A
+                                            </label>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+										<label class="radio">
+										  <input type="radio" name="optionsRadios" id="optionsRadios2" value="option2">
+										   Segmento B
+										</label>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+										<label class="radio">
+										  <input type="radio" name="optionsRadios" id="optionsRadios3" value="option3">
+											Segmento C
+										</label>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+										<label class="radio">
+										  <input type="radio" name="optionsRadios" id="optionsRadios4" value="option4">
+										   Segmento D
+										</label>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+										<label class="radio">
+										  <input type="radio" name="optionsRadios" id="optionsRadios5" value="option5">
+											Segmento E
+										</label>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+										<label class="radio">
+										  <input type="radio" name="optionsRadios" id="optionsRadios6" value="option6">
+										   Segmento F
+										</label>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+										<label class="radio">
+										  <input type="radio" name="optionsRadios" id="optionsRadios7" value="option7">
+											Segmento G
+										</label>
+                                       </td>
+                                    </tr>
+                                    
+									<tr>
+										<td><button id="btn_verseg" class="btn" >Ver Segmento</button></td>
+									</tr>
+								</table>
+							</div>
+					</fieldset>
+					<fieldset>
+					<legend>Resultados</legend>
+						<table id="table_users" class="table">
+							<thead>
+								<tr>
+									<th>Codigo</th><th>Descripcion</th>
+								</tr>
+							</thead>
+							<tbody id="id_tbody">
+							
+							</tbody>
+                         </table>
+                    <fieldset>
+					<fieldset>
+					<legend>Modificar</legend>
+						<form action={%url url_modificarsegmento%} method='post'>{% csrf_token %}
+							<input type="hidden" id="hid_id" name="pk">
+							<input type="hidden" id="hid_seg" name="seg_pk">
+							<table id="table_modificar">
+								{{form_update.as_table}}
+							</table>
+							<button type="submit" class="btn" />Guardar</button>
+						</form>
+					</fieldset>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+{%endblock%}

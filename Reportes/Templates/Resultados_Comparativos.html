@@ -1,19 +1,26 @@
 {%extends 'Main.html'%}
 {%block header%}
-
 {%endblock%}
 {%block includes%}
-	<script type="text/javascript" src="{{STATIC_URL}}static_resources/jquery/jquery-1.6.2.min.js"></script>
-	<script type="text/javascript" src="{{STATIC_URL}}static_resources/jquery/jquery-ui-1.8.16.custom.min.js"></script>
-	
-	<link rel="stylesheet" type="text/css" href="{{STATIC_URL}}resources_css/jquery-ui-1.8.16.custom.css" />
-	<link rel="stylesheet" type="text/css" href="{{STATIC_URL}}resources_css/styles_reportes.css" />
-	
+	<script type="text/javascript" src="{{STATIC_URL}}jquery/jquery-1.6.2.min.js"></script>
+	<script type="text/javascript" src="{{STATIC_URL}}jquery/jquery-ui-1.8.16.custom.min.js"></script>
+	<link rel="stylesheet" type="text/css" href="{{STATIC_URL}}css/jquery-ui-1.8.16.custom.css" />
+	<link rel="stylesheet" type="text/css" href="{{STATIC_URL}}css/styles_reportes.css" />
 {%endblock%}
 {%block contenido%}
+{%load customfilters%}
 	<script type="text/javascript">
 		$(document).ready(function() {	
 			$( "#tabs" ).tabs();
+		});
+		
+		$("#logout_btn").click(function(){
+			//location.href = '/transparencia/logout/'; 
+			location.href = '{%url url_logout%}'; 
+		});
+		$("#principal_btn").click(function(){
+			//location.href = '/transparencia/home/'; 
+			location.href = '{%url url_home%}';
 		});
 	</script>
 	<div id="tabs">
@@ -26,7 +33,7 @@
 		<legend>Directores Distritales</legend>
 			<table>
 				{%for e in enc_dd%}
-					<tr><td><strong><a href='{%url url_publicadas e.codigo%}'> Encuesta {{e.codigo}} , fecha de creacion {{e.fecha_apertura}}</a></strong></td></tr>
+					<tr><td><strong><a href='{%url url_publicadas e.codigo%}'> Encuesta {{e.codigo}} , fecha de creacion {{e.fecha_apertura}}[SegmentoE> {{e.codigo|GetSpecificInfo}}]</a></strong></td></tr>
 				{%endfor%}
 			</table>
 		</fieldset>
@@ -35,7 +42,7 @@
 		<legend>Sociedad Civil</legend>
 			<table>
 				{%for e in enc_sc%}
-					<tr><td><strong><a href='{%url url_publicadas e.codigo%}'> Encuesta {{e.codigo}} , fecha de creacion {{e.fecha_apertura}}</a></strong></td></tr>
+					<tr><td><strong><a href='{%url url_publicadas e.codigo%}'> Encuesta {{e.codigo}} , fecha de creacion {{e.fecha_apertura}}[SegmentoE> {{e.codigo|GetSpecificInfo}}]</a></strong></td></tr>
 				{%endfor%}
 			</table>
 		</fieldset>
@@ -44,14 +51,11 @@
 		<legend>Unidad de Transparencia</legend>
 			<table>
 				{%for e in enc_ut%}
-					<tr><td><strong><a href='{%url url_publicadas e.codigo%}'> Encuesta {{e.codigo}} , fecha de creacion {{e.fecha_apertura}}</a></strong></td></tr>
+					<tr><td><strong><a href='{%url url_publicadas e.codigo%}'> Encuesta {{e.codigo}} , fecha de creacion {{e.fecha_apertura}}[SegmentoE> {{e.codigo|GetSpecificInfo}}]</a></strong></td></tr>
 				{%endfor%}
 			</table>
 		</fieldset>
 		</table>
-
-
 	</div>
 </div>
-
 {%endblock%}
