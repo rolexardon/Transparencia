@@ -11,11 +11,152 @@
 {%block contenido%}
 	
 	<script>
+    
 		$(document).ready(function() {	
+        
+        
+            var BrowserDetect = {
+	init: function () {
+		this.browser = this.searchString(this.dataBrowser) || "An unknown browser";
+		this.version = this.searchVersion(navigator.userAgent)
+			|| this.searchVersion(navigator.appVersion)
+			|| "an unknown version";
+		this.OS = this.searchString(this.dataOS) || "an unknown OS";
+	},
+	searchString: function (data) {
+		for (var i=0;i<data.length;i++)	{
+			var dataString = data[i].string;
+			var dataProp = data[i].prop;
+			this.versionSearchString = data[i].versionSearch || data[i].identity;
+			if (dataString) {
+				if (dataString.indexOf(data[i].subString) != -1)
+					return data[i].identity;
+			}
+			else if (dataProp)
+				return data[i].identity;
+		}
+	},
+	searchVersion: function (dataString) {
+		var index = dataString.indexOf(this.versionSearchString);
+		if (index == -1) return;
+		return parseFloat(dataString.substring(index+this.versionSearchString.length+1));
+	},
+	dataBrowser: [
+		{
+			string: navigator.userAgent,
+			subString: "Chrome",
+			identity: "Chrome"
+		},
+		{ 	string: navigator.userAgent,
+			subString: "OmniWeb",
+			versionSearch: "OmniWeb/",
+			identity: "OmniWeb"
+		},
+		{
+			string: navigator.vendor,
+			subString: "Apple",
+			identity: "Safari",
+			versionSearch: "Version"
+		},
+		{
+			prop: window.opera,
+			identity: "Opera",
+			versionSearch: "Version"
+		},
+		{
+			string: navigator.vendor,
+			subString: "iCab",
+			identity: "iCab"
+		},
+		{
+			string: navigator.vendor,
+			subString: "KDE",
+			identity: "Konqueror"
+		},
+		{
+			string: navigator.userAgent,
+			subString: "Firefox",
+			identity: "Firefox"
+		},
+		{
+			string: navigator.vendor,
+			subString: "Camino",
+			identity: "Camino"
+		},
+		{		// for newer Netscapes (6+)
+			string: navigator.userAgent,
+			subString: "Netscape",
+			identity: "Netscape"
+		},
+		{
+			string: navigator.userAgent,
+			subString: "MSIE",
+			identity: "Explorer",
+			versionSearch: "MSIE"
+		},
+		{
+			string: navigator.userAgent,
+			subString: "Gecko",
+			identity: "Mozilla",
+			versionSearch: "rv"
+		},
+		{ 		// for older Netscapes (4-)
+			string: navigator.userAgent,
+			subString: "Mozilla",
+			identity: "Netscape",
+			versionSearch: "Mozilla"
+		}
+	],
+	dataOS : [
+		{
+			string: navigator.platform,
+			subString: "Win",
+			identity: "Windows"
+		},
+		{
+			string: navigator.platform,
+			subString: "Mac",
+			identity: "Mac"
+		},
+		{
+			   string: navigator.userAgent,
+			   subString: "iPhone",
+			   identity: "iPhone/iPod"
+	    },
+		{
+			string: navigator.platform,
+			subString: "Linux",
+			identity: "Linux"
+		}
+	]
+
+};
+BrowserDetect.init();
+            
+            var browser = BrowserDetect.browser; 
+            if(browser == "Explorer"){
+                $("div_browser").hidden="";
+                $('#login_btn').attr( 'hidden', 'hidden' );
+            }; 
 			$("#tabs").tabs();
 		});
 	</script>
 	
+    <div id="div_browser" hidden="hidden" class="alert alert-error">
+        <h4>Atención</h4>
+        Para tener una mejor experiencia de trabajo, recomendamos que utilice otro explorador distinto a Internet Explorer.
+        <legend></legend>
+        <div class="row-fluid">
+        <span class="span6">
+            <a href = "https://www.google.com/intl/en/chrome/browser/">Descargar Google Chrome</a>
+        </span>
+        </div>
+        <div class="row-fluid">
+        <span class="span6">
+            <a href="http://www.mozilla.org/en-US/firefox/new/">Descargar Mozilla Firefox </a>
+        </span>
+        </div>
+    </div>
 	<div id="tabs" >
 		<ul>
 			<li><a href="#tab1">Ingresar</a></li>
@@ -39,7 +180,7 @@
                       <input type="password" id="inputPassword" placeholder="Ingrese contraseña" name="password">
                     </div>
                   </div>
-                  <div class="control-group">
+                  <div id="login_btn" class="control-group">
                     <div class="controls">
                       <button type="submit" class="btn">Ingresar</button>
                     </div>

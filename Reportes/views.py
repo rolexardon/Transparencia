@@ -22,7 +22,12 @@ from Encuesta.models import SegmentoG as SG
 from Encuesta.models import Encuesta as E
 from Encuesta.models import EncuestaData as ED
 
-    
+from Administration.models import *
+from Encuesta.models import *
+ 
+import xlwt
+from datetime import datetime, date
+
 def view_reporte(request):
     
     usuarios = User.objects.all()
@@ -738,6 +743,91 @@ def GetDataSegmentoG(datos,items,sum_listgE,sum_listgMB,sum_listgB,sum_listgR,su
              sum_listgM.insert(index,sum)
      
         
-            
+def view_reporteexportar(request,tabla):
+    error = "error"
+    book = xlwt.Workbook(encoding='utf8')
+    sheet = book.add_sheet('untitled')
+    values_list,fields = None,None
+    default_style = xlwt.Style.default_style
+    datetime_style = xlwt.easyxf(num_format_str='dd/mm/yyyy hh:mm')
+    date_style = xlwt.easyxf(num_format_str='dd/mm/yyyy')
+
+    if tabla == "Departamentos":
+        values_list = Departamento.objects.all().values_list()
+        fields = Departamento._meta.fields
+    if tabla == "Municipios":
+        values_list = Municipio.objects.all().values_list()
+        fields = Municipio._meta.fields
+    if tabla == "Centros":
+        values_list = CentroEducativo.objects.all().values_list()
+        fields = CentroEducativo._meta.fields
+    if tabla == "Centros":
+        values_list = CentroEducativo.objects.all().values_list()
+        fields = CentroEducativo._meta.fields
+    if tabla == "SegmentoA":
+        values_list = SegmentoA.objects.all().values_list()
+        fields = SegmentoA._meta.fields
+    if tabla == "SegmentoB":
+        values_list = SegmentoB.objects.all().values_list()
+        fields = SegmentoB._meta.fields
+    if tabla == "SegmentoC":
+        values_list = SegmentoC.objects.all().values_list()
+        fields = SegmentoC._meta.fields
+    if tabla == "SegmentoD":
+        values_list = SegmentoD.objects.all().values_list()
+        fields = SegmentoD._meta.fields
+    if tabla == "SegmentoE":
+        values_list = SegmentoE.objects.all().values_list()
+        fields = SegmentoE._meta.fields
+    if tabla == "SegmentoF":
+        values_list = SegmentoF.objects.all().values_list()
+        fields = SegmentoF._meta.fields
+    if tabla == "SegmentoG":
+        values_list = SegmentoG.objects.all().values_list()
+        fields = SegmentoG._meta.fields
+    if tabla == "EncuestaTemp":
+        values_list = EncuestaTemp.objects.all().values_list()
+        fields = EncuestaTemp._meta.fields
+    if tabla == "EncuestaTempData":
+        values_list = EncuestaTempData.objects.all().values_list()
+        fields = EncuestaTempData._meta.fields
+    if tabla == "ListadoDocentesTemp":
+        values_list = ListadoDocentesTemp.objects.all().values_list()
+        fields = ListadoDocentesTemp._meta.fields
+    if tabla == "Encuesta":
+        values_list = Encuesta.objects.all().values_list()
+        fields = Encuesta._meta.fields
+    if tabla == "EncuestaData":
+        values_list = EncuestaData.objects.all().values_list()
+        fields = EncuestaData._meta.fields
+    if tabla == "ListadoDocentes":
+        values_list = ListadoDocentes.objects.all().values_list()
+        fields = ListadoDocentes._meta.fields
+
+    
+    try:
+        
+        cols=0
+        for field in fields:
+            sheet.write(0, cols, str(field.name), style=default_style)
+            cols = cols+1
+        for row, rowdata in enumerate(values_list):
+            for col, val in enumerate(rowdata):
+                if isinstance(val, datetime):
+                    style = datetime_style
+                elif isinstance(val, date):
+                    style = date_style
+                else:
+                    style = default_style
+
+                sheet.write(row+1, col, val, style=style)
+
+        response = HttpResponse(mimetype='application/vnd.ms-excel')
+        response['Content-Disposition'] = 'attachment; filename=' + tabla + '.xls'
+        book.save(response)
+        return response
+    except Exception,e:
+        error=e
+    return HttpResponse(error)
 
     
