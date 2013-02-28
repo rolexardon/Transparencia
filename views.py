@@ -13,8 +13,8 @@ from Encuesta.models import EncuestaTempData as ETD
 from Encuesta.models import Encuesta as E
 from Encuesta.models import EncuestaData as ED
 from django.contrib.auth.models import User 
-
-
+from datetime import datetime
+from django.core.urlresolvers import reverse
 def view_login(request):
     try:
         username = ''
@@ -104,8 +104,8 @@ def view_bringencuestas(request):
                 #words = string.split(usuario_name, ' ')
                 user = User.objects.get(pk=pk).username
                 encuestas = E.objects.filter(codigo_usuario=pk)
-                
-                data = [{'user':user,'pk':e.codigo,'fecha':str(e.fecha),'fecha_cre':str(e.fecha_apertura),'centro':e.codigo_centro.nombre} for e in encuestas]
+
+                data = [{'user':user,'pk':e.codigo,'fecha':str(e.fecha.strftime('%d/%m/%y')),'fecha_cre':str(e.fecha_apertura.strftime('%d/%m/%y')),'centro':e.codigo_centro.nombre,'url1':reverse('url_despubencuestas', args=[e.codigo]),'url2':reverse('url_publicadas', args=[e.codigo])} for e in encuestas]
             
                 #data = [{'pk':e.codigo} for e in encuestas]
                 return HttpResponse(simplejson.dumps(data), mimetype="application/json")

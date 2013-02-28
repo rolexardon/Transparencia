@@ -22,6 +22,7 @@ from Encuesta.models import EncuestaTemp as ET
 from Encuesta.models import Encuesta as E
 
 from Transparencia.views import PrepareContent
+from django.core.urlresolvers import reverse
 
 def view_menuusuarios(request):
     try:
@@ -155,7 +156,7 @@ def view_bringusers(request):
                         id_tipo = TipoUsuario.objects.get(codigo=tipo)
                         users=Usuario.BringByTipo_Username(id_tipo,None)
 
-                ret = [{'pk':u.pk,'name':u.get_full_name(),'usuario':u.username} for u in users]
+                ret = [{'pk':u.pk,'name':u.get_full_name(),'usuario':u.username,'tipo':u.tipo_usuario.nombre, 'url':reverse('url_deleteuser', args=[u.pk])} for u in users]
                 return HttpResponse(simplejson.dumps(ret), mimetype="application/json")
             except Exception,e:
                 return HttpResponse(e)
@@ -182,13 +183,13 @@ def view_bringusers(request):
                         tipos = TipoUsuario.BringAll()
                         return render_to_response('MenuUsuarios.html',{'form':form_original,'mssg': "user_del",'tipos':tipos},context_instance=RequestContext(request))'''
 
-
 def view_deleteuser(request,pk):
     user = Usuario.objects.get(pk=pk)
     user.delete()
 
     form_original = UsuarioForm()
     tipos = TipoUsuario.BringAll()
+    
     return render_to_response('MenuUsuarios.html',{'form':form_original,'mssg': "user_del",'tipos':tipos},context_instance=RequestContext(request))
 
 def view_modificarusuario(request,tipo):

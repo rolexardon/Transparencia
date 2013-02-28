@@ -60,9 +60,10 @@
 							},
 						url: "{% url url_bringusers %}",
 						success: function(msg){
+                        
                         if(msg != ""){
 									$.each(msg,function(key,val){
-										$("#id_tbody").append("<tr><td>"+val.pk+"</td><td>"+val.name+"</td><td>"+val.usuario+"</td><td><button onclick='Modificar("+val.pk+")'; class='btn btn-small btn-inverse' type='button'>Modificar</button></td></tr>");
+										$("#id_tbody").append("<tr><td>"+val.pk+"</td><td>"+val.name+"</td><td>"+val.usuario+"</td><td><button onclick=Modificar("+val.pk+",'"+val.url+"'); class='btn btn-small btn-inverse' type='button'>Modificar</button></td></tr>");
 					});
                     }
                     else{
@@ -77,11 +78,6 @@
 	});*/
     
     
-	$("#btn_eliminar").click(function(){
-		var user_pk= $("#hid_id").val();
-        location.href =  "/transparencia/administracion/gestionar/usuarios/delete"+user_pk
-       // location.href = '{% url url_deleteuser 39 %}';
-    });
     $("#btn_cancelar").click(function(){
         document.getElementById("table_modificar").innerHTML = "";
         $("#field_modificar").attr('hidden', 'hidden');
@@ -113,9 +109,8 @@
 	
 	});
 	
-	function Modificar(pk){
-        
-		$("#hid_id").val(pk);
+	function Modificar(pk,url){
+
 		$.ajax({
 						type:"GET",
 						data:
@@ -127,6 +122,7 @@
 						success: function(msg){
 							//$("#table_modificar").append(msg.as_table);
 							$("#table_modificar").html(msg.html);
+                            $("#btn_eliminar").attr('href',url);
 				}
 			});
             $('#field_modificar').removeAttr('hidden');
@@ -200,7 +196,6 @@
 					<fieldset id="field_modificar">
 					<legend>Modificar</legend>
 						<form action={%url url_modificarusuario 'datos'%} method='post'>{% csrf_token %}
-							<input type="hidden" id="hid_id" name="pk">
 							<table id="table_modificar">
 								{{form_update.as_table}}
 							</table>
@@ -208,7 +203,7 @@
 
 						</form>
                         <table>
-                        <tr></tr></td><td><button class="btn" id="btn_eliminar">Eliminar</button></td><td><button class="btn" id="btn_cancelar">Cancelar</button></td></tr>
+                        <tr></tr></td><td><a href = "" class="btn" id="btn_eliminar">Eliminar</a></td><td><button class="btn" id="btn_cancelar">Cancelar</button></td></tr>
 					    </table>
                     </fieldset>
 				</div>

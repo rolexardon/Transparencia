@@ -97,11 +97,11 @@
 							},
 						url: "{% url url_bringusers %}",
 						success: function(msg){
-                        
+
                         if(msg != ""){
                             $("#msj_users").attr('hidden', 'hidden');
 									$.each(msg,function(key,val){
-										$("#id_tbody").append("<tr><td>"+val.pk+"</td><td>"+val.name+"</td><td>"+val.usuario+"</td><td><button onclick='MostrarEncuestas("+val.pk+")'; class='btn btn-small btn-inverse' type='button'>Ver Encuestas</button></td></tr>");
+										$("#id_tbody").append("<tr><td>"+val.pk+"</td><td>"+val.name+"</td><td>"+val.usuario+"</td><td>"+val.tipo+"</td><td><button onclick='MostrarEncuestas("+val.pk+")'; class='btn btn-small btn-inverse' type='button'>Ver Encuestas</button></td></tr>");
 					});
                     }
                     else{
@@ -137,9 +137,12 @@ function MostrarEncuestas(pk){
 					success: function(msg){
                     if(msg != ""){
 						$.each(msg,function(key,val){
-						
-							$("#id_tbody2").append("<tr><td>"+val.user+"</td><td>"+val.pk+"</td><td>"+val.centro+"</td><td>"+val.fecha+"</td><td>"+val.fecha_cre+"</td><td><button onclick= window.open('/transparencia/encuesta/ver/encuesta/"+val.pk+"'); class='btn btn-small btn-inverse' type='button'>Ver Encuesta</button></td><td><button onclick= window.open('/transparencia/home/unpublish/encuesta/"+val.pk+"'); class='btn btn-small btn-inverse' type='button'>Despublicar</button></td></tr>");
-							//$("#id_tbody2").append("<tr><td>"+val.pk+"</td><td>"+val.centro+"</td><td>"+val.fecha+"</td><td>"+val.fecha_cre+"</td></tr>");
+                            $("#id_tbody2").append("<tr><td>"+val.user+"</td><td>"+val.pk+"</td><td>"+val.centro+"</td><td>"+val.fecha+"</td><td>"+val.fecha_cre+"</td><td><button onclick= window.open('"+val.url2+"'); class='btn btn-small btn-inverse' type='button'>Ver Encuesta</button></td><td><button onclick= window.open('"+val.url1+"'); class='btn btn-small btn-inverse' type='button'>Despublicar</button></td></tr>");
+							//$("#id_tbody2").append("<tr><td>"+val.user+"</td><td>"+val.pk+"</td><td>"+val.centro+"</td><td>"+val.fecha+"</td><td>"+val.fecha_cre+"</td><td><button onclick= window.open('/transparencia/encuesta/ver/encuesta/"+val.pk+"'); class='btn btn-small btn-inverse' type='button'>Ver Encuesta</button></td><td><button onclick= window.open('/transparencia/home/unpublish/encuesta/"+val.pk+"'); class='btn btn-small btn-inverse' type='button'>Despublicar</button></td></tr>");
+                            //$("#id_tbody2").append("<tr><td>"+val.user+"</td><td>"+val.pk+"</td><td>"+val.centro+"</td><td>"+val.fecha+"</td><td>"+val.fecha_cre+"</td><td><button onclick= window.open('/transparenica/transparencia/encuesta/ver/encuesta/"+val.pk+"'); class='btn btn-small btn-inverse' type='button'>Ver Encuesta</button></td><td><button onclick= window.open('/transparencia/transparencia/home/unpublish/encuesta/"+val.pk+"'); class='btn btn-small btn-inverse' type='button'>Despublicar</button></td></tr>");
+							
+                            
+                            //$("#id_tbody2").append("<tr><td>"+val.pk+"</td><td>"+val.centro+"</td><td>"+val.fecha+"</td><td>"+val.fecha_cre+"</td></tr>");
 							
 							/*
 							var table = document.getElementById("tabla_encuestas");
@@ -203,7 +206,7 @@ function MostrarEncuestas(pk){
 				<table id="table_users" class="table table-striped">
 					<thead>
 						<tr>
-							<th>Código</th><th>Nombre</th><th>Usuario</th>
+							<th>Código</th><th>Nombre</th><th>Usuario</th><th>Tipo</th>
 						</tr>
 					</thead>
 					<tbody id="id_tbody">
