@@ -32,6 +32,45 @@
 		});
 	</script>
 
+<div class="well">
+    <fieldset>
+    <legend>Filtro Seleccionado</legend>
+        {%if filtros.fechas%}
+        <div class= "row-fluid">
+            <h5>{{filtros.fechas}}</h5>
+        </div>
+        {%endif%}
+        {%if filtros.centro%}
+        <div class= "row-fluid">
+            <h5>{{filtros.centro}}</h5>
+        </div>
+        {%endif%}
+        {%if filtros.municipio%}
+        <div class= "row-fluid">
+            <h5>{{filtros.municipio}}</h5>
+        </div>
+        {%endif%}
+        {%if filtros.departamento%}
+        <div class= "row-fluid">
+            <h5>{{filtros.departamento}}</h5>
+        </div>
+        {%endif%}
+        {%if filtros.usuario%}
+        <div class= "row-fluid">
+            <h5>{{filtros.usuario}}</h5>
+        </div>
+        {%endif%}
+        {%if filtros.tipousuario%}
+        <div class= "row-fluid">
+            <h5>{{filtros.tipousuario}}</h5>
+        </div>
+        {%endif%}
+    </fieldset>
+    
+    <legend></legend>
+    <h4>Encuestas Encontradas: {{count}} </h4>
+
+</div>
 		<div id="SegmentoA">
 
 		</div>
