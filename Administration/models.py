@@ -131,33 +131,35 @@ class Usuario(User):
     
     @classmethod
     def BringAll(Usuario):
-        return Usuario.objects.all()
+        return Usuario.objects.filter(is_active=1)
     @classmethod 
     def BringByTipo(Usuario,tipo):
         tipousuario = TipoUsuario.objects.get(codigo = tipo)
         #user = getattr(User, 'tipo_usuario', None)
         #usuarios=Usuario.objects.filter(tipo_usuario = tipousuario)
-        usuarios=Userio.objects.filter(tipo_usuario = tipousuario)
+        usuarios=Usuario.objects.filter(tipo_usuario = tipousuario)
         return usuarios
     @classmethod 
     def BringByTipo_Username(Usuario,tipo,un):
-		if tipo:
-			if un:
-				#tipousuario = TipoUsuario.objects.get(codigo = tipo)
-				#user = getattr(Usuario, 'tipo_usuario', None)
-				usuarios=Usuario.objects.filter(tipo_usuario = tipo,username__contains=un)
-			else:
-				#tipousuario = TipoUsuario.objects.get(codigo = tipo)
-				#user = getattr(Usuario, 'tipo_usuario', None)
-				usuarios=Usuario.objects.filter(tipo_usuario = tipo)
-
-		else:
-			 if un:
-				 usuarios=User.objects.filter(username__contains=un)
-			 else:
-				 usuarios=User.objects.all()
-
-		return usuarios
+        if tipo:
+            if un:
+                #tipousuario = TipoUsuario.objects.get(codigo = tipo)
+                #user = getattr(Usuario, 'tipo_usuario', None)
+                usuarios=Usuario.objects.filter(tipo_usuario = tipo,username__contains=un,is_active=1)
+            else:
+                #tipousuario = TipoUsuario.objects.get(codigo = tipo)
+                #user = getattr(Usuario, 'tipo_usuario', None)
+                usuarios=Usuario.objects.filter(tipo_usuario = tipo,is_active=1)
+        else:
+            if un:
+                usuarios=Usuario.objects.filter(username__contains=un,is_active=1)
+             #usuarios=User.objects.filter(username__contains=un,is_active=1)
+             
+            else:
+                usuarios=Usuario.objects.filter(is_active=1)
+             #usuarios=User.objects.filter(is_active=1)
+        print usuarios
+        return usuarios
 
 
 

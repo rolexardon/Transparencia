@@ -33,6 +33,11 @@
 			showMessage("Usuario Eliminado");
 			mssg = "";
 		}
+        if(mssg == "user_reset"){
+            mensaje= "Se reestableció el acceso del usuario; la nueva contraseña es: " + "{{pwd}}"
+			showMessage(mensaje);
+			mssg = "";
+		}
         if(mssg == "user_error"){
 			showMessage("Error, revise los datos del usuario");
 			mssg = "";
@@ -63,7 +68,7 @@
                         
                         if(msg != ""){
 									$.each(msg,function(key,val){
-										$("#id_tbody").append("<tr><td>"+val.pk+"</td><td>"+val.name+"</td><td>"+val.usuario+"</td><td><button onclick=Modificar("+val.pk+",'"+val.url+"'); class='btn btn-small btn-inverse' type='button'>Modificar</button></td></tr>");
+										$("#id_tbody").append("<tr><td>"+val.pk+"</td><td>"+val.name+"</td><td>"+val.usuario+"</td><td><button onclick=Modificar("+val.pk+",'"+val.url+"','"+val.url_reset+"'); class='btn btn-small btn-inverse' type='button'>Modificar</button></td></tr>");
 					});
                     }
                     else{
@@ -109,7 +114,7 @@
 	
 	});
 	
-	function Modificar(pk,url){
+	function Modificar(pk,url,url_reset){
 
 		$.ajax({
 						type:"GET",
@@ -123,6 +128,7 @@
 							//$("#table_modificar").append(msg.as_table);
 							$("#table_modificar").html(msg.html);
                             $("#btn_eliminar").attr('href',url);
+                            $("#btn_reset").attr('href',url_reset);
 				}
 			});
             $('#field_modificar').removeAttr('hidden');
@@ -203,7 +209,8 @@
 
 						</form>
                         <table>
-                        <tr></tr></td><td><a href = "" class="btn" id="btn_eliminar">Eliminar</a></td><td><button class="btn" id="btn_cancelar">Cancelar</button></td></tr>
+                            <tr></tr>
+                            <tr><td><a href = "" class="btn" id="btn_reset">Reestablecer acceso</a></td><td><a href = "" class="btn" id="btn_eliminar">Eliminar</a></td><td><button class="btn" id="btn_cancelar">Cancelar</button></td></tr>
 					    </table>
                     </fieldset>
 				</div>

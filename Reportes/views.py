@@ -157,7 +157,6 @@ def view_reportecomparativo(request):
                 encuestas = E.objects.filter(codigo_centro = centro , fecha__range=(fecha1,fecha2))
             else:
                 encuestas = E.objects.filter(fecha__range=(fecha1,fecha2))
-            print "voy"
             if encuestas:
                 return PrepareReporteComparativo(encuestas,request)
             else:

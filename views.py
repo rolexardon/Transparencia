@@ -15,6 +15,8 @@ from Encuesta.models import EncuestaData as ED
 from django.contrib.auth.models import User 
 from datetime import datetime
 from django.core.urlresolvers import reverse
+
+
 def view_login(request):
     try:
         username = ''
