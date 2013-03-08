@@ -115,7 +115,7 @@
 	});
 	
 	function Modificar(pk,url,url_reset){
-
+		$("#hid_id").val(pk);
 		$.ajax({
 						type:"GET",
 						data:
@@ -202,6 +202,7 @@
 					<fieldset id="field_modificar">
 					<legend>Modificar</legend>
 						<form action={%url url_modificarusuario 'datos'%} method='post'>{% csrf_token %}
+							<input type="hidden" id="hid_id" name="pk">
 							<table id="table_modificar">
 								{{form_update.as_table}}
 							</table>
