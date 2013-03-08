@@ -7,7 +7,7 @@ from django.utils import simplejson
 import string
 from dateutil import parser
 from django.contrib.auth.models import User
-from Administration.models import Usuario as U 
+from Administration.models import Usuario as U
 from Administration.models import TipoUsuario as TU
 from Administration.models import Departamento as DP
 
@@ -24,16 +24,16 @@ from Encuesta.models import EncuestaData as ED
 
 from Administration.models import *
 from Encuesta.models import *
- 
+
 import xlwt
 from datetime import datetime, date
 
 def view_reporte(request):
-    
+
     usuarios = User.objects.all()
     tipos = TU.BringAll()
     deps = DP.BringAll()
-    
+
     infoA= SA.BringAll()
     infoB= SB.BringAll()
     infoC= SC.BringAll()
@@ -41,7 +41,7 @@ def view_reporte(request):
     infoE= SE.BringAll()
     infoF= SF.BringAll()
     infoG= SG.BringAll()
-    
+
     return render_to_response('Reportes.html',{'usuarios':usuarios,'tipos':tipos, 'deps':deps,'infoA':infoA,'infoB':infoB,'infoC':infoC,'infoD':infoD,'infoE':infoE,'infoF':infoF,'infoG':infoG},context_instance=RequestContext(request))
 
 def view_bringusuarios(request):
@@ -56,7 +56,7 @@ def view_bringusuarios(request):
                    # users=User.objects.filter(U__tipo_usuario = tipousuario)
                     users = U.BringByTipo(tipo)
 
-                #data = [{'pk':u.user.id,'usuario':u.user} for u in users]    
+                #data = [{'pk':u.user.id,'usuario':u.user} for u in users]
                 #data = [{'pk':u.user.id,'usuario':u.user.get_full_name()} for u in users]
                 data = [{'pk':u.user.id,'usuario':u.user.username} for u in users]
                 return HttpResponse(simplejson.dumps(data), mimetype="application/json")
@@ -66,15 +66,19 @@ def view_bringusuarios(request):
                 return HttpResponse('Error')
             else:
                 return HttpResponse(simplejson.dumps(data), mimetype="application/json")
-                #return HttpResponse(simplejson.dumps(list(users)), mimetype="application/json")   
-            
+                #return HttpResponse(simplejson.dumps(list(users)), mimetype="application/json")
+
 def view_reportestadistico(request):
     if request.method == "POST":
-        
-        
+
+        filtros = {}
+
         fecha1 = request.POST['tbx_fecha1']
         fecha2 = request.POST['tbx_fecha2']
-        
+
+        filtros['fechas'] = u'Entre la fecha %s y %s' % (fecha1,fecha2)
+
+        """
         #if fecha1 != '' and fecha2!= '':
         dt = parser.parse(fecha1)
         m = dt.strftime("%d")
@@ -88,8 +92,9 @@ def view_reportestadistico(request):
         y = dt.strftime("%Y")
         #dt = dt.strftime("%Y-%d-%m")
         fecha2 = str(y) + "-" + str(d) + "-" + str(m)
+        """
 
-        print fecha1,fecha2
+        #print fecha1,fecha2
         tipousuario = request.POST['cbx_tipousuario']
         #usuario = request.POST['cbx_usuario']
         usuario = request.POST['name_codeselecteduser']
@@ -97,33 +102,41 @@ def view_reportestadistico(request):
         municipio = request.POST['cbx_mun']
         centro = request.POST['cbx_centro']
        # segmentos_lista = request.POST.getlist("check_seg")
-        
-        sql = "SELECT * FROM Encuesta_encuesta WHERE fecha BETWEEN '" + str(fecha1) + "' AND '" + str(fecha2) + "'"
-        if centro != 'Todos':
-            sql = sql + " AND codigo_centro_id = " + centro
-        if municipio != 'Todos':
-            sql = sql + " AND codigo_municipio_id = " + municipio
-        if departamento != 'Todos':
-            sql = sql + " AND codigo_departamento_id = " + departamento
+
+        sql = "SELECT * FROM Encuesta_encuesta WHERE fecha BETWEEN '" + str(parser.parse(fecha1)) + "' AND '" + str(parser.parse(fecha2)) + "'"
         if usuario != '-1':
             #words = string.split(usuario, ' ')
             #sql = sql + " AND codigo_usuario_id = (SELECT id FROM auth_user WHERE first_name = '" + words[0] + "' AND last_name = '" + words[1] + "')"
             sql = sql + " AND codigo_usuario_id = " + usuario
+            filtros['usuario'] = u'Del usuario %s' % User.objects.get(pk=usuario).username
         if tipousuario != 'Todos':
-            sql = sql + " AND codigo_usuario_id = (SELECT user_id FROM Administration_usuario WHERE tipo_usuario_id = (SELECT id FROM Administration_tipousuario WHERE nombre = '" + tipousuario + "'))"
+            #sql = sql + " AND codigo_usuario_id = (SELECT user_id FROM Administration_usuario WHERE tipo_usuario_id = (SELECT id FROM Administration_tipousuario WHERE nombre = '" + tipousuario + "'))"
+            sql = sql + " AND codigo_usuario_id  IN (SELECT user_ptr_id FROM administration_usuario WHERE tipo_usuario_id = " + tipousuario + ")"
+            filtros['tipousuario'] = u'Del tipo de usuario %s' % str(TU.objects.get(codigo = tipousuario).nombre)
+        if centro != 'Todos':
+            sql = sql + " AND codigo_centro_id = " + centro
+            filtros['centro'] = u'Centro Educativo: %s ' % str(CentroEducativo.objects.get(pk=centro))
+        if departamento != 'Todos':
+            sql = sql + " AND codigo_departamento_id = " + departamento
+            filtros['departamento'] = u'Departamento %s' % str(Departamento.objects.get(pk=departamento))
+        if municipio != 'Todos':
+            sql = sql + " AND codigo_municipio_id = " + municipio
+            filtros['municipio'] = u'Municipio de %s' % str(Municipio.objects.get(departamento=departamento,codigo=municipio))
+
 
 
         encuestas = E.objects.raw(sql)
-        print encuestas
+        #print encuestas
       #  PrepareReporteEstadistico(encuestas,segmentos_lista)
-        return PrepareReporteEstadistico(encuestas,request)
+        return PrepareReporteEstadistico(encuestas,filtros,request)
 
 def view_reportecomparativo(request):
     if request.method == 'POST':
         try:
-            fecha1 = request.POST['tbx_fecha1']
-            fecha2 = request.POST['tbx_fecha2']
-            
+            fecha1 = parser.parse(request.POST['tbx_fecha1'])
+            fecha2 = parser.parse(request.POST['tbx_fecha2'])
+
+            """
             #if fecha1 != '' and fecha2!= '':
             dt = parser.parse(fecha1)
             m = dt.strftime("%d")
@@ -137,21 +150,20 @@ def view_reportecomparativo(request):
             y = dt.strftime("%Y")
             #dt = dt.strftime("%Y-%d-%m")
             fecha2 = str(y) + "-" + str(d) + "-" + str(m)
-        
-        
+            """
+
             centro = request.POST['cbx_centro']
             if centro != "Todos":
                 encuestas = E.objects.filter(codigo_centro = centro , fecha__range=(fecha1,fecha2))
             else:
                 encuestas = E.objects.filter(fecha__range=(fecha1,fecha2))
-            print "voy"
             if encuestas:
                 return PrepareReporteComparativo(encuestas,request)
             else:
                 usuarios = User.objects.all()
                 tipos = TU.BringAll()
                 deps = DP.BringAll()
-                
+
                 infoA= SA.BringAll()
                 infoB= SB.BringAll()
                 infoC= SC.BringAll()
@@ -159,14 +171,14 @@ def view_reportecomparativo(request):
                 infoE= SE.BringAll()
                 infoF= SF.BringAll()
                 infoG= SG.BringAll()
-                
+
                 return render_to_response('Reportes.html',{'err':'No hay encuestas','usuarios':usuarios,'tipos':tipos, 'deps':deps,'infoA':infoA,'infoB':infoB,'infoC':infoC,'infoD':infoD,'infoE':infoE,'infoF':infoF,'infoG':infoG},context_instance=RequestContext(request))
         except Exception,e:
             HttpResponse(e)
     else:
         HttpResponse("nada")
     return render_to_response('Reportes.html',context_instance=RequestContext(request))
-            
+
 def PrepareReporteComparativo(encuestas,request):
 
     idtipo = TU.objects.get(nombre = 'Director Distrital')
@@ -188,7 +200,7 @@ def PrepareReporteComparativo(encuestas,request):
        #         codigo = str(e.codigo)
         #        fecha = str(e.fecha_apertura)
          #       llenado_dd = llenado_dd + ("<tr><td><strong><a href='{%url url_encuesta " + codigo + "%}'> Encuesta " + codigo + " , fecha de creacion "+ fecha +" </a></strong></td></tr>")
-              
+
     idtipo = TU.objects.get(nombre = 'Sociedad Civil')
     iduser = U.objects.filter(tipo_usuario = idtipo.pk)
     l = []
@@ -203,7 +215,7 @@ def PrepareReporteComparativo(encuestas,request):
      #   codigo = str(e.codigo)
       #  fecha = str(e.fecha_apertura)
        # llenado_sc = llenado_sc + ("<tr><td><strong><a href='{%url url_encuesta " + codigo + "%}'> Encuesta " + codigo + " , fecha de creacion "+fecha+" </a></strong></td></tr>")
-        
+
     idtipo = TU.objects.get(nombre = 'Unidad de Transparencia')
     iduser = U.objects.filter(tipo_usuario = idtipo.pk)
     l = []
@@ -219,29 +231,31 @@ def PrepareReporteComparativo(encuestas,request):
 
     #return TemplateResponse('Resultados_Comparativos.html',{'llenado_dd':llenado_dd})
     return render_to_response('Resultados_Comparativos.html',{'enc_dd': encuestas_directordistrital,'enc_sc': encuestas_sociedadcivil ,'enc_ut':encuestas_unidadtransparencia},context_instance=RequestContext(request))
- 
-def PrepareReporteEstadistico(encuestas,request):
+
+def PrepareReporteEstadistico(encuestas,filtros,request):
+
+    count = sum(1 for result in encuestas)
 
     sega = SA.BringAll()
     segb = SB.BringAll()
     segc = SC.BringAll()
     segf = SF.BringAll()
     segg = SG.BringAll()
-     
+
     lista = []
     for sa in sega:
         lista.append(sa.codigo)
     sum_lista = []
     for l in lista:
         sum_lista.append(0)
-         
+
     listb = []
     for sb in segb:
         listb.append(sb.codigo)
     sum_listb = []
     for l in listb:
         sum_listb.append(0)
-         
+
     listc = []
     for sc in segc:
         listc.append(sc.codigo)
@@ -250,14 +264,14 @@ def PrepareReporteEstadistico(encuestas,request):
     for l in listc:
         sum_listcSI.append(0)
         sum_listcNO.append(0)
-         
+
     listf = []
     for sf in segf:
         listf.append(sf.codigo)
     sum_listf = []
     for l in listf:
         sum_listf.append(0)
-         
+
     listg = []
     for sg in segg:
         listg.append(sg.codigo)
@@ -272,7 +286,7 @@ def PrepareReporteEstadistico(encuestas,request):
         sum_listgB.append(0)
         sum_listgR.append(0)
         sum_listgM.append(0)
-     
+
     for e in encuestas:
         data = ED.objects.filter(encuesta=e)
         GetDataSegmentoA(data.filter(segmento = 'A',tipo_valor = "texto"),lista,sum_lista)
@@ -280,9 +294,9 @@ def PrepareReporteEstadistico(encuestas,request):
         GetDataSegmentoC(data.filter(segmento = 'C'),listc,sum_listcSI,sum_listcNO)
         GetDataSegmentoF(data.filter(segmento = 'F'),listf,sum_listf)
         GetDataSegmentoG(data.filter(segmento = 'G'),listg,sum_listgE,sum_listgMB,sum_listgB,sum_listgR,sum_listgM)
-    
+
     js = ""
-        
+
     #Segmento A
     porcent_lista = []
     sumaa = 0
@@ -293,20 +307,20 @@ def PrepareReporteEstadistico(encuestas,request):
             element = 0
         else : element = (float(obj) / float(sumaa)) * 100.0
         porcent_lista.append(element)
-         
+
     js = js + ("chartA = new Highcharts.Chart({"                                                    +
                     "chart: {"                                                                      +
                     "renderTo: 'SegmentoA',"                                                           +
                     "    plotBackgroundColor: null,"                                                +
                     "    plotBorderWidth: null,"                                                    +
-                    "    plotShadow: false"                                                         +    
+                    "    plotShadow: false"                                                         +
                     "        },"                                                                    +
                     "title:{"                                                                       +
                     "    text: 'Instalacion y Ubicacion del Mural'"                                 +
                     "    },"                                                                        +
                     "tooltip: {"                                                                    +
                     "    formatter: function() {"                                                   +
-                    "        return '<b>'+ this.point.name +'</b>: '+ this.percentage +' %';"       +
+                    "        return '<b>'+ this.point.name +'</b>: '+ Math.round(this.percentage) +' %';"       +
                     "    }"                                                                         +
                     "},"                                                                            +
                     "plotOptions: {"                                                                +
@@ -318,15 +332,15 @@ def PrepareReporteEstadistico(encuestas,request):
                     "            color: '#000000',"                                                 +
                     "            connectorColor: '#000000',"                                        +
                     "            formatter: function() {"                                           +
-                    "               return '<b>'+ this.point.name +'</b>: '+ this.percentage +' %';"+
+                    "               return '<b>'+ this.point.name +'</b>';"+
                     "            }"                                                                 +
                     "        }"                                                                     +
                     "    }"                                                                         +
                     "},"                                                                            +
-                    "series: [{"                                                                    +                                                
-                    "    type: 'pie',"                                                              +    
-                    "    name: 'Segmento A',"                                                       +    
-                    "    data: ["                                                                   
+                    "series: [{"                                                                    +
+                    "    type: 'pie',"                                                              +
+                    "    name: 'Segmento A',"                                                       +
+                    "    data: ["
                     )
 
     index = 0;
@@ -339,7 +353,7 @@ def PrepareReporteEstadistico(encuestas,request):
     js = js + (                     "]" +
                                 "}]"+
                             "});")
-    
+
     #Segmento B
     porcent_listb = []
     sumab = 0
@@ -351,20 +365,20 @@ def PrepareReporteEstadistico(encuestas,request):
         else : element = (float(obj) / float(sumab)) * 100.0
 
         porcent_listb.append(element)
-         
+
     js = js + ("chartB = new Highcharts.Chart({"                                                    +
                     "chart: {"                                                                      +
                     "renderTo: 'SegmentoB',"                                                        +
                     "    plotBackgroundColor: null,"                                                +
                     "    plotBorderWidth: null,"                                                    +
-                    "    plotShadow: false"                                                         +    
+                    "    plotShadow: false"                                                         +
                     "        },"                                                                    +
                     "title:{"                                                                       +
                     "    text: 'Informacion Obligatoria Publicada en Mural'"                        +
                     "    },"                                                                        +
                     "tooltip: {"                                                                    +
                     "    formatter: function() {"                                                   +
-                    "        return '<b>'+ this.point.name +'</b>: '+ this.percentage +' %';"       +
+                    "        return '<b>'+ this.point.name +'</b>: '+ Math.round(this.percentage) +' %';"       +
                     "    }"                                                                         +
                     "},"                                                                            +
                     "plotOptions: {"                                                                +
@@ -376,15 +390,15 @@ def PrepareReporteEstadistico(encuestas,request):
                     "            color: '#000000',"                                                 +
                     "            connectorColor: '#000000',"                                        +
                     "            formatter: function() {"                                           +
-                    "               return '<b>'+ this.point.name +'</b>: '+ this.percentage +' %';"+
+                    "               return '<b>'+ this.point.name +'</b>';"+
                     "            }"                                                                 +
                     "        }"                                                                     +
                     "    }"                                                                         +
                     "},"                                                                            +
-                    "series: [{"                                                                    +                                                
-                    "    type: 'pie',"                                                              +    
-                    "    name: 'Segmento B',"                                                       +    
-                    "    data: ["                                                                   
+                    "series: [{"                                                                    +
+                    "    type: 'pie',"                                                              +
+                    "    name: 'Segmento B',"                                                       +
+                    "    data: ["
                     )
 
 
@@ -405,7 +419,7 @@ def PrepareReporteEstadistico(encuestas,request):
         sumacSI = sumacSI + obj
     for obj in sum_listcNO:
         sumacNO = sumacNO + obj
-         
+
     js = js + ("chartC = new Highcharts.Chart({"                                                    +
                     "chart: {"                                                                      +
                         "renderTo: 'SegmentoC',"                                                           +
@@ -417,14 +431,14 @@ def PrepareReporteEstadistico(encuestas,request):
 
                 "xAxis: {"+
                 "categories: [")
-    
+
     index = 0
     for item in segc:
         if index !=0:
             js = js + ","
         js = js + "'" + item.descripcion +"'"
         index = index + 1
-        
+
     js = js + ("],"+
          "title: {"+
             "text: null"+
@@ -465,7 +479,7 @@ def PrepareReporteEstadistico(encuestas,request):
                       "},"+
                     "series: [{"+
                         "name:'SI',"+
-                        "data:["                                                                                                                                                                         
+                        "data:["
                     )
     index = 0;
     for item in listc:
@@ -484,7 +498,7 @@ def PrepareReporteEstadistico(encuestas,request):
         index = index + 1
     js = js + ("]}]"+
  "});")
-    
+
     #Segmento F
     porcent_listf = []
     sumaf = 0
@@ -495,20 +509,20 @@ def PrepareReporteEstadistico(encuestas,request):
             element = 0
         else :element = (float(obj) / float(sumaf)) * 100.0
         porcent_listf.append(element)
-         
+
     js = js + ("chartF = new Highcharts.Chart({"                                                    +
                     "chart: {"                                                                      +
                     "renderTo: 'SegmentoF',"                                                           +
                     "    plotBackgroundColor: null,"                                                +
                     "    plotBorderWidth: null,"                                                    +
-                    "    plotShadow: false"                                                         +    
+                    "    plotShadow: false"                                                         +
                     "        },"                                                                    +
                     "title:{"                                                                       +
                     "    text: 'Hallazgos e Irregularidades en Matricula Gratis'"                        +
                     "    },"                                                                        +
                     "tooltip: {"                                                                    +
                     "    formatter: function() {"                                                   +
-                    "        return '<b>'+ this.point.name +'</b>: '+ this.percentage +' %';"       +
+                    "        return '<b>'+ this.point.name +'</b>: '+ Math.round(this.percentage) +' %';"       +
                     "    }"                                                                         +
                     "},"                                                                            +
                     "plotOptions: {"                                                                +
@@ -520,15 +534,15 @@ def PrepareReporteEstadistico(encuestas,request):
                     "            color: '#000000',"                                                 +
                     "            connectorColor: '#000000',"                                        +
                     "            formatter: function() {"                                           +
-                    "               return '<b>'+ this.point.name +'</b>: '+ this.percentage +' %';"+
+                    "               return '<b>'+ this.point.name +'</b>';"+
                     "            }"                                                                 +
                     "        }"                                                                     +
                     "    }"                                                                         +
                     "},"                                                                            +
-                    "series: [{"                                                                    +                                                
-                    "    type: 'pie',"                                                              +    
-                    "    name: 'Segmento F',"                                                       +    
-                    "    data: ["                                                                   
+                    "series: [{"                                                                    +
+                    "    type: 'pie',"                                                              +
+                    "    name: 'Segmento F',"                                                       +
+                    "    data: ["
                     )
 
 
@@ -541,7 +555,7 @@ def PrepareReporteEstadistico(encuestas,request):
     js = js + (                     "]" +
                                 "}]"+
                             "});")
-    
+
     #SegmentoG
 
     sumagE = 0
@@ -560,7 +574,7 @@ def PrepareReporteEstadistico(encuestas,request):
     for obj in sum_listgM:
         sumagM = sumagM + obj
 
-         
+
     js = js + ("chartC = new Highcharts.Chart({"                                                    +
                     "chart: {"                                                                      +
                         "renderTo: 'SegmentoG',"                                                           +
@@ -572,14 +586,14 @@ def PrepareReporteEstadistico(encuestas,request):
 
                 "xAxis: {"+
                 "categories: [")
-    
+
     index = 0
     for item in segc:
         if index !=0:
             js = js + ","
         js = js + "'" + item.descripcion +"'"
         index = index + 1
-        
+
     js = js + ("],"+
          "title: {"+
             "text: null"+
@@ -620,7 +634,7 @@ def PrepareReporteEstadistico(encuestas,request):
                       "},"+
                     "series: [{"+
                         "name:'Excelente',"+
-                        "data:["                                                                                                                                                                         
+                        "data:["
                     )
     index = 0;
     for item in listc:
@@ -667,9 +681,10 @@ def PrepareReporteEstadistico(encuestas,request):
     js = js + ("]}]"+
  "});")
 
-    return render_to_response('Resultados_Estadisticos.html',{'js':js},context_instance=RequestContext(request))
- 
-    
+
+    return render_to_response('Resultados_Estadisticos.html',{'js':js,'filtros':filtros,'count':count},context_instance=RequestContext(request))
+
+
 
 def GetDataSegmentoA(datos,items,sum_lista):
      for d in datos:
@@ -741,8 +756,8 @@ def GetDataSegmentoG(datos,items,sum_listgE,sum_listgMB,sum_listgB,sum_listgR,su
              sum = sum_listgM[index] + 1
              del sum_listgM[index]
              sum_listgM.insert(index,sum)
-     
-        
+
+
 def view_reporteexportar(request,tabla):
     error = "error"
     book = xlwt.Workbook(encoding='utf8')
@@ -804,9 +819,9 @@ def view_reporteexportar(request,tabla):
         values_list = ListadoDocentes.objects.all().values_list()
         fields = ListadoDocentes._meta.fields
 
-    
+
     try:
-        
+
         cols=0
         for field in fields:
             sheet.write(0, cols, str(field.name), style=default_style)
@@ -830,4 +845,3 @@ def view_reporteexportar(request,tabla):
         error=e
     return HttpResponse(error)
 
-    

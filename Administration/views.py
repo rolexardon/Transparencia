@@ -22,6 +22,8 @@ from Encuesta.models import EncuestaTemp as ET
 from Encuesta.models import Encuesta as E
 
 from Transparencia.views import PrepareContent
+from django.core.urlresolvers import reverse
+import random,string
 
 def view_menuusuarios(request):
     try:
@@ -136,6 +138,8 @@ def view_bringsegmento(request):
                     return HttpResponse(e)
                 #else:
                     #return HttpResponse(simplejson.dumps(form), mimetype="application/json")
+                    
+                    
 def view_bringusers(request):
     if request.is_ajax():
         if request.GET['data'] == 'users':
@@ -155,7 +159,7 @@ def view_bringusers(request):
                         id_tipo = TipoUsuario.objects.get(codigo=tipo)
                         users=Usuario.BringByTipo_Username(id_tipo,None)
 
-                ret = [{'pk':u.pk,'name':u.get_full_name(),'usuario':u.username} for u in users]
+                ret = [{'pk':u.pk,'name':u.get_full_name(),'usuario':u.username,'tipo':u.tipo_usuario.nombre, 'url':reverse('url_deleteuser', args=[u.pk]), 'url_reset':reverse('url_pwdreset', args=[u.pk]) } for u in users]
                 return HttpResponse(simplejson.dumps(ret), mimetype="application/json")
             except Exception,e:
                 return HttpResponse(e)
@@ -182,15 +186,32 @@ def view_bringusers(request):
                         tipos = TipoUsuario.BringAll()
                         return render_to_response('MenuUsuarios.html',{'form':form_original,'mssg': "user_del",'tipos':tipos},context_instance=RequestContext(request))'''
 
-
 def view_deleteuser(request,pk):
     user = Usuario.objects.get(pk=pk)
-    user.delete()
+    user.is_active = False
+    user.save()
+    
+    #user.delete()
 
     form_original = UsuarioForm()
     tipos = TipoUsuario.BringAll()
+    
     return render_to_response('MenuUsuarios.html',{'form':form_original,'mssg': "user_del",'tipos':tipos},context_instance=RequestContext(request))
 
+def view_pwdreset(request,pk):
+    
+    usuario= User.objects.get(pk=pk)
+    pwd=''.join(random.choice(string.ascii_lowercase + string.digits) for x in range(12))
+    
+    usuario.set_password(pwd)
+    usuario.save()
+    
+    
+    form_original = UsuarioForm()
+    tipos = TipoUsuario.BringAll()
+    
+    return render_to_response('MenuUsuarios.html',{'form':form_original,'mssg': "user_reset",'tipos':tipos,'pwd':pwd},context_instance=RequestContext(request))
+    
 def view_modificarusuario(request,tipo):
     if tipo=="datos":
         try:

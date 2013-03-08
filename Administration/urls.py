@@ -10,6 +10,7 @@ urlpatterns = patterns('Administration.views',
     url(r'^gestionar/usuarios/delete(?P<pk>\d+)$','view_deleteuser',name = 'url_deleteuser'),
 	url(r'^gestionar/segmentos/bring$','view_bringsegmento',name = 'url_bringsegmento'),
 	url(r'^gestionar/usuarios/modificar/(?P<tipo>\w+)$','view_modificarusuario',name = 'url_modificarusuario'),
+    url(r'^gestionar/usuarios/resetpwd/(?P<pk>\d+)$','view_pwdreset',name = 'url_pwdreset'),
 	url(r'^gestionar/segmentos/modificar$','view_modificarsegmento',name = 'url_modificarsegmento'),
 
 	

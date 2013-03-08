@@ -76,7 +76,7 @@ def view_bringcentroinfo(request):
             else:
                 return HttpResponse(simplejson.dumps(resp), mimetype="application/json")
 
-def view_save(request,encuesta_id):    
+def view_save(request,encuesta_id):
 	
     try:
         tipo_save = request.POST['tipo_save']
@@ -90,13 +90,13 @@ def view_save(request,encuesta_id):
                 if 'imagen02' in request.FILES:
                     if encuesta.imagen02:
                         os.remove(encuesta.imagen02.path)
-                    
+
                 etf = ET_Form(request.POST, request.FILES, instance = encuesta)
                 if etf.is_valid():
                     etf.save()
 
                     # resize and save image under same filename
- 
+
             #ETD.objects.filter(encuesta= encuesta_id).delete()
             ETD.objects.filter(encuesta= encuesta).delete()
 
@@ -149,9 +149,17 @@ def SaveBasic(datos,codigo_tabla,ts):
                 if fecha != "":
 					#valid_fecha = datetime.strptime(fecha, '%d/%m/%Y')
 					#p.fecha = fecha
-					dt = parser.parse(fecha)
+					dt= datetime.strptime(fecha, '%d/%m/%Y')
+					
+					#dt = parser.parse(fecha)
+
+            """try:
+                valid_fecha = datetime.strptime(str(dt), '%d/%m/%Y')
+            except Exception,e:
+                print e"""
+
 					#p.update(fecha=dt)
-					p.fecha = dt
+            p.fecha = dt
 					#p.save()
             if 'cbx_centros' in datos.POST:
                 centro=datos.POST['cbx_centros']
@@ -181,9 +189,9 @@ def SaveBasic(datos,codigo_tabla,ts):
             zona = datos.POST['cbx_zonacentro']
             #p.update(zona=zona)
             p.zona=zona
-                
+
             p.save()
-            
+
         else:
             encuesta_temp = ET.objects.get(pk=codigo_tabla)
             etf = ET_Form(datos.POST, datos.FILES, instance = encuesta_temp)
@@ -191,16 +199,22 @@ def SaveBasic(datos,codigo_tabla,ts):
                 etf.save()
             img1 = encuesta_temp.imagen01
             img2 = encuesta_temp.imagen02
-            
+
             departamento = DP.objects.get(pk=datos.POST['cbx_dep'])
             municipio = MN.objects.get(pk=datos.POST['cbx_mun'])
             centro = CE.objects.get(pk=datos.POST['cbx_centros'])
-            
+
+
             fecha=datos.POST['tbx_fecha']
             if fecha != "":
-                dt = parser.parse(fecha)
+            	try:
+                	dt= datetime.strptime(fecha, '%d/%m/%Y')
+
+
+                except Exception,e:
+                    dt = parser.parse(fecha)
                 fecha = dt
-                
+
             zona = datos.POST['cbx_zonacentro']
             t1=datos.POST['tbx_tel1']
             al = datos.POST['tbx_alumnos']
@@ -413,13 +427,14 @@ def view_encuesta(request,encuesta):
             #print fecha
             return render_to_response('Encuesta.html',{'usuario':username,'id_usuario':userid,'codigo_enc':p.codigo,'tipo_save':tipo_save,'deps':deps,'centros':centros,'infoA':infoA,'infoB':infoB,'infoC':infoC,'infoD':infoD,'infoE':infoE,'infoF':infoF,'infoG':infoG,'muns':muns,'tipo':"nueva", 'range1':range(4),'range2':range(3),'today':today,'show':showbtns,'etf':etf},context_instance=RequestContext(request))
         else:
-            
+
             #fecha = d % '-' % m % '-' % y
             #print fecha
             e = ET.objects.get(pk=encuesta)
             #today = str(e.fecha)
-            
+
             today = e.fecha
+
             #dt = parser.parse(today)
             #today = dt
             if today:
@@ -482,9 +497,11 @@ def view_publicadas(request,encuesta):
     muns= MN.BringAll()
 
     e = Encuesta.objects.get(pk=encuesta)
-    today = str(e.fecha)
+    today = e.fecha
+    if today:
+        today= today.strftime('%d/%m/%y')
     #data = ETD.objects.filter(encuesta=e)
-    
+
     etf = E_Form(instance=e)
 
     data_a = ConvertToDict(ED.objects.filter(encuesta=e,segmento = "A").values())
@@ -514,7 +531,7 @@ def view_publicadas(request,encuesta):
     data_f2 = CompleteSpaces(data_f2,3)
     data_d = CompleteSpaces(data_d,len(infoD))
     data_e = CompleteSpaces(data_e,len(infoE))
-    
+
     showbtns = False
     return render_to_response('Encuesta.html',{'usuario':username,'id_usuario':userid,'codigo_enc':encuesta,'tipo_save':tipo_save,'deps':deps,'centros':centros,'infoA':infoA,'infoB':infoB,'infoC':infoC,'infoD':infoD,'infoE':infoE,'infoF':infoF,'infoG':infoG,'muns':muns,'tipo':"existente",'encuesta':e, 'da':data_a,'da2':data_a2, 'db':data_b,'db2':data_b2, 'dc':data_c, 'dd':data_d, 'de':data_e, 'df':data_f, 'df2':data_f2,'dg':data_g, 'range': range(4),'show':showbtns,'today':today,'etf':etf},context_instance=RequestContext(request))
     #except Exception,e:
