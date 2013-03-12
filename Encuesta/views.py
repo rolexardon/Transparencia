@@ -2,7 +2,7 @@ from django.http import HttpResponse
 from django.template import RequestContext
 from django.shortcuts import render_to_response,redirect,get_object_or_404
 from django.utils import simplejson
-from datetime import datetime as dt
+from datetime import datetime 
 from django.db import transaction
 from django.contrib.auth.models import User
 from datetime import datetime
@@ -80,6 +80,7 @@ def view_save(request,encuesta_id):
 	
     try:
         tipo_save = request.POST['tipo_save']
+        
         if tipo_save == "temporal":
             SaveBasic(request,encuesta_id,tipo_save)
             if request.method == "POST":
@@ -104,6 +105,8 @@ def view_save(request,encuesta_id):
 
             encuesta = SaveBasic(request,encuesta_id,tipo_save)
             SaveDocentesPartE(encuesta_id,encuesta)
+            
+            
         infoC=SC.BringAll()
         infoD=SD.BringAll()
         SavePartA(request,tipo_save,encuesta)
@@ -144,23 +147,19 @@ def SaveBasic(datos,codigo_tabla,ts):
     try:
         if ts == "temporal":
             p = ET.objects.get(codigo = codigo_tabla)
+             
             if 'tbx_fecha' in datos.POST:
                 fecha=datos.POST['tbx_fecha']
                 if fecha != "":
 					#valid_fecha = datetime.strptime(fecha, '%d/%m/%Y')
 					#p.fecha = fecha
 					dt= datetime.strptime(fecha, '%d/%m/%Y')
-					
 					#dt = parser.parse(fecha)
-
-            """try:
-                valid_fecha = datetime.strptime(str(dt), '%d/%m/%Y')
-            except Exception,e:
-                print e"""
-
 					#p.update(fecha=dt)
+            
             p.fecha = dt
 					#p.save()
+                    
             if 'cbx_centros' in datos.POST:
                 centro=datos.POST['cbx_centros']
                 centro=CE.objects.get(pk=centro)
@@ -189,14 +188,17 @@ def SaveBasic(datos,codigo_tabla,ts):
             zona = datos.POST['cbx_zonacentro']
             #p.update(zona=zona)
             p.zona=zona
-
-            p.save()
-
+            try:
+                p.save()
+            except Exception,e:
+                HttpResponse(e)
         else:
+        
             encuesta_temp = ET.objects.get(pk=codigo_tabla)
             etf = ET_Form(datos.POST, datos.FILES, instance = encuesta_temp)
             if etf.is_valid():
                 etf.save()
+                
             img1 = encuesta_temp.imagen01
             img2 = encuesta_temp.imagen02
 
@@ -204,16 +206,13 @@ def SaveBasic(datos,codigo_tabla,ts):
             municipio = MN.objects.get(pk=datos.POST['cbx_mun'])
             centro = CE.objects.get(pk=datos.POST['cbx_centros'])
 
-
             fecha=datos.POST['tbx_fecha']
-            if fecha != "":
-            	try:
-                	dt= datetime.strptime(fecha, '%d/%m/%Y')
-
-
-                except Exception,e:
-                    dt = parser.parse(fecha)
-                fecha = dt
+            try:
+                dt= datetime.strptime(fecha, '%d/%m/%Y')
+            except Exception,e:
+                pass
+                
+            fecha = dt
 
             zona = datos.POST['cbx_zonacentro']
             t1=datos.POST['tbx_tel1']
@@ -222,7 +221,7 @@ def SaveBasic(datos,codigo_tabla,ts):
                 ob = datos.POST['tbx_obsv']
             else: ob = ""
             try:
-                 row=Encuesta(codigo_usuario = datos.user,fecha=fecha,codigo_departamento = departamento, codigo_municipio = municipio, codigo_centro = centro,zona=zona,tel=t1,fecha_apertura = dt.today(),observacion = ob,alumnos = al,imagen01 = img1, imagen02 = img2)
+                 row=Encuesta(codigo_usuario = datos.user,fecha=fecha,codigo_departamento = departamento, codigo_municipio = municipio, codigo_centro = centro,zona=zona,tel=t1,fecha_apertura = datetime.today(),observacion = ob,alumnos = al,imagen01 = img1, imagen02 = img2)
                  row.save()
             except Exception,e:
                  HttpResponse(e)
@@ -414,7 +413,7 @@ def view_encuesta(request,encuesta):
         muns= MN.BringAll()
 
         if encuesta == "nueva":
-            today = dt.now()
+            today = datetime.now()
             p = ET(codigo_usuario=codigo_usuario,fecha_apertura = today)
             p.save()
             showbtns = True
@@ -438,7 +437,7 @@ def view_encuesta(request,encuesta):
             #dt = parser.parse(today)
             #today = dt
             if today:
-                today= today.strftime('%d/%m/%y')
+                today= today.strftime('%d/%m/%Y')
             else:
                 today=""
             etf = ET_Form(instance=e)
@@ -533,7 +532,7 @@ def view_publicadas(request,encuesta):
     data_e = CompleteSpaces(data_e,len(infoE))
 
     showbtns = False
-    return render_to_response('Encuesta.html',{'usuario':username,'id_usuario':userid,'codigo_enc':encuesta,'tipo_save':tipo_save,'deps':deps,'centros':centros,'infoA':infoA,'infoB':infoB,'infoC':infoC,'infoD':infoD,'infoE':infoE,'infoF':infoF,'infoG':infoG,'muns':muns,'tipo':"existente",'encuesta':e, 'da':data_a,'da2':data_a2, 'db':data_b,'db2':data_b2, 'dc':data_c, 'dd':data_d, 'de':data_e, 'df':data_f, 'df2':data_f2,'dg':data_g, 'range': range(4),'show':showbtns,'today':today,'etf':etf},context_instance=RequestContext(request))
+    return render_to_response('Encuesta.html',{'usuario':username,'id_usuario':userid,'codigo_enc':encuesta,'tipo_save':tipo_save,'deps':deps,'centros':centros,'infoA':infoA,'infoB':infoB,'infoC':infoC,'infoD':infoD,'infoE':infoE,'infoF':infoF,'infoG':infoG,'muns':muns,'tipo':"existente",'encuesta':e, 'da':data_a,'da2':data_a2, 'db':data_b,'db2':data_b2, 'dc':data_c, 'dd':data_d, 'de':data_e, 'df':data_f, 'df2':data_f2,'dg':data_g, 'range': range(4),'show':showbtns,'today':today,'etf':etf,'pub':'SI'},context_instance=RequestContext(request))
     #except Exception,e:
        # return HttpResponse(e)
 

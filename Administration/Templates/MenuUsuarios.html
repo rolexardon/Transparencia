@@ -68,7 +68,7 @@
                         
                         if(msg != ""){
 									$.each(msg,function(key,val){
-										$("#id_tbody").append("<tr><td>"+val.pk+"</td><td>"+val.name+"</td><td>"+val.usuario+"</td><td><button onclick=Modificar("+val.pk+",'"+val.url+"','"+val.url_reset+"'); class='btn btn-small btn-inverse' type='button'>Modificar</button></td></tr>");
+										$("#id_tbody").append("<tr><td>"+val.pk+"</td><td>"+val.name+"</td><td>"+val.usuario+"</td><td>"+val.tipo+"</td><td><button onclick=Modificar("+val.pk+",'"+val.url+"','"+val.url_reset+"'); class='btn btn-small btn-inverse' type='button'>Modificar</button></td></tr>");
 					});
                     }
                     else{
@@ -191,7 +191,7 @@
 						<table id="table_users" class="table table-striped">
 							<thead>
 								<tr>
-									<th>Código</th><th>Nombre</th><th>Usuario</th>
+									<th>Código</th><th>Nombre</th><th>Usuario</th><th>Tipo</th>
 								</tr>
 							</thead>
 							<tbody id="id_tbody">

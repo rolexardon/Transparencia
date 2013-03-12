@@ -21,6 +21,13 @@
 {%block contenido%}
 	<script language="javascript">
 		$(document).ready(function() {
+        
+            var publicada = '{{pub}}';
+            
+            if(publicada == "SI"){
+                $("#pg1 fieldset").attr("disabled", "disabled");
+                $("#pg2 fieldset").attr("disabled", "disabled");
+            }
 			var selectedTabIndex = null;
 			var validated = false;
 			var valorE1 = 0 ;
@@ -110,54 +117,69 @@
 										tbx_fecha : "required",
 										tbxE_1 : {
 													//max: $("#D_2").val()
+                                                    min: 0,
                                                     max: Number(D2)
 												},
 										tbxE_2 : {
 													//max: $("#D_2").val()
+                                                    min: 0,
                                                     max: Number(D2)
 												},
 										tbxE_3 : {
 													//max: $("#D_3").val()
+                                                    min: 0,
                                                     max: Number(D3)
 												},
 										tbxE_4 : {
 													//max: $("#D_1").val()
+                                                    min: 0,
                                                     max: Number(D1)
 												},
 										tbxE_5 : {
 													//max: $("#D_2").val()
+                                                    min: 0,
                                                     max: Number(D2)
 												},
 										tbxE_6 : {
 													//max: $("#D_3").val()
+                                                    min: 0,
                                                     max: Number(D3)
 												},
 										tbxE_7 : {
 													//max: Math.max($("#D_2").val(),$("#D_3").val())
+                                                    min: 0,
                                                     max: Math.max(Number(D2),Number(D3))
 												},
 										tbx_alumnos : { max : 9999}
 									},
 									messages :{
+                                        tbx_fecha : {   required: "Ingrese este campo" },
 										tbxE_1 : {
+                                                    min:"Asegúrese que el valor sea positivo",
 													max:"Asegúrese que el valor sea igual o menor que D2._"
 												 },
 										tbxE_2 : {
+                                                    min:"Asegúrese que el valor sea positivo",
 													max:"Asegúrese que el valor sea igual o menor que D2._"
 												 },
 										tbxE_3 : {
+                                                    min:"Asegúrese que el valor sea positivo",
 													max:"Asegúrese que el valor sea igual o menor que D3._"
 												 },
 										tbxE_4 : {
+                                                    min:"Asegúrese que el valor sea positivo",
 													max:"Asegúrese que el valor sea igual o menor que D1._"
 												 },
 										tbxE_5 : {
+                                                    min:"Asegúrese que el valor sea positivo",
 													max:"Asegúrese que el valor sea igual o menor que D2._"
 												 },	
 										tbxE_6 : {
+                                                    min:"Asegúrese que el valor sea positivo",
 													max:"Asegúrese que el valor sea igual o menor que D3._"
 												 },			
 										tbxE_7 : {
+                                                    min:"Asegúrese que el valor sea positivo",
 													max:"Asegúrese que el valor sea igual o menor que el mayor entre D2._ y D3._"
 												 },
 										tbx_alumnos : {
@@ -184,7 +206,7 @@
 									onsubmit: false,
 									rules: {
 										tbx_fecha : "required",
-										cbx_centros : "required",
+										//cbx_centros : "required",
 										tbx_tel1 : "required",
 										//imagen01 : "required",
 										//imagen02 : "required",
@@ -194,50 +216,76 @@
 										selG_1 : "required",
 										selG_2 : "required",
 										selG_3 : "required",
+                                        cbx_centros : {
+                                                        required : true,
+                                                        notEqual : "Seleccione"
+                                        },
 										tbxE_1 : {
+                                                    min: 0,
 													max: $("#D_2").val()
 												},
 										tbxE_2 : {
+                                                    min: 0,
 													max: $("#D_2").val()
 												},
 										tbxE_3 : {
+                                                    min: 0,
 													max: $("#D_3").val()
 												},
 										tbxE_4 : {
+                                                    min: 0,
 													max: $("#D_1").val()
 												},
 										tbxE_5 : {
+                                                    min: 0,
 													max: $("#D_2").val()
 												},
 										tbxE_6 : {
+                                                    min: 0,
 													max: $("#D_3").val()
 												},
 										tbxE_7 : {
+                                                    min: 0,
 													max: Math.max($("#D_2").val(),$("#D_3").val())
 												},
 										tbx_alumnos : { required:true, max : 9999}
 											},
 											
 									messages :{		
+                                        tbx_fecha : {   required: "Ingrese este campo" },
+                                        tbx_tel1 : {   required: "Ingrese este campo" },
+                                        selC_1 : {   required: "Ingrese este campo" },
+                                        selC_2 : {   required: "Ingrese este campo" },
+                                        selC_3 : {   required: "Ingrese este campo" },
+                                        selG_1 : {   required: "Ingrese este campo" },
+                                        selG_2 : {   required: "Ingrese este campo" },
+                                        selG_3 : {   required: "Ingrese este campo" },
 										tbxE_1 : {
-													max:"Asegúrese que el valor sea igual o menor que D2._"
+                                                    min:"Asegúrese que el valor sea positivo",
+													max:"Asegúrese que el valor sea igual o me  nor que D2._"
 												 },
 										tbxE_2 : {
+                                                    min:"Asegúrese que el valor sea positivo",
 													max:"Asegúrese que el valor sea igual o menor que D2._"
 												 },
 										tbxE_3 : {
+                                                    min:"Asegúrese que el valor sea positivo",
 													max:"Asegúrese que el valor sea igual o menor que D3._"
 												 },
 										tbxE_4 : {
+                                                    min:"Asegúrese que el valor sea positivo",
 													max:"Asegúrese que el valor sea igual o menor que D1._"
 												 },
 										tbxE_5 : {
+                                                    min:"Asegúrese que el valor sea positivo",
 													max:"Asegúrese que el valor sea igual o menor que D2._"
 												 },	
 										tbxE_6 : {
+                                                    min:"Asegúrese que el valor sea positivo",
 													max:"Asegúrese que el valor sea igual o menor que D3._"
 												 },			
 										tbxE_7 : {
+                                                    min:"Asegúrese que el valor sea positivo",
 													max:"Asegúrese que el valor sea igual o menor que el mayor entre D2._ y D3._"
 												 },	
 										tbx_alumnos : {
@@ -252,6 +300,10 @@
 								$.validator.addMethod("Numeric_tbxs2", $.validator.methods.number, "Ingrese elementos numéricos");
 								$.validator.addMethod("Required", $.validator.methods.required, "Ingrese este elemento");
 								$.validator.addClassRules("inputs_parteE", { Numeric_tbxs2: true , Required : true});
+                                $.validator.addMethod("notEqual", function(value, element, param) {
+
+                                  return this.optional(element) || value != param;
+                                }, "Seleccione un Centro Educativo");
 						
 						break;	
 						}							
@@ -274,7 +326,7 @@
 			$("#id_dep").change(function() {
 				dep = $(this).val();
 				$("#id_mun").empty();
-				$("#id_mun").append("<option value='0' selected='selected'>Seleccione</option>");
+				$("#id_mun").append("<option value='Seleccione' selected='selected'>Seleccione</option>");
 				$("#id_centros").empty();
 								
 				$.ajax({
@@ -294,7 +346,7 @@
 			});
 			$("#id_mun").change(function() {
 				$("#id_centros").empty();
-				$("#id_centros").append("<option value='0' selected='selected'>Seleccione</option>");
+				$("#id_centros").append("<option value='Seleccione' selected='selected'>Seleccione</option>");
 				$.ajax({
 							type:"GET",
 							data:
@@ -689,7 +741,7 @@
 							<tr>
 								<td><label class="lbl_centro">Departamento:</label></td>
 								<td><select name="cbx_dep" id="id_dep">
-										<option selected="selected">Seleccione</option>
+										<option value='Seleccione' selected="selected">Seleccione</option>
 					                	{%for d in deps%}
 											<option value="{{d.pk}}"> {{d.nombre}} </option>
 										{%endfor%}
@@ -928,7 +980,7 @@
 						</table>
 					</fieldset>
 					<br>
-					<fieldset id="centro">
+					<fieldset id="centro" >
 					<legend>Centro Educativo</legend>
 						<div class="instruccion">
 							<label>Seleccione el centro educativo</label>
@@ -938,7 +990,7 @@
 							<tr>
 								<td><label class="lbl_centro">Departamento:</label></td>
 								<td><select name="cbx_dep" id="id_dep">
-                                <option>Seleccione</option>
+                                <option value='Seleccione' >Seleccione</option>
 					                	{%for d in deps%}
 											{%if d.nombre == encuesta.codigo_centro|getdepforcentro%}
 												<option value={{d.codigo}} selected="selected"> {{d}} </option>
@@ -1003,12 +1055,15 @@
 								<td><label class="lbl_centro">Matrícula de Alumnos Total:</label></td>
 								<td><input type="text" name="tbx_alumnos" id="id_alumnos" class ="number_inputs" value="{{encuesta.alumnos|setval:"alumnos"}}" max_lenght="4"></td>
 							</tr>
-							<tr>
-								<td><label class="lbl_centro">Imagenes:</label></td>
-								<td>{{etf}}</td>
-							</tr>
+							
 						</table>
 					</fieldset>
+                    <table>
+                        <tr>
+                            <td><label class="lbl_centro">Imagenes:</label></td>
+                            <td>{{etf}}</td>
+                        </tr>
+                    </table>
 					<br>
 					<fieldset id="parteA">
 					<legend>A. Instalación y ubicación del mural</legend>
@@ -1049,7 +1104,7 @@
 						</table>
 					</fieldset>
 					<br>			
-					<fieldset id="parteB">
+					<fieldset id="parteB" >
 					<legend>B. Información obligatoria publicada en el mural</legend>
 						<div class="instruccion">
 							<label>Puede elegir varias opciones y escribir hasta 4 tipos de información extra</label>
@@ -1113,7 +1168,7 @@
 						</table>
 					</fieldset>
 					<br>
-					<fieldset id="parteD" style="display: none;">
+					<fieldset id="parteD" style="display: none;" >
 					<legend>D. Cantidades totales de docentes</legend>
 						<div class="instruccion">
 							<label>Solo colocar números en cada casilla</label>
@@ -1132,7 +1187,7 @@
 				</div>
 				<div id="tabs-3">
 					<input type="hidden" name="tipo_save" value="" id ="hidden_tiposave2">
-					<fieldset id="parteE" style="display: none;">
+					<fieldset id="parteE" style="display: none;" >
 					<legend>E. Hallazgos e Irregularidades en LISTAS</legend>
 						<div class="instruccion">
 							<label>Solo colocar números en cada casilla</label>
@@ -1181,7 +1236,7 @@
 						</table>
 					</fieldset>
 					<br>
-					<fieldset id="parteG">
+					<fieldset id="parteG" >
 					<legend>G. Creatividad (colores, materiales autóctonos, decorado)</legend>
 						<div class="instruccion">
 							<label>Seleccione una opción</label>

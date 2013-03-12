@@ -12,43 +12,42 @@
 
 	<script>
 		$(document).ready(function() {	
-		
-        
             $("#selected_user").attr('hidden', 'hidden');
             $("#field_resultados").attr('hidden', 'hidden');
             $("#msj_users").attr('hidden', 'hidden');
 			
             $("#code_selecteduser").val(-1);
-            
+         /*   
 			var currentTime = new Date()
 			var month = currentTime.getMonth() + 1
 			var day = currentTime.getDate()
 			var year = currentTime.getFullYear()
 			//var today= year + "-" + month + "-" + day
             var today= day + "/" + month + "/" + year
-		
+		*/
+            var today = '{{today}}'
 			$("#tabs").tabs();
 			$( "#datepicker1" ).datepicker({
 				//dateFormat: 'yy-mm-dd',
                 dateFormat: 'dd/mm/yy',
                 //dateFormat: 'yy-dd-mm',
 				 
-			});//.val(today);
+			}).val(today);
 			$( "#datepicker2" ).datepicker({ 
 				//dateFormat: 'yy-mm-dd',
                 dateFormat: 'dd/mm/yy',
                 //dateFormat: 'yy-dd-mm',
-			});//.val(today);
+			}).val(today);
 			$( "#datepicker3" ).datepicker({ 
 				//dateFormat: 'yy-mm-dd',
                 dateFormat: 'dd/mm/yy',
                 //dateFormat: 'yy-dd-mm',
-			});//.val(today);
+			}).val(today);
 			$( "#datepicker4" ).datepicker({ 
 				//dateFormat: 'yy-mm-dd',
                 dateFormat: 'dd/mm/yy',
                 //dateFormat: 'yy-dd-mm',
-			});//.val(today);
+			}).val(today);
             
 			$( "#accordion" ).accordion({
 				autoHeight: false,
@@ -212,7 +211,6 @@
     
         
 	</script>
-	
 	<div id="tabs">
 		<ul>
 			<li><a href="#tabs-1">Generación de Reportes</a></li>
@@ -391,120 +389,148 @@
 			</div>
             <h3><a href="#">Exportación</a></h3>
                 <div>
-                        <h5>Datos Regionales</h5>
+                        <h3>Datos de Usuario</h3>
                         <fieldset>
-                        <legend>Exportar Tabla Departamentos</legend>
-                            <br>
+                        <legend>Tabla Usuarios
+                        <form id="form_exportar" method = "POST" action = "{%url url_reporteexportar 'Usuarios'%}">{% csrf_token %}
+                        <button class="btn" type="submit">Exportar</button>
+                        </form>
+                        </legend>
+                        </fieldset>
+                        <fieldset>
+                        <legend>Tabla Tipo Usuario
+                        <form id="form_exportar" method = "POST" action = "{%url url_reporteexportar 'Tipos'%}">{% csrf_token %}
+                        <button class="btn" type="submit">Exportar</button>
+                        </form>
+                        </legend>
+                        </fieldset>
+                        <fieldset>
+                        <legend>Tabla Tipo Roles de Usuario
+                        <form id="form_exportar" method = "POST" action = "{%url url_reporteexportar 'Roles'%}">{% csrf_token %}
+                        <button class="btn" type="submit">Exportar</button>
+                        </form>
+                        </legend>
+                        </fieldset>
+                        
+                        <legend></legend>
+                        <h3>Datos Regionales</h3>
+                        <fieldset>
+                        <legend>Tabla Departamentos
                         <form id="form_exportar" method = "POST" action = "{%url url_reporteexportar 'Departamentos'%}">{% csrf_token %}
                         <button class="btn" type="submit">Exportar</button>
                         </form>
+                        </legend>
                         </fieldset>
                         <fieldset>
-                        <legend>Exportar Tabla Municipios</legend>
-                            <br>
+                        <legend>Tabla Municipios
                         <form id="form_exportar" method = "POST" action = "{%url url_reporteexportar 'Municipios'%}">{% csrf_token %}
                         <button class="btn" type="submit">Exportar</button>
                         </form>
+                        </legend>
                         </fieldset>
                         <fieldset>
-                        <legend>Exportar Tabla Centros</legend>
-                            <br>
+                        <legend>ETabla Centros Educativos
                         <form id="form_exportar" method = "POST" action = "{%url url_reporteexportar 'Centros'%}">{% csrf_token %}
                         <button class="btn" type="submit">Exportar</button>
                         </form>
+                        </legend>
                         </fieldset>
-                        <h5>Segmentos de Encuesta</h5>
+                        
+                        <legend></legend>
+                        <h3>Segmentos de Encuesta</h3>
                         <fieldset>
-                        <legend>Exportar Tabla SegmentoA</legend>
-                            <br>
+                        <legend>Tabla SegmentoA
                         <form id="form_exportar" method = "POST" action = "{%url url_reporteexportar 'SegmentoA'%}">{% csrf_token %}
                         <button class="btn" type="submit">Exportar</button>
                         </form>
+                        </legend>
                         </fieldset>
                         <fieldset>
-                        <legend>Exportar Tabla SegmentoB</legend>
-                            <br>
+                        <legend>Tabla SegmentoB
                         <form id="form_exportar" method = "POST" action = "{%url url_reporteexportar 'SegmentoB'%}">{% csrf_token %}
                         <button class="btn" type="submit">Exportar</button>
                         </form>
+                        </legend>
                         </fieldset>
                         <fieldset>
-                        <legend>Exportar Tabla SegmentoC</legend>
-                            <br>
+                        <legend>Tabla SegmentoC
                         <form id="form_exportar" method = "POST" action = "{%url url_reporteexportar 'SegmentoC'%}">{% csrf_token %}
                         <button class="btn" type="submit">Exportar</button>
                         </form>
+                        </legend>
                         </fieldset>
                         <fieldset>
-                        <legend>Exportar Tabla SegmentoD</legend>
-                            <br>
+                        <legend>Tabla SegmentoD
                         <form id="form_exportar" method = "POST" action = "{%url url_reporteexportar 'SegmentoD'%}">{% csrf_token %}
                         <button class="btn" type="submit">Exportar</button>
                         </form>
                         </fieldset>
+                        </legend>
                         <fieldset>
-                        <legend>Exportar Tabla SegmentoE</legend>
-                            <br>
+                        <legend>Tabla SegmentoE
                         <form id="form_exportar" method = "POST" action = "{%url url_reporteexportar 'SegmentoE'%}">{% csrf_token %}
                         <button class="btn" type="submit">Exportar</button>
                         </form>
+                        </legend>
                         </fieldset>
                         <fieldset>
-                        <legend>Exportar Tabla SegmentoF</legend>
-                            <br>
+                        <legend>Tabla SegmentoF
                         <form id="form_exportar" method = "POST" action = "{%url url_reporteexportar 'SegmentoF'%}">{% csrf_token %}
                         <button class="btn" type="submit">Exportar</button>
                         </form>
+                        </legend>
                         </fieldset>
                         <fieldset>
-                        <legend>Exportar Tabla SegmentoG</legend>
-                            <br>
+                        <legend>Tabla SegmentoG
                         <form id="form_exportar" method = "POST" action = "{%url url_reporteexportar 'SegmentoG'%}">{% csrf_token %}
                         <button class="btn" type="submit">Exportar</button>
                         </form>
+                        </legend>
                         </fieldset>
-                        <h5>Datos de Encuestas</h5>
+                        
+                        <legend></legend>
+                        <h3>Datos de Encuestas</h3>
                         <fieldset>
-                        <legend>Exportar Tabla Encuesta Temporal</legend>
-                            <br>
+                        <legend>Tabla Encuesta Temporal
                         <form id="form_exportar" method = "POST" action = "{%url url_reporteexportar 'EncuestaTemp'%}">{% csrf_token %}
                         <button class="btn" type="submit">Exportar</button>
                         </form>
+                        </legend>
                         </fieldset>
                         <fieldset>
-                        <legend>Exportar Tabla Datos Encuesta Temporal</legend>
-                            <br>
+                        <legend>Tabla Datos Encuesta Temporal
                         <form id="form_exportar" method = "POST" action = "{%url url_reporteexportar 'EncuestaTempData'%}">{% csrf_token %}
                         <button class="btn" type="submit">Exportar</button>
                         </form>
+                        </legend>
                         </fieldset>
                         <fieldset>
-                        <legend>Exportar Tabla Listado Docentes Temporal</legend>
-                            <br>
+                        <legend>Tabla Listado Docentes Temporal
                         <form id="form_exportar" method = "POST" action = "{%url url_reporteexportar 'ListadoDocentesTemp'%}">{% csrf_token %}
                         <button class="btn" type="submit">Exportar</button>
                         </form>
+                        </legend>
                         </fieldset>
                         <fieldset>
-                        <legend>Exportar Tabla Encuesta Publicada</legend>
-                            <br>
+                        <legend>Tabla Encuesta Publicada
                         <form id="form_exportar" method = "POST" action = "{%url url_reporteexportar 'Encuesta'%}">{% csrf_token %}
                         <button class="btn" type="submit">Exportar</button>
                         </form>
+                        </legend>
                         </fieldset>
                         <fieldset>
-                        <legend>Exportar Tabla Datos Encuesta Publicada</legend>
-                            <br>
+                        <legend>Tabla Datos Encuesta Publicada
                         <form id="form_exportar" method = "POST" action = "{%url url_reporteexportar 'EncuestaData'%}">{% csrf_token %}
                         <button class="btn" type="submit">Exportar</button>
                         </form>
+                        </legend>
                         </fieldset>
                         <fieldset>
-                        <legend>Exportar Tabla Listado Docentes Publicada</legend>
-                            <br>
+                        <legend>Tabla Listado Docentes Publicada
                         <form id="form_exportar" method = "POST" action = "{%url url_reporteexportar 'ListadoDocentes'%}">{% csrf_token %}
                         <button class="btn" type="submit">Exportar</button>
                         </form>
+                        </legend>
                         </fieldset>
                 </div>	            
 		</div>

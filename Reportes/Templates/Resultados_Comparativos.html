@@ -23,6 +23,29 @@
 			location.href = '{%url url_home%}';
 		});
 	</script>
+    
+    <div class="well">
+    <fieldset>
+    <legend>Filtro Seleccionado</legend>
+        {%if filtros.fechas%}
+        <div class= "row-fluid">
+            <h5>{{filtros.fechas}}</h5>
+        </div>
+        {%endif%}
+        {%if filtros.centro%}
+        <div class= "row-fluid">
+            <h5>{{filtros.centro}}</h5>
+        </div>
+        {%endif%}
+       
+    </fieldset>
+    
+    <legend></legend>
+    <h4>Encuestas Encontradas: {{count}} </h4>
+
+</div>
+
+
 	<div id="tabs">
 		<ul>
 			<li><a href="#tabs-1">Resultados</a></li>
@@ -33,7 +56,7 @@
 		<legend>Directores Distritales</legend>
 			<table>
 				{%for e in enc_dd%}
-					<tr><td><strong><a href='{%url url_publicadas e.codigo%}'> Encuesta {{e.codigo}} , fecha de creacion {{e.fecha_apertura}}[SegmentoE> {{e.codigo|GetSpecificInfo}}]</a></strong></td></tr>
+					<tr><td><strong><a href='{%url url_publicadas e.codigo%}'> No.{e.codigo}}, {{e.fecha|parsed_date}}, {{e.codigo_centro|centroinfo}},[{{e.codigo|GetSpecificInfo}}]</a></strong></td></tr>
 				{%endfor%}
 			</table>
 		</fieldset>
@@ -42,7 +65,7 @@
 		<legend>Sociedad Civil</legend>
 			<table>
 				{%for e in enc_sc%}
-					<tr><td><strong><a href='{%url url_publicadas e.codigo%}'> Encuesta {{e.codigo}} , fecha de creacion {{e.fecha_apertura}}[SegmentoE> {{e.codigo|GetSpecificInfo}}]</a></strong></td></tr>
+					<tr><td><strong><a href='{%url url_publicadas e.codigo%}'> No.{{e.codigo}}, {{e.fecha|parsed_date}}, {{e.codigo_centro|centroinfo}},[{{e.codigo|GetSpecificInfo}}]</a></strong></td></tr>
 				{%endfor%}
 			</table>
 		</fieldset>
@@ -51,7 +74,7 @@
 		<legend>Unidad de Transparencia</legend>
 			<table>
 				{%for e in enc_ut%}
-					<tr><td><strong><a href='{%url url_publicadas e.codigo%}'> Encuesta {{e.codigo}} , fecha de creacion {{e.fecha_apertura}}[SegmentoE> {{e.codigo|GetSpecificInfo}}]</a></strong></td></tr>
+					<tr><td><strong><a href='{%url url_publicadas e.codigo%}'> No.{{e.codigo}}, {{e.fecha|parsed_date}}, {{e.codigo_centro|centroinfo}},[{{e.codigo|GetSpecificInfo}}]</a></strong></td></tr>
 				{%endfor%}
 			</table>
 		</fieldset>
