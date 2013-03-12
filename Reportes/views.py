@@ -28,6 +28,8 @@ from Encuesta.models import *
 import xlwt
 from datetime import datetime, date
 
+
+
 def view_reporte(request):
 
     usuarios = User.objects.all()
@@ -42,7 +44,11 @@ def view_reporte(request):
     infoF= SF.BringAll()
     infoG= SG.BringAll()
 
-    return render_to_response('Reportes.html',{'usuarios':usuarios,'tipos':tipos, 'deps':deps,'infoA':infoA,'infoB':infoB,'infoC':infoC,'infoD':infoD,'infoE':infoE,'infoF':infoF,'infoG':infoG},context_instance=RequestContext(request))
+    today = datetime.now()
+    today = today.strftime('%d/%m/%Y')
+    
+
+    return render_to_response('Reportes.html',{'usuarios':usuarios,'tipos':tipos, 'deps':deps,'infoA':infoA,'infoB':infoB,'infoC':infoC,'infoD':infoD,'infoE':infoE,'infoF':infoF,'infoG':infoG,'today':today},context_instance=RequestContext(request))
 
 def view_bringusuarios(request):
     if request.is_ajax():
@@ -75,24 +81,11 @@ def view_reportestadistico(request):
 
         fecha1 = request.POST['tbx_fecha1']
         fecha2 = request.POST['tbx_fecha2']
-
+        
         filtros['fechas'] = u'Entre la fecha %s y %s' % (fecha1,fecha2)
-
-        """
-        #if fecha1 != '' and fecha2!= '':
-        dt = parser.parse(fecha1)
-        m = dt.strftime("%d")
-        d = dt.strftime("%m")
-        y = dt.strftime("%Y")
-        #dt = dt.strftime("%Y-%d-%m")
-        fecha1 = str(y) + "-" + str(d) + "-" + str(m)
-        dt = parser.parse(fecha2)
-        m = dt.strftime("%d")
-        d = dt.strftime("%m")
-        y = dt.strftime("%Y")
-        #dt = dt.strftime("%Y-%d-%m")
-        fecha2 = str(y) + "-" + str(d) + "-" + str(m)
-        """
+        
+        fecha1 = datetime.strptime(fecha1, '%d/%m/%Y')
+        fecha2 = datetime.strptime(fecha2, '%d/%m/%Y')
 
         #print fecha1,fecha2
         tipousuario = request.POST['cbx_tipousuario']
@@ -103,7 +96,8 @@ def view_reportestadistico(request):
         centro = request.POST['cbx_centro']
        # segmentos_lista = request.POST.getlist("check_seg")
 
-        sql = "SELECT * FROM Encuesta_encuesta WHERE fecha BETWEEN '" + str(parser.parse(fecha1)) + "' AND '" + str(parser.parse(fecha2)) + "'"
+        #sql = "SELECT * FROM Encuesta_encuesta WHERE fecha BETWEEN '" + str(parser.parse(fecha1)) + "' AND '" + str(parser.parse(fecha2)) + "'"
+        sql = "SELECT * FROM Encuesta_encuesta WHERE fecha BETWEEN '" + str(fecha1) + "' AND '" + str(fecha2) + "'"
         if usuario != '-1':
             #words = string.split(usuario, ' ')
             #sql = sql + " AND codigo_usuario_id = (SELECT id FROM auth_user WHERE first_name = '" + words[0] + "' AND last_name = '" + words[1] + "')"
@@ -124,7 +118,6 @@ def view_reportestadistico(request):
             filtros['municipio'] = u'Municipio de %s' % str(Municipio.objects.get(departamento=departamento,codigo=municipio))
 
 
-
         encuestas = E.objects.raw(sql)
         #print encuestas
       #  PrepareReporteEstadistico(encuestas,segmentos_lista)
@@ -133,54 +126,34 @@ def view_reportestadistico(request):
 def view_reportecomparativo(request):
     if request.method == 'POST':
         try:
-            fecha1 = parser.parse(request.POST['tbx_fecha1'])
-            fecha2 = parser.parse(request.POST['tbx_fecha2'])
-
-            """
-            #if fecha1 != '' and fecha2!= '':
-            dt = parser.parse(fecha1)
-            m = dt.strftime("%d")
-            d = dt.strftime("%m")
-            y = dt.strftime("%Y")
-            #dt = dt.strftime("%Y-%d-%m")
-            fecha1 = str(y) + "-" + str(d) + "-" + str(m)
-            dt = parser.parse(fecha2)
-            m = dt.strftime("%d")
-            d = dt.strftime("%m")
-            y = dt.strftime("%Y")
-            #dt = dt.strftime("%Y-%d-%m")
-            fecha2 = str(y) + "-" + str(d) + "-" + str(m)
-            """
+        
+            filtros = {}
+            
+            fecha1 = request.POST['tbx_fecha1']
+            fecha2 = request.POST['tbx_fecha2']
+            
+            filtros['fechas'] = u'Entre la fecha %s y %s' % (fecha1,fecha2)
+            
+            fecha1 = datetime.strptime(fecha1, '%d/%m/%Y')
+            fecha2 = datetime.strptime(fecha2, '%d/%m/%Y')
 
             centro = request.POST['cbx_centro']
             if centro != "Todos":
                 encuestas = E.objects.filter(codigo_centro = centro , fecha__range=(fecha1,fecha2))
+                filtros['centro'] = u'Centro Educativo: %s ' % str(CentroEducativo.objects.get(pk=centro))
             else:
                 encuestas = E.objects.filter(fecha__range=(fecha1,fecha2))
-            if encuestas:
-                return PrepareReporteComparativo(encuestas,request)
-            else:
-                usuarios = User.objects.all()
-                tipos = TU.BringAll()
-                deps = DP.BringAll()
 
-                infoA= SA.BringAll()
-                infoB= SB.BringAll()
-                infoC= SC.BringAll()
-                infoD= SD.BringAll()
-                infoE= SE.BringAll()
-                infoF= SF.BringAll()
-                infoG= SG.BringAll()
-
-                return render_to_response('Reportes.html',{'err':'No hay encuestas','usuarios':usuarios,'tipos':tipos, 'deps':deps,'infoA':infoA,'infoB':infoB,'infoC':infoC,'infoD':infoD,'infoE':infoE,'infoF':infoF,'infoG':infoG},context_instance=RequestContext(request))
+            return PrepareReporteComparativo(encuestas,request,filtros)
+                
         except Exception,e:
             HttpResponse(e)
-    else:
-        HttpResponse("nada")
-    return render_to_response('Reportes.html',context_instance=RequestContext(request))
 
-def PrepareReporteComparativo(encuestas,request):
 
+def PrepareReporteComparativo(encuestas,request,filtros):
+
+    count = encuestas.count
+    
     idtipo = TU.objects.get(nombre = 'Director Distrital')
     iduser = U.objects.filter(tipo_usuario = idtipo.pk)
     l = []
@@ -230,7 +203,7 @@ def PrepareReporteComparativo(encuestas,request):
        # llenado_ut = llenado_ut + ("<tr><td><strong><a href='{%url url_encuesta " + codigo + "%}'> Encuesta " + codigo + " , fecha de creacion "+fecha+" </a></strong></td></tr>")
 
     #return TemplateResponse('Resultados_Comparativos.html',{'llenado_dd':llenado_dd})
-    return render_to_response('Resultados_Comparativos.html',{'enc_dd': encuestas_directordistrital,'enc_sc': encuestas_sociedadcivil ,'enc_ut':encuestas_unidadtransparencia},context_instance=RequestContext(request))
+    return render_to_response('Resultados_Comparativos.html',{'enc_dd': encuestas_directordistrital,'enc_sc': encuestas_sociedadcivil ,'enc_ut':encuestas_unidadtransparencia,'filtros':filtros,'count':count},context_instance=RequestContext(request))
 
 def PrepareReporteEstadistico(encuestas,filtros,request):
 
@@ -332,9 +305,10 @@ def PrepareReporteEstadistico(encuestas,filtros,request):
                     "            color: '#000000',"                                                 +
                     "            connectorColor: '#000000',"                                        +
                     "            formatter: function() {"                                           +
-                    "               return '<b>'+ this.point.name +'</b>';"+
+                    "               return  Math.round(this.percentage) +' %';"+
                     "            }"                                                                 +
-                    "        }"                                                                     +
+                    "        },"                                                                    +
+                    "        showInLegend : true"                                                   +
                     "    }"                                                                         +
                     "},"                                                                            +
                     "series: [{"                                                                    +
@@ -390,9 +364,10 @@ def PrepareReporteEstadistico(encuestas,filtros,request):
                     "            color: '#000000',"                                                 +
                     "            connectorColor: '#000000',"                                        +
                     "            formatter: function() {"                                           +
-                    "               return '<b>'+ this.point.name +'</b>';"+
+                    "               return  Math.round(this.percentage) +' %';"+
                     "            }"                                                                 +
-                    "        }"                                                                     +
+                    "        },"                                                                    +
+                    "        showInLegend : true"                                                   +
                     "    }"                                                                         +
                     "},"                                                                            +
                     "series: [{"                                                                    +
@@ -534,9 +509,10 @@ def PrepareReporteEstadistico(encuestas,filtros,request):
                     "            color: '#000000',"                                                 +
                     "            connectorColor: '#000000',"                                        +
                     "            formatter: function() {"                                           +
-                    "               return '<b>'+ this.point.name +'</b>';"+
+                    "               return  Math.round(this.percentage) +' %';"+
                     "            }"                                                                 +
-                    "        }"                                                                     +
+                    "        },"                                                                    +
+                    "        showInLegend : true"                                                   +
                     "    }"                                                                         +
                     "},"                                                                            +
                     "series: [{"                                                                    +
@@ -767,6 +743,19 @@ def view_reporteexportar(request,tabla):
     datetime_style = xlwt.easyxf(num_format_str='dd/mm/yyyy hh:mm')
     date_style = xlwt.easyxf(num_format_str='dd/mm/yyyy')
 
+    
+    if tabla == "Usuarios":
+        values_list = Usuario.objects.all().values_list()
+        fields = Usuario._meta.fields
+    if tabla == "Tipos":
+        values_list = TipoUsuario.objects.all().values_list()
+        fields = TipoUsuario._meta.fields
+    if tabla == "Roles":
+        values_list = Rol.objects.all().values_list()
+        fields = Rol._meta.fields
+        
+        
+        
     if tabla == "Departamentos":
         values_list = Departamento.objects.all().values_list()
         fields = Departamento._meta.fields

@@ -30,11 +30,16 @@ class CentroEducativo(models.Model):
         return CentroEducativo.objects.filter(codigo_departamento = str(dep), codigo_municipio = str(mun)).order_by('nombre')
     @classmethod
     def GetCodigoCentro(CentroEducativo,idcentro):
-        return CentroEducativo.objects.get(pk=idcentro).codigo_ce
+        try:
+            return CentroEducativo.objects.get(pk=idcentro).codigo_ce
+        except:
+            return ""
     @classmethod
     def GetTipoCentro(CentroEducativo,idcentro):
-        return CentroEducativo.objects.get(pk=idcentro).tipo_centro
-    
+        try:
+            return CentroEducativo.objects.get(pk=idcentro).tipo_centro
+        except:
+            return ""
     def __unicode__(self):
         return self.nombre
     
