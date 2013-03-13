@@ -94,6 +94,7 @@ def view_reportestadistico(request):
         departamento = request.POST['cbx_dep']
         municipio = request.POST['cbx_mun']
         centro = request.POST['cbx_centro']
+        
        # segmentos_lista = request.POST.getlist("check_seg")
 
         #sql = "SELECT * FROM Encuesta_encuesta WHERE fecha BETWEEN '" + str(parser.parse(fecha1)) + "' AND '" + str(parser.parse(fecha2)) + "'"
@@ -107,15 +108,21 @@ def view_reportestadistico(request):
             #sql = sql + " AND codigo_usuario_id = (SELECT user_id FROM Administration_usuario WHERE tipo_usuario_id = (SELECT id FROM Administration_tipousuario WHERE nombre = '" + tipousuario + "'))"
             sql = sql + " AND codigo_usuario_id  IN (SELECT user_ptr_id FROM administration_usuario WHERE tipo_usuario_id = " + tipousuario + ")"
             filtros['tipousuario'] = u'Del tipo de usuario %s' % str(TU.objects.get(codigo = tipousuario).nombre)
-        if centro != 'Todos':
-            sql = sql + " AND codigo_centro_id = " + centro
-            filtros['centro'] = u'Centro Educativo: %s ' % str(CentroEducativo.objects.get(pk=centro))
+        if centro != 'Todos' and centro != "0":
+            try:
+                sql = sql + " AND codigo_centro_id = " + centro
+                filtros['centro'] = u'Centro Educativo: %s ' % str(CentroEducativo.objects.get(pk=centro))
+            except: 
+                pass
         if departamento != 'Todos':
             sql = sql + " AND codigo_departamento_id = " + departamento
             filtros['departamento'] = u'Departamento %s' % str(Departamento.objects.get(pk=departamento))
-        if municipio != 'Todos':
-            sql = sql + " AND codigo_municipio_id = " + municipio
-            filtros['municipio'] = u'Municipio de %s' % str(Municipio.objects.get(departamento=departamento,codigo=municipio))
+        if municipio != 'Todos' and municipio != "0":
+            try:
+                sql = sql + " AND codigo_municipio_id = " + municipio
+                filtros['municipio'] = u'Municipio de %s' % str(Municipio.objects.get(departamento=departamento,codigo=municipio))
+            except: 
+                pass
 
 
         encuestas = E.objects.raw(sql)
@@ -126,7 +133,6 @@ def view_reportestadistico(request):
 def view_reportecomparativo(request):
     if request.method == 'POST':
         try:
-        
             filtros = {}
             
             fecha1 = request.POST['tbx_fecha1']
@@ -138,12 +144,12 @@ def view_reportecomparativo(request):
             fecha2 = datetime.strptime(fecha2, '%d/%m/%Y')
 
             centro = request.POST['cbx_centro']
-            if centro != "Todos":
+            if centro != "Todos" and centro != "0":
                 encuestas = E.objects.filter(codigo_centro = centro , fecha__range=(fecha1,fecha2))
                 filtros['centro'] = u'Centro Educativo: %s ' % str(CentroEducativo.objects.get(pk=centro))
             else:
                 encuestas = E.objects.filter(fecha__range=(fecha1,fecha2))
-
+                
             return PrepareReporteComparativo(encuestas,request,filtros)
                 
         except Exception,e:
