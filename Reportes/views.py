@@ -104,26 +104,35 @@ def view_reportestadistico(request):
             #sql = sql + " AND codigo_usuario_id = (SELECT id FROM auth_user WHERE first_name = '" + words[0] + "' AND last_name = '" + words[1] + "')"
             sql = sql + " AND codigo_usuario_id = " + usuario
             filtros['usuario'] = u'Del usuario %s' % User.objects.get(pk=usuario).username
+	else:
+		filtros['usuario'] = u'Todos los usuarios'
         if tipousuario != 'Todos':
             #sql = sql + " AND codigo_usuario_id = (SELECT user_id FROM Administration_usuario WHERE tipo_usuario_id = (SELECT id FROM Administration_tipousuario WHERE nombre = '" + tipousuario + "'))"
             sql = sql + " AND codigo_usuario_id  IN (SELECT user_ptr_id FROM administration_usuario WHERE tipo_usuario_id = " + tipousuario + ")"
             filtros['tipousuario'] = u'Del tipo de usuario %s' % str(TU.objects.get(codigo = tipousuario).nombre)
+	else:
+		filtros['tipousuario'] = u'Todos los tipos de usuario'
         if centro != 'Todos' and centro != "0":
             try:
                 sql = sql + " AND codigo_centro_id = " + centro
                 filtros['centro'] = u'Centro Educativo: %s ' % str(CentroEducativo.objects.get(pk=centro))
             except: 
                 pass
+	else:
+		filtros['centro'] = u'Todos los centros educativos'
         if departamento != 'Todos':
             sql = sql + " AND codigo_departamento_id = " + departamento
             filtros['departamento'] = u'Departamento %s' % str(Departamento.objects.get(pk=departamento))
+	else:
+		filtros['departamento'] = u'Todos los departamentos'
         if municipio != 'Todos' and municipio != "0":
             try:
                 sql = sql + " AND codigo_municipio_id = " + municipio
                 filtros['municipio'] = u'Municipio de %s' % str(Municipio.objects.get(departamento=departamento,codigo=municipio))
             except: 
                 pass
-
+	else:
+		filtros['municipio'] = u'Todos los municipios'
 
         encuestas = E.objects.raw(sql)
         #print encuestas
@@ -149,6 +158,7 @@ def view_reportecomparativo(request):
                 filtros['centro'] = u'Centro Educativo: %s ' % str(CentroEducativo.objects.get(pk=centro))
             else:
                 encuestas = E.objects.filter(fecha__range=(fecha1,fecha2))
+		filtros['centro'] = u'Todos los centros'
                 
             return PrepareReporteComparativo(encuestas,request,filtros)
                 
