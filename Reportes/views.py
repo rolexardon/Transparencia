@@ -99,16 +99,16 @@ def view_reportestadistico(request):
 
         #sql = "SELECT * FROM Encuesta_encuesta WHERE fecha BETWEEN '" + str(parser.parse(fecha1)) + "' AND '" + str(parser.parse(fecha2)) + "'"
         sql = "SELECT * FROM Encuesta_encuesta WHERE fecha BETWEEN '" + str(fecha1) + "' AND '" + str(fecha2) + "'"
-        if usuario != '-1':
+        if usuario != '-1' and usuario != "0":
             #words = string.split(usuario, ' ')
             #sql = sql + " AND codigo_usuario_id = (SELECT id FROM auth_user WHERE first_name = '" + words[0] + "' AND last_name = '" + words[1] + "')"
             sql = sql + " AND codigo_usuario_id = " + usuario
             filtros['usuario'] = u'Del usuario %s' % User.objects.get(pk=usuario).username
 	else:
 		filtros['usuario'] = u'Todos los usuarios'
-        if tipousuario != 'Todos':
-            #sql = sql + " AND codigo_usuario_id = (SELECT user_id FROM Administration_usuario WHERE tipo_usuario_id = (SELECT id FROM Administration_tipousuario WHERE nombre = '" + tipousuario + "'))"
-            sql = sql + " AND codigo_usuario_id  IN (SELECT user_ptr_id FROM administration_usuario WHERE tipo_usuario_id = " + tipousuario + ")"
+        if tipousuario != 'Todos' and tipousuario != "0":
+            #sql = sql + " AND codigo_usuario_id = (SELECT user_ptr_id FROM Administration_usuario WHERE tipo_usuario_id = (SELECT codigo FROM Administration_tipousuario WHERE nombre = '" + tipousuario + "'))"
+            sql = sql + " AND codigo_usuario_id  IN (SELECT user_ptr_id FROM Administration_usuario WHERE tipo_usuario_id = " + tipousuario + ")"
             filtros['tipousuario'] = u'Del tipo de usuario %s' % str(TU.objects.get(codigo = tipousuario).nombre)
 	else:
 		filtros['tipousuario'] = u'Todos los tipos de usuario'
