@@ -146,8 +146,14 @@ INSTALLED_APPS = (
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
 )
+#AUTHENTICATION_BACKENDS = (
+#    'Transparencia.Administration.auth_backends.CustomUserModelBackend',
+#)
+
 AUTHENTICATION_BACKENDS = (
-    'Transparencia.Administration.auth_backends.CustomUserModelBackend',
+	'django.contrib.auth.backends.ModelBackend',
+	#'impostor.backend.AuthBackend',
+
 )
 CUSTOM_USER_MODEL = 'Administration.Usuario'
 #AUTH_PROFILE_MODULE = "Administration.Usuario"
