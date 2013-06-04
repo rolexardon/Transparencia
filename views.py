@@ -62,7 +62,8 @@ def PrepareContent(user,request):
         #usuario = user.first_name
         id_usuario = user.id
         #rol_usuario = RU.objects.get(codigo = user.get_profile().rol.codigo)
-        rol_usuario = RU.objects.get(codigo = user.rol.codigo)
+        #rol_usuario = RU.objects.get(codigo = user.rol.codigo)
+		rol_usuario = RU.objects.get(codigo = user.usuario.rol.codigo)
         encuestas_pendientes = ET.objects.filter(codigo_usuario = user)
         encuestas_publicadas = E.objects.filter(codigo_usuario=user)
 
