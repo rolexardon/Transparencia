@@ -57,29 +57,29 @@ def view_home(request):
         return HttpResponse(e)
 
 def PrepareContent(user,request):
-    try:
-        usuario = user.get_full_name()
-        #usuario = user.first_name
-        id_usuario = user.id
-        #rol_usuario = RU.objects.get(codigo = user.get_profile().rol.codigo)
-        #rol_usuario = RU.objects.get(codigo = user.rol.codigo)
+	try:
+		usuario = user.get_full_name()
+		#usuario = user.first_name
+		id_usuario = user.id
+		#rol_usuario = RU.objects.get(codigo = user.get_profile().rol.codigo)
+		#rol_usuario = RU.objects.get(codigo = user.rol.codigo)
 		rol_usuario = RU.objects.get(codigo = user.usuario.rol.codigo)
-        encuestas_pendientes = ET.objects.filter(codigo_usuario = user)
-        encuestas_publicadas = E.objects.filter(codigo_usuario=user)
+		encuestas_pendientes = ET.objects.filter(codigo_usuario = user)
+		encuestas_publicadas = E.objects.filter(codigo_usuario=user)
 
-        try:
-            tipo = request.POST['tipo_save']
-        except:
-            tipo = ""
-            
-        try:
-            despub = request.POST['msg']
-        except Exception,e:
-            despub=""
-            
-        return render_to_response('Home.html',{'usuario':usuario,'rol_usuario':rol_usuario.nombre,'encuestas':encuestas_pendientes,'publicadas':encuestas_publicadas,'mssg':tipo,'despub':despub},context_instance=RequestContext(request))
-    except Exception,e:
-        return HttpResponse(e)
+		try:
+			tipo = request.POST['tipo_save']
+		except:
+			tipo = ""
+			
+		try:
+			despub = request.POST['msg']
+		except Exception,e:
+			despub=""
+			
+		return render_to_response('Home.html',{'usuario':usuario,'rol_usuario':rol_usuario.nombre,'encuestas':encuestas_pendientes,'publicadas':encuestas_publicadas,'mssg':tipo,'despub':despub},context_instance=RequestContext(request))
+	except Exception,e:
+		return HttpResponse(e)
 
 
 def view_adminusuarios(request):

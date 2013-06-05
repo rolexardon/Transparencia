@@ -31,7 +31,6 @@ ROOT_PATH =  os.path.dirname(__file__)
 from Transparencia.settings import MEDIA_ROOT
 from dateutil import parser
 
-
 tipo_save  = ""
 id_encuestafinal = 0
 
