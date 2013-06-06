@@ -65,7 +65,7 @@
 							},
 						url: "{% url url_bringusers %}",
 						success: function(msg){
-                        
+                        alert(msg);
                         if(msg != ""){
 									$.each(msg,function(key,val){
 										$("#id_tbody").append("<tr><td>"+val.pk+"</td><td>"+val.name+"</td><td>"+val.usuario+"</td><td>"+val.tipo+"</td><td><button onclick=Modificar("+val.pk+",'"+val.url+"','"+val.url_reset+"'); class='btn btn-small btn-inverse' type='button'>Modificar</button></td></tr>");
@@ -168,7 +168,7 @@
 					<legend>Filtro de búsqueda</legend>
                             <table>
                                 <tr>
-                                    <td><label>Tipo de Usuario:</label></td><td><select name="cbx_dep" id="cbx_tipo">
+                                    <td><label>Tipo de Usuario:</label></td><td><select name="tipo" id="cbx_tipo">
                                                                                     <option selected="selected">Todos</option>
                                                                                     {%for t in tipos%}
                                                                                         <option value="{{t.pk}}"> {{t.nombre}} </option>
@@ -176,7 +176,7 @@
                                                                                 </select></td>
                                 </tr>
                                 <tr>
-                                    <td><label>Usuario:</label></td><td><input type="input" id = "tbx_nombusuario"></td>
+                                    <td><label>Usuario:</label></td><td><input type="input" id = "tbx_nombusuario" name = "username" ></td>
                                     <td><button id="btn_buscarusers" class="btn">Buscar</button></td>
                                 </tr>
                             </table>

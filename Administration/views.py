@@ -144,8 +144,9 @@ def view_bringusers(request):
     if request.is_ajax():
         if request.GET['data'] == 'users':
             try:
-                nuser = request.GET['username']
-                tipo = request.GET['tipo']
+                nuser = request.GET.get('username','')
+                tipo = request.GET.get('tipo','')
+                
                 if nuser != '':
                     if tipo == 'Todos':
                         users=Usuario.BringByTipo_Username(None,nuser)
@@ -158,7 +159,7 @@ def view_bringusers(request):
                     else:
                         id_tipo = TipoUsuario.objects.get(codigo=tipo)
                         users=Usuario.BringByTipo_Username(id_tipo,None)
-
+               
                 ret = [{'pk':u.pk,'name':u.get_full_name(),'usuario':u.username,'tipo':u.tipo_usuario.nombre, 'url':reverse('url_deleteuser', args=[u.pk]), 'url_reset':reverse('url_pwdreset', args=[u.pk]) } for u in users]
                 return HttpResponse(simplejson.dumps(ret), mimetype="application/json")
             except Exception,e:

@@ -163,6 +163,8 @@ class Usuario(User):
             else:
                 usuarios=Usuario.objects.filter(is_active=1).exclude(pk=1)
              #usuarios=User.objects.filter(is_active=1)
+             
+        return usuarios
 
 
 
