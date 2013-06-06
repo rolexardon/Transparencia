@@ -11,9 +11,14 @@ register = template.Library()
 @register.filter(name='iteminlist')
 def iteminlist(data,index):
     value = data[index]
+    print value
     if value == "":
         value = ""
+    if value == "0/":
+        value = 0
+    print value
     return value
+    
 @register.filter(name='getinfocentro')
 def getinfocentro(codigo,tipo):
     
@@ -107,7 +112,7 @@ def centroinfo(centro):
         dep = D.objects.get(codigo=centro.codigo_departamento).nombre
         mun = M.objects.get(departamento = centro.codigo_departamento, codigo=centro.codigo_municipio).nombre
         
-        ret = centro.nombre + ", " + mun + ", " + dep
+        ret = "[" + centro.codigo_ce + "] " + centro.nombre + ", " + mun + ", " + dep
     else:
         ret="No ha seleccionado centro"
     return ret

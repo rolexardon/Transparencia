@@ -54,7 +54,8 @@ def view_bringcentros(request):
                 #iddep = MN.BringDepId(idmun)
                 iddep = request.GET['iddep']
                 centros = CE.FilterByDepMun(iddep,idmun)
-                data = [{'pk':c.pk,'descripcion':c.nombre + "(" + c.direccion + ")"} for c in centros]
+               
+                data = [{'pk':c.pk,'descripcion': "[" + c.codigo_ce + "] " + c.nombre + "(" + c.direccion + ")"} for c in centros]
                 return HttpResponse(simplejson.dumps(data), mimetype="application/json")
             except Exception,e:
                 return HttpResponse(e)
@@ -145,85 +146,89 @@ def SaveDocentesPartE(encuesta_temporal,encuesta_final):
 def SaveBasic(datos,codigo_tabla,ts):
     try:
         if ts == "temporal":
-            p = ET.objects.get(codigo = codigo_tabla)
-             
-            if 'tbx_fecha' in datos.POST:
-                fecha=datos.POST['tbx_fecha']
-                if fecha != "":
-					#valid_fecha = datetime.strptime(fecha, '%d/%m/%Y')
-					#p.fecha = fecha
-					dt= datetime.strptime(fecha, '%d/%m/%Y')
-					#dt = parser.parse(fecha)
-					#p.update(fecha=dt)
-            
-            p.fecha = dt
-					#p.save()
-                    
-            if 'cbx_centros' in datos.POST:
-                centro=datos.POST['cbx_centros']
-                centro=CE.objects.get(pk=centro)
-                p.codigo_centro = centro
-				#p.update(codigo_centro = centro)
-            if 'tbx_tel1' in datos.POST:
-                t1=datos.POST['tbx_tel1']
-                if t1 != "":
-                    #p.update(tel=t1)
-					p.tel = t1
-                else :
-                    #p.update(tel=None)
-					p.tel=None
-            if 'tbx_obsv' in datos.POST:
-                ob = datos.POST['tbx_obsv']
-                #p.update(observacion= ob)
-                p.observacion=ob
-            if 'tbx_alumnos' in datos.POST:
-                ob = datos.POST['tbx_alumnos']
-                if ob != "":
-                    #p.update(alumnos=ob)
-                    p.alumnos = ob
-                else :
-                    #p.update(alumnos=None)
-                    p.alumnos=None
-            zona = datos.POST['cbx_zonacentro']
-            #p.update(zona=zona)
-            p.zona=zona
             try:
+                p = ET.objects.get(codigo = codigo_tabla)
+                 
+                if 'tbx_fecha' in datos.POST:
+                    fecha=datos.POST['tbx_fecha']
+                    if fecha != "":
+                        #valid_fecha = datetime.strptime(fecha, '%d/%m/%Y')
+                        #p.fecha = fecha
+                        dt= datetime.strptime(fecha, '%d/%m/%Y')
+                        #dt = parser.parse(fecha)
+                        #p.update(fecha=dt)
+                
+                p.fecha = dt
+                        #p.save()
+                        
+                if 'cbx_centros' in datos.POST:
+                    centro=datos.POST['cbx_centros']
+                    centro=CE.objects.get(pk=centro)
+                    p.codigo_centro = centro
+                    #p.update(codigo_centro = centro)
+                if 'tbx_tel1' in datos.POST:
+                    t1=datos.POST['tbx_tel1']
+                    if t1 != "":
+                        #p.update(tel=t1)
+                        p.tel = t1
+                    else :
+                        #p.update(tel=None)
+                        p.tel=None
+                if 'tbx_obsv' in datos.POST:
+                    ob = datos.POST['tbx_obsv']
+                    #p.update(observacion= ob)
+                    p.observacion=ob
+                if 'tbx_alumnos' in datos.POST:
+                    ob = datos.POST['tbx_alumnos']
+                    if ob != "":
+                        #p.update(alumnos=ob)
+                        p.alumnos = ob
+                    else :
+                        #p.update(alumnos=None)
+                        p.alumnos=None
+                zona = datos.POST['cbx_zonacentro']
+                #p.update(zona=zona)
+                p.zona=zona
+            
                 p.save()
             except Exception,e:
+                print e
                 HttpResponse(e)
         else:
         
-            encuesta_temp = ET.objects.get(pk=codigo_tabla)
-            etf = ET_Form(datos.POST, datos.FILES, instance = encuesta_temp)
-            if etf.is_valid():
-                etf.save()
-                
-            img1 = encuesta_temp.imagen01
-            img2 = encuesta_temp.imagen02
-
-            departamento = DP.objects.get(pk=datos.POST['cbx_dep'])
-            municipio = MN.objects.get(pk=datos.POST['cbx_mun'])
-            centro = CE.objects.get(pk=datos.POST['cbx_centros'])
-
-            fecha=datos.POST['tbx_fecha']
             try:
-                dt= datetime.strptime(fecha, '%d/%m/%Y')
-            except Exception,e:
-                pass
-                
-            fecha = dt
+                encuesta_temp = ET.objects.get(pk=codigo_tabla)
+                etf = ET_Form(datos.POST, datos.FILES, instance = encuesta_temp)
+                if etf.is_valid():
+                    etf.save()
+                    
+                img1 = encuesta_temp.imagen01
+                img2 = encuesta_temp.imagen02
 
-            zona = datos.POST['cbx_zonacentro']
-            t1=datos.POST['tbx_tel1']
-            al = datos.POST['tbx_alumnos']
-            if 'tbx_obsv' in datos.POST:
-                ob = datos.POST['tbx_obsv']
-            else: ob = ""
-            try:
-                 row=Encuesta(codigo_usuario = datos.user,fecha=fecha,codigo_departamento = departamento, codigo_municipio = municipio, codigo_centro = centro,zona=zona,tel=t1,fecha_apertura = datetime.today(),observacion = ob,alumnos = al,imagen01 = img1, imagen02 = img2)
-                 row.save()
+                departamento = DP.objects.get(pk=datos.POST['cbx_dep'])
+                municipio = MN.objects.get(pk=datos.POST['cbx_mun'])
+                centro = CE.objects.get(pk=datos.POST['cbx_centros'])
+
+                fecha=datos.POST['tbx_fecha']
+                try:
+                    dt= datetime.strptime(fecha, '%d/%m/%Y')
+                except Exception,e:
+                    pass
+                    
+                fecha = dt
+
+                zona = datos.POST['cbx_zonacentro']
+                t1=datos.POST['tbx_tel1']
+                al = datos.POST['tbx_alumnos']
+                if 'tbx_obsv' in datos.POST:
+                    ob = datos.POST['tbx_obsv']
+                else: ob = ""
+            
+                row=Encuesta(codigo_usuario = datos.user,fecha=fecha,codigo_departamento = departamento, codigo_municipio = municipio, codigo_centro = centro,zona=zona,tel=t1,fecha_apertura = datetime.today(),observacion = ob,alumnos = al,imagen01 = img1, imagen02 = img2)
+                row.save()
             except Exception,e:
-                 HttpResponse(e)
+                print e
+                HttpResponse(e)
         return row
     except Exception,e:
         return HttpResponse(e)
@@ -280,7 +285,6 @@ def SavePartB(datos,tipo_guardar,encuesta):
                     row.save()
     except Exception,e:
         return HttpResponse(e)
-
 
 def SavePartC(datos,items,tipo_guardar,encuesta):
     try:
@@ -390,7 +394,6 @@ def borrar_temporal(encuesta, borrar):
 
         enc_data = ETD.objects.filter(encuesta = encuesta)
         enc_data.delete()
-
 
 def view_encuesta(request,encuesta):
     try:
@@ -619,22 +622,29 @@ def view_adddocente(request,encuesta):
         else:
             if request.GET['data'] == 'erase':
                 try:
-                    texto = request.GET['texto']
-                    encuesta_id = request.GET['enc']
-                    segmento = request.GET['seg']
-                    encuesta = ET.objects.get(codigo = encuesta_id)
+                
+                    texto = request.GET.get('texto','')
+                    encuesta_id = request.GET.get('enc','')
+                    segmento = request.GET.get('seg','')
+                    
+                    if texto != '':
+                        encuesta = ET.objects.get(codigo = encuesta_id)
 
-                    list = texto.split('~')
-                    id = list[0]
-                    name = list[1]
+                        list = texto.split('~')
+                        id = list[0]
+                        name = list[1]
+                        
+                        print "texto",texto
+                        print id
+                        print name
+                        
+                        registro = LDT.objects.get(encuesta = encuesta,segmento = segmento,id_personal = id,nombre = name)
+                        registro.delete()
 
-                    registro = LDT.objects.get(encuesta = encuesta,segmento = segmento,id_personal = id,nombre = name)
-                    registro.delete()
+                        docentes = LDT.BringAll(encuesta,segmento)
+                        data = [{'pk':d.id_personal,'nombre':d.nombre} for d in docentes]
 
-                    docentes = LDT.BringAll(encuesta,segmento)
-                    data = [{'pk':d.id_personal,'nombre':d.nombre} for d in docentes]
-
-                    return HttpResponse(simplejson.dumps(data), mimetype="application/json")
+                        return HttpResponse(simplejson.dumps(data), mimetype="application/json")
                 except Exception,e:
                     return HttpResponse(e)
                 else:

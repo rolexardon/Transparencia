@@ -40,7 +40,7 @@
 			var segmento ="";
 			var cantidad_docentes = 0;
 			var agregados = 0;
-			var docente_text;
+			var docente_text = "";
           
             var D1= $("#D_1").val();
             var D2= $("#D_2").val();
@@ -210,6 +210,10 @@
 										tbx_tel1 : "required",
 										//imagen01 : "required",
 										//imagen02 : "required",
+										cbx_parteA : {
+														required : true,
+														notEqual : ""
+										},
 										selC_1 : "required",
 										selC_2 : "required",
 										selC_3 : "required",
@@ -254,6 +258,7 @@
 									messages :{		
                                         tbx_fecha : {   required: "Ingrese este campo" },
                                         tbx_tel1 : {   required: "Ingrese este campo" },
+										cbx_parteA : {   required: "Ingrese este campo" },
                                         selC_1 : {   required: "Ingrese este campo" },
                                         selC_2 : {   required: "Ingrese este campo" },
                                         selC_3 : {   required: "Ingrese este campo" },
@@ -466,11 +471,17 @@
 					}
 			});
 			$( "#selectable" ).selectable({
-				stop: function() {
-				$( ".ui-selected", this ).each(function() {
-					docente_text = $( "#selectable li" ).text( this );
-				});
-			}
+				 selected: function() {
+					$( ".ui-selected", this ).each(function() {
+						docente_text =$(this).text();
+						//docente_text = $( "#selectable li" ).text(this);
+
+					});
+				}
+				/*selected: function(event, ui) {
+					alert(ui.text());
+				}*/
+				
 			});
 			$(".btnList").click(function(){
 				$("#label_dialog").empty();
@@ -625,26 +636,26 @@
 		$("#btnEraseItem").click(function(){
 			var enc = {{codigo_enc}}
 			$.ajax({
-										type:"GET",
-										data:
-											{
-												data: "erase",
-												enc: enc,
-												texto : docente_text,
-												seg: segmento
-											},
-										url: "{% url url_adddocente codigo_enc%}",
-										success: function(data){
-													$("#selectable").empty();
-													$.each(data,function(key,val){
-														$("#selectable").append("<li class='ui-widget-content' value = val.pk>" + val.pk + "~" + val.nombre + "</li>");
-														
-													});
-													$("#tbx_id").empty();
-													$("#tbx_name").empty();
-													agregados = agregados - 1;
-												}
-							});
+					type:"GET",
+					data:
+						{
+							data: "erase",
+							enc: enc,
+							texto : docente_text,
+							seg: segmento
+						},
+					url: "{% url url_adddocente codigo_enc%}",
+					success: function(data){
+								$("#selectable").empty();
+								$.each(data,function(key,val){
+									$("#selectable").append("<li class='ui-widget-content' value = "+val.pk+">" + val.pk + "~" + val.nombre + "</li>");
+									
+								});
+								$("#tbx_id").empty();
+								$("#tbx_name").empty();
+								agregados = agregados - 1;
+							}
+			});
 		});
 		$("#logout_btn").click(function(){
 			//location.href = '/transparencia/logout/';
@@ -661,19 +672,9 @@
 			<p id="Mensaje"> </p>
 		</div>
 		<div id = "dialog-form" title="Gestión de Listado" >
-			<div id="topbar_btns">
-				{% if show %}
-					<img src="{{STATIC_URL}}css/images/icons/Delete.ico" id="btnEraseItem" height = '20' width = '20' class = "">
-				{% endif%}
-			</div>
+			
 			<label id="label_dialog"></label>
 			<br>
-			<br>
-			<label>Listado Docentes:</label>
-			<fieldset>
-				<ul id="selectable">
-		    	</ul>
-			</fieldset>
 			<br>
 			<form id="AddUser" action = "">
 				<table>
@@ -687,6 +688,17 @@
 					</tr>
 				</table>
 			</form>
+			<br>
+			<label>Listado Docentes:</label>
+			<div id="topbar_btns">
+				{% if show %}
+					<img src="{{STATIC_URL}}css/images/icons/Delete.ico" id="btnEraseItem" height = '20' width = '20' class = "">
+				{% endif%}
+			</div>
+			<fieldset>
+				<ul id="selectable">
+		    	</ul>
+			</fieldset>
 		</div>
         
         

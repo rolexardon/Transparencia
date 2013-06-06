@@ -52,6 +52,7 @@ def view_home(request):
             return PrepareContent(request.user,request)
             
         else:
+              
             return render_to_response('Login.html',context_instance=RequestContext(request))
     except Exception,e:
         return HttpResponse(e)

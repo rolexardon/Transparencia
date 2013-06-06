@@ -129,7 +129,7 @@
 								<table class="table table-striped">
 									
 									{%for e in encuestas%}
-										<tr><td><a href="{%url url_encuesta e.codigo%}"> No.{{e.codigo}} , {{e.fecha|parsed_date}} , {{e.codigo_centro|centroinfo}}, creada en {{e.fecha_apertura|parsed_date}} </a></td></tr>
+										<tr><td><a href="{%url url_encuesta e.codigo%}"> {{e.fecha|parsed_date}} , {{e.codigo_centro|centroinfo}}, creada:{{e.fecha_apertura|parsed_date}} </a></td></tr>
 									{%endfor%}
 								</table>
 							</fieldset>
@@ -138,7 +138,7 @@
 							<legend>Encuestas Publicadas</legend>
 								<table class="table table-striped">
 									{%for p in publicadas%}
-										<tr><td><a href="{%url url_publicadas p.codigo%}"> No.{{p.codigo}} , {{p.fecha|parsed_date}} , {{p.codigo_centro|centroinfo}}, creada en {{p.fecha_apertura|parsed_date}} </a></td></tr>
+										<tr><td><a href="{%url url_publicadas p.codigo%}"> {{p.fecha|parsed_date}} , {{p.codigo_centro|centroinfo}}, creada:{{p.fecha_apertura|parsed_date}} </a></td></tr>
 									{%endfor%}
 								</table>
 							</fieldset>
