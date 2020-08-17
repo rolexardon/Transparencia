@@ -14,8 +14,8 @@ DATABASES = {
                     'init_command': 'SET storage_engine=INNODB',
                     },
         'NAME': 'transparenciadb',       # Not used with sqlite3.
-		'USER': 'root',
-        'PASSWORD': 'admin',                  # Not used with sqlite3.
+		'USER': '',
+        'PASSWORD': '',                  # Not used with sqlite3.
         'HOST': '',                      # Set to empty string for localhost. Not used with sqlite3.
         'PORT': '',                      # Set to empty string for default. Not used with sqlite3.
     }
