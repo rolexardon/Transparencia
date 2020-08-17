@@ -19,9 +19,7 @@ from django.core.urlresolvers import reverse
 
 def view_login(request):
     try:
-        username = ''
-        password = ''
-		
+
         if request.POST:
             username = request.POST.get('username')
             password = request.POST.get('password')
